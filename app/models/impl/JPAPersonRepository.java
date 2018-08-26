@@ -1,5 +1,7 @@
-package models;
+package models.impl;
 
+import models.Person;
+import models.PersonRepository;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;

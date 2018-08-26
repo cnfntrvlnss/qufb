@@ -1,0 +1,21 @@
+@(projectList: List[models.Project])
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>myQuestion</title>
+	</head>
+  <body>
+  <li>
+     共 @projectList.size 个项目
+  </li>
+      @for((project, index) <- projectList.zipWithIndex){
+      <span>@index</span>
+      <span>@project.getProjectName()</span><br>
+      }
+    <ul>
+
+    </ul>
+  </body>
+</html>
