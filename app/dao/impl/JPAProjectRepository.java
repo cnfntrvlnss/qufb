@@ -1,7 +1,7 @@
 package dao.impl;
 
 import models.Project;
-import models.ProjectRepository;
+import dao.ProjectRepository;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;

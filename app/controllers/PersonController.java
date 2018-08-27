@@ -32,7 +32,7 @@ public class PersonController extends Controller {
     }
 
     public Result index() {
-        return ok(views.html.index.render());
+        return ok(views.html.index.render("天气很好"));
     }
 
     public CompletionStage<Result> addPerson() {

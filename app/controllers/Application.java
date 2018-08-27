@@ -1,35 +1,46 @@
 package controllers;
 
 import java.util.List;
+import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
+import dao.ProjectRepository;
 import models.Project;
 import play.*;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.FormFactory;
 import play.mvc.*;
 import views.html.*;
 
+import javax.inject.Inject;
+
 public class Application extends Controller {
+	@Inject
+	FormFactory formFactory;
+	@Inject
+	ProjectRepository projDao;
+
 	/**
 	 * 首页面
 	 * @return
 	 */
-    public static Result index() {
+    public Result index() {
         return ok(index.render("我的第一个index页面内容"));
     }
     /**
      * 表单提交页面
      * @return
      */
-    public static Result form() {
+    public Result form() {
     	return ok(views.html.form.render());
     }
     /**
      * 提交表单的动作
      * @return
      */
-    public static Result postForm() {
-    	DynamicForm in   = Form.form().bindFromRequest();
+    public Result postForm() {
+    	DynamicForm in   = formFactory.form().bindFromRequest();
 	    String system    = in.get("system");
 	    String email=in.get("email");
 	    String questionFeedback=in.get("questionDescription");
@@ -41,22 +52,20 @@ public class Application extends Controller {
      * 我的项目
      * @return
      */
-    public static Result myProject() {
-    	List<Project> projectList=Project.findAll();
-    	//return ok(views.html.myQuestion.render());
-    	//return ok("获取的项目长度为"+projectList.size());
-		//System.err.print(projectList.size());
-    	return ok(myProject.render(projectList));
+    public CompletionStage<Result> myProject() {
+        return projDao.findAll().thenApplyAsync(stream -> {
+            return ok(myProject.render(stream.collect(Collectors.toList())));
+        });
     }
 
 	/**
 	 * 登录
 	 * @return
 	 */
-	public static Result login() {
+	public Result login() {
 		return ok(views.html.login.render());
 	}
-	public static Result loginSubmit() {
+	public Result loginSubmit() {
 		return ok(views.html.login.render());
 	}
 }
