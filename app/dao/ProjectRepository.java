@@ -1,4 +1,6 @@
-package models;
+package dao;
+
+import models.Project;
 
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;

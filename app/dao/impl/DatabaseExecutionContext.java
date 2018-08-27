@@ -1,4 +1,4 @@
-package models.impl;
+package dao.impl;
 
 import akka.actor.ActorSystem;
 import scala.concurrent.ExecutionContext;

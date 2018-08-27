@@ -1,7 +1,7 @@
 package models;
 
 import com.google.inject.ImplementedBy;
-import models.impl.JPAPersonRepository;
+import dao.impl.JPAPersonRepository;
 
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;

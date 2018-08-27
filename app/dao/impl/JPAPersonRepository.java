@@ -1,4 +1,4 @@
-package models.impl;
+package dao.impl;
 
 import models.Person;
 import models.PersonRepository;
