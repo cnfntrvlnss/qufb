@@ -1,6 +1,7 @@
 package dao.impl;
 
 import akka.actor.ActorSystem;
+import com.google.inject.Singleton;
 import scala.concurrent.ExecutionContext;
 import scala.concurrent.ExecutionContextExecutor;
 
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 /**
  * Custom execution context wired to "database.dispatcher" thread pool
  */
+@Singleton
 public class DatabaseExecutionContext implements ExecutionContextExecutor {
     private final ExecutionContext executionContext;
 

@@ -1,5 +1,6 @@
 package dao.impl;
 
+import com.google.inject.Singleton;
 import models.Person;
 import models.PersonRepository;
 import play.db.jpa.JPAApi;
@@ -16,6 +17,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 /**
  * Provide JPA operations running inside of a thread pool sized to the connection pool
  */
+@Singleton
 public class JPAPersonRepository implements PersonRepository {
 
     private final JPAApi jpaApi;

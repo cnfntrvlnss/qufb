@@ -24,3 +24,8 @@ POST     /postForm                      controllers.Application.postForm()
 # myQuestion
 GET    /myQuestion                     controllers.QuestionFeedbackController.myQuestion()
 
+GET     /person                           controllers.PersonController.index()
+
+POST    /person/person                     controllers.PersonController.addPerson()
+
+GET     /person/persons                    controllers.PersonController.getPersons()

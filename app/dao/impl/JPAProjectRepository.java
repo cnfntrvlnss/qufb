@@ -1,7 +1,9 @@
 package dao.impl;
 
+import com.google.inject.Singleton;
 import models.Project;
 import dao.ProjectRepository;
+import org.springframework.stereotype.Repository;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
@@ -10,6 +12,7 @@ import java.util.stream.Stream;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
+@Singleton
 public class JPAProjectRepository implements ProjectRepository {
     private final JPAApi jpaApi;
     private final DatabaseExecutionContext executionContext;

@@ -1,6 +1,14 @@
-@(message: String)
+@()
 
 @main("Welcome to Play") {
 
-    <h1>@message</h1>
+    <script type='text/javascript' src='@routes.Assets.at("javascripts/populatedata.js")'></script>
+
+    <ul id="persons"></ul>
+
+    <form method="POST" action="@routes.PersonController.addPerson()">
+        @helper.CSRF.formField
+        <input type="text" name="name"/>
+        <button>Add Person</button>
+    </form>
 }
