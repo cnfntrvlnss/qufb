@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+
 @Singleton
 public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository {
 

@@ -1,5 +1,5 @@
         $.ajax({
-            url: "/persons",
+            url: "/person/persons",
             success: function(data){
                 console.log("persons:", data);
                 $.each(data, function(i, e){

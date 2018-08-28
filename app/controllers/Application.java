@@ -26,7 +26,7 @@ public class Application extends Controller {
 	 * @return
 	 */
     public Result index() {
-        return ok(index.render("我的第一个index页面内容"));
+        return ok(index.render());
     }
     /**
      * 表单提交页面
