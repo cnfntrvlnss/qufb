@@ -1,0 +1,21 @@
+@(questionList: List[models.ConfigInfo])
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>myConfig</title>
+	</head>
+  <body>
+  <li>
+     共 @questionList.size 个反馈问题
+  </li>
+      @for((question, index) <- questionList.zipWithIndex){
+      <span>@index</span>
+      <span>@question.getConfigName()</span><br>
+      }
+    <ul>
+
+    </ul>
+  </body>
+</html>
