@@ -6,6 +6,8 @@ import models.QuestionFeedback;
 import play.db.jpa.JPAApi;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -84,20 +86,42 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
 
             if(fb.getQuestionId() != null){
                 QuestionFeedback tfb = em.find(QuestionFeedback.class, fb.getQuestionId());
-                syncQuestion(fb, tfb);
+                _syncQuestion(fb, tfb);
 
             }else{
                 QuestionFeedback tfb = em.createQuery("select q from QuestionFeedback q where q.questionCode = ?1", QuestionFeedback.class)
                         .setParameter(1, fb.getQuestionCode())
                         .getSingleResult();
-                syncQuestion(fb, tfb);
+                _syncQuestion(fb, tfb);
             }
 
             return null;
         });
     }
 
-    void syncQuestion(QuestionFeedback fb, QuestionFeedback tfb){
+    void _syncQuestion(QuestionFeedback fb, QuestionFeedback tfb) {
+        try{
+            Class<QuestionFeedback> clz = QuestionFeedback.class;
+            for(Field f: Arrays.asList(clz.getDeclaredFields())){
+                String fname = f.getName();
+                if(fname.equals("questionId") || fname.equals("questionCode")){
+                    continue;
+                }
+                String mPart = fname.substring(0, 1).toUpperCase() + fname.substring(1);
+                Method m = clz.getMethod("get" + mPart);
+                Object fromGet = m.invoke(fb);
+                if(fromGet != null){
+                    Method mset = clz.getMethod("set" + mPart, fromGet.getClass());
+                    System.out.println("zsrdebug: in _syncQuestion, " + mset.getName() + "(" + fromGet.toString() + ")");
+                    mset.invoke(tfb, fromGet);
+                }
+            }
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    void syncQuestion(QuestionFeedback fb, QuestionFeedback tfb) {
         if(fb.getQuestionTitle() != null){
             tfb.setQuestionTitle(fb.getQuestionTitle());
         }
@@ -167,8 +191,51 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
         if(fb.getResultAuditId() != null){
             tfb.setResultAuditId(fb.getResultAuditId());
         }
-        
-
+        if(fb.getResultAuditSuggestion() != null){
+            tfb.setResultAuditSuggestion(fb.getResultAuditSuggestion());
+        }
+        if(fb.getResultAuditTime() != null){
+            tfb.setResultAuditTime(fb.getResultAuditTime());
+        }
+        if(fb.getVerifyName() != null){
+            tfb.setVerifyName(fb.getVerifyName());
+        }
+        if(fb.getVerifyId() != null){
+            tfb.setVerifyId(fb.getVerifyId());
+        }
+        if(fb.getVerifySuggestion() != null){
+            tfb.setVerifySuggestion(fb.getVerifySuggestion());
+        }
+        if(fb.getVerifyTime() != null){
+            tfb.setVerifyTime(fb.getVerifyTime());
+        }
+        if(fb.getEstimateFinishTime() != null){
+            tfb.setEstimateFinishTime(fb.getEstimateFinishTime());
+        }
+        if(fb.getLatestUpdateTime() != null){
+            tfb.setLatestUpdateTime(fb.getLatestUpdateTime());
+        }
+        if(fb.getProjectId() != null){
+            tfb.setProjectId(fb.getProjectId());
+        }
+        if(fb.getProjectName() != null){
+            tfb.setProjectName(fb.getProjectName());
+        }
+        if(fb.getQuestionDescription() != null){
+            tfb.setQuestionDescription(fb.getQuestionDescription());
+        }
+        if(fb.getQuestionState() != null){
+            tfb.setQuestionState(fb.getQuestionState());
+        }
+        if(fb.getQuestionType() != null){
+            tfb.setQuestionType(fb.getQuestionType());
+        }
+        if(fb.getQuestionLevel() != null){
+            tfb.setQuestionLevel(fb.getQuestionLevel());
+        }
+        if(fb.getFlowId() != null){
+            tfb.setFlowId(fb.getFlowId());
+        }
 
     }
 
