@@ -27,11 +27,7 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
 
     @Override
     public CompletionStage<List<QuestionFeedback>> findAll() {
-        return supplyAsync(()->{
-            return  jpaApi.withTransaction(questionList->{
-                return questionList.createQuery("select p from QuestionFeedback p", QuestionFeedback.class).getResultList();
-            });
-        });
+        return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery("select p from QuestionFeedback p", QuestionFeedback.class).getResultList()));
     }
 
     QuestionFeedback _findById(Integer id){
@@ -43,9 +39,7 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
 
     @Override
     public CompletionStage<QuestionFeedback> findById(Integer id){
-        return supplyAsync(() -> {
-            return _findById(id);
-        });
+        return supplyAsync(() -> _findById(id));
     }
 
     QuestionFeedback findByCode(Integer code){
@@ -58,11 +52,7 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
 
 
     private CompletionStage<Void> wrap(Function<EntityManager, Void> fn){
-        return supplyAsync(() -> {
-            return jpaApi.withTransaction(em ->{
-                return fn.apply(em);
-            });
-        });
+        return supplyAsync(() -> jpaApi.withTransaction(em -> fn.apply(em)));
     }
 
     public CompletionStage<Void> save(QuestionFeedback fb){

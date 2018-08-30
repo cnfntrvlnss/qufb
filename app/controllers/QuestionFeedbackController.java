@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import models.QuestionFeedback;
 import dao.QuestionFeedbackRepository;
+import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -20,7 +21,8 @@ public class QuestionFeedbackController extends Controller {
 	QuestionFeedbackRepository questRepo;
 	@Inject
 	private HttpExecutionContext ec;
-
+	@Inject
+	private  FormFactory formFactory;
 
 
 	/**
@@ -39,9 +41,25 @@ public class QuestionFeedbackController extends Controller {
 			}
 		}, ec.current());*/
 		//lambda表达式实现方法
-		return questionList.thenApplyAsync(list -> {
-			return ok(myQuestion.render(list));
-		}, ec.current());
+		return questionList.thenApplyAsync(list -> ok(myQuestion.render(list)), ec.current());
     }
 
+	/**
+	 * 提交问题页面
+	 * @return
+	 */
+	public Result myQuestionSubmit() {
+		return ok(views.html.myQuestionSubmit.render());
+	}
+
+	/**
+	 * 保存一个问题
+	 * @return
+	 */
+	public CompletionStage<Result> addQuestion() {
+		QuestionFeedback questionFeedback = formFactory.form(QuestionFeedback.class).bindFromRequest().get();
+		return questRepo.save(questionFeedback).thenApplyAsync(p -> {
+			return redirect(routes.QuestionFeedbackController.myQuestionSubmit());
+		}, ec.current());
+	}
 }
