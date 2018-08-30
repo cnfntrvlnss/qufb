@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>form</title>
+	</head>
+  <body>
+    <div class="htmleaf-container">
+			<div class="wrapper">
+				<div class="container">
+					<img style="margin-top:20px;" src="@routes.Assets.at("images/inspur.png")"/>
+					<p>&nbsp;</p>
+					<h2 style="margin-left:37%">问题反馈接口</h2>
+					<form class="form" style="margin-left:25%"  id="submitQuestion" method="post" action="@routes.QuestionFeedbackController.submitQuestion()">
+						@helper.CSRF.formField
+						<table>
+						 	<tr>
+						 		<td><label>问题标题:</label></td>
+						 		<td> <input name="questionTitle" class="f1 easyui-textbox" style="width:100%;height:30px;" ></input></td>
+						 	</tr>
+						 	<tr>
+						 		<td><label style="letter-spacing:2.5px;">反馈者邮箱:</label></td>
+						 		<td><input class="easyui-validatebox" type="email" name="email" data-options="validType:'email'" ></input></td>
+						 	
+						 	</tr>
+						 	<tr>
+						 		<td>  <label style="letter-spacing:6.5px;">问题描述:</label></td>
+						 		<td><input class="easyui-textbox" name="questionDescription" style="width:100%;height:60px;" prompt="请限制在1024个字数以内" data-options="multiline:true"></input></td>
+						 	</tr>
+						 	<tr>
+						 		<td><label style="letter-spacing:6.5px;">修改建议:</label></td>
+						 		<td><input class="easyui-textbox" name="suggest" style="width:100%;height:60px" prompt="请限制在1024个字数以内" data-options=" multiline:true"></input></td>
+						 	</tr>
+						 	
+						 	<tr><td><button style="margin-left:110%;margin-top:5%;width:110px;" type="submit" id="login-button">提交问题</button></td></tr>
+						 	<tr>
+						 		<td><label style="font-size:13px;margin-top:15%">若遇反馈问题，请邮件联络：</label></td>
+						 		<td><label style="font-size:13px;margin-top:15%">李欣（li.xin@@inspur.com）</label></td>
+						 	</tr>
+						 </table>
+                
+           
+						
+					</form>
+				</div>
+			</div>
+		</div>
+
+  </body>
+</html>
