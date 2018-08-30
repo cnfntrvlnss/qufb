@@ -1,7 +1,7 @@
 package controllers;
 
 import models.Person;
-import models.PersonRepository;
+import dao.PersonRepository;
 import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;

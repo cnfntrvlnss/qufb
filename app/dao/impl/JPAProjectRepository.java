@@ -3,7 +3,6 @@ package dao.impl;
 import com.google.inject.Singleton;
 import models.Project;
 import dao.ProjectRepository;
-import org.springframework.stereotype.Repository;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;

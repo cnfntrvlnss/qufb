@@ -1,7 +1,8 @@
-package models;
+package dao;
 
 import com.google.inject.ImplementedBy;
 import dao.impl.JPAPersonRepository;
+import models.Person;
 
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
@@ -16,3 +17,4 @@ public interface PersonRepository {
 
     CompletionStage<Stream<Person>> list();
 }
+

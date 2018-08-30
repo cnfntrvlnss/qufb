@@ -2,7 +2,7 @@ package dao.impl;
 
 import com.google.inject.Singleton;
 import models.Person;
-import models.PersonRepository;
+import dao.PersonRepository;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;

@@ -1,6 +1,6 @@
 import controllers.PersonController;
 import models.Person;
-import models.PersonRepository;
+import dao.PersonRepository;
 import org.junit.Test;
 import play.api.mvc.Request;
 import play.core.j.JavaContextComponents;
