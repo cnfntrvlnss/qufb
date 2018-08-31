@@ -75,7 +75,7 @@ public class QuestionFeedback {
 	public void setQuestionId(Integer questionId) {
 		this.questionId = questionId;
 	}
-
+	@Column(unique=true, nullable=false)
 	public String getQuestionCode() {
 		return questionCode;
 	}
@@ -86,7 +86,6 @@ public class QuestionFeedback {
 	public String getQuestionTitle() {
 		return questionTitle;
 	}
-
 	public void setQuestionTitle(String questionTitle) {
 		this.questionTitle = questionTitle;
 	}
@@ -94,7 +93,6 @@ public class QuestionFeedback {
 	public String getFeedbacker() {
 		return feedbacker;
 	}
-
 	public void setFeedbacker(String feedbacker) {
 		this.feedbacker = feedbacker;
 	}
@@ -102,7 +100,6 @@ public class QuestionFeedback {
 	public String getFeedbackerId() {
 		return feedbackerId;
 	}
-
 	public void setFeedbackerId(String feedbackerId) {
 		this.feedbackerId = feedbackerId;
 	}
@@ -110,7 +107,6 @@ public class QuestionFeedback {
 	public Date getFeedbackTime() {
 		return feedbackTime;
 	}
-
 	public void setFeedbackTime(Date feedbackTime) {
 		this.feedbackTime = feedbackTime;
 	}

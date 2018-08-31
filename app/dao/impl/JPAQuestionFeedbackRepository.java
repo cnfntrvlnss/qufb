@@ -3,6 +3,7 @@ package dao.impl;
 import com.google.inject.Singleton;
 import dao.QuestionFeedbackRepository;
 import models.QuestionFeedback;
+import play.Logger;
 import play.db.jpa.JPAApi;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -17,6 +18,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 @Singleton
 public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository {
+    private final Logger.ALogger logger = Logger.of(JPAQuestionFeedbackRepository.class);
 
     private final JPAApi jpaApi;
     private final DatabaseExecutionContext executionContext;
@@ -112,7 +114,7 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
                 Object fromGet = m.invoke(fb);
                 if(fromGet != null){
                     Method mset = clz.getMethod("set" + mPart, fromGet.getClass());
-                    System.out.println("zsrdebug: in _syncQuestion, " + mset.getName() + "(" + fromGet.toString() + ")");
+                    logger.debug("in _syncQuestion, {}({})", mset.getName(), fromGet);
                     mset.invoke(tfb, fromGet);
                 }
             }
