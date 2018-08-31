@@ -1,7 +1,6 @@
 package controllers;
 
 import javax.inject.Inject;
-
 import models.QuestionFeedback;
 import dao.QuestionFeedbackRepository;
 import play.data.FormFactory;
@@ -9,10 +8,11 @@ import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.myQuestion;
-
+import com.google.gson.GsonBuilder;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-
+import static play.libs.Json.toJson;
 
 
 public class QuestionFeedbackController extends Controller {
@@ -58,8 +58,19 @@ public class QuestionFeedbackController extends Controller {
 	 */
 	public CompletionStage<Result> addQuestion() {
 		QuestionFeedback questionFeedback = formFactory.form(QuestionFeedback.class).bindFromRequest().get();
+		questionFeedback.setFeedbackTime(new Date());
 		return questRepo.save(questionFeedback).thenApplyAsync(p -> {
 			return redirect(routes.QuestionFeedbackController.myQuestionSubmit());
+		}, ec.current());
+	}
+
+	/**
+	 * 获取问题列表
+	 * @return
+	 */
+	public CompletionStage<Result> listQuestion() {
+		return questRepo.findAll().thenApplyAsync(questionList -> {
+			return ok(toJson(questionList));
 		}, ec.current());
 	}
 }
