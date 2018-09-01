@@ -30,6 +30,9 @@ GET    /myQuestionSubmit               controllers.QuestionFeedbackController.my
 # myQuestionSubmit
 POST    /addQuestion               controllers.QuestionFeedbackController.addQuestion()
 
+# listQuestion
+GET    /listQuestion               controllers.QuestionFeedbackController.listQuestion()
+
 GET     /person                           controllers.PersonController.index()
 
 POST    /person/person                     controllers.PersonController.addPerson()

@@ -16,6 +16,8 @@ import java.util.List;
  */
 @Entity
 public class QuestionFeedback {
+	@Id
+	@GeneratedValue(strategy= GenerationType.AUTO)
 	private Integer questionId;//问题反馈系统id
 	private String questionCode;//问题编号
 	private String questionTitle;//问题标题
@@ -67,8 +69,7 @@ public class QuestionFeedback {
 
 	private Integer flowId;//流程id
 
-	@Id
-	@GeneratedValue(strategy= GenerationType.IDENTITY)
+
 	public Integer getQuestionId() {
 		return questionId;
 	}

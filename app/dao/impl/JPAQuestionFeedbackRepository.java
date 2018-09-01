@@ -27,36 +27,42 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
         this.executionContext = executionContext;
     }
 
+    /**
+     * 获取所有的问题反馈列表
+     * @return
+     */
     @Override
     public CompletionStage<List<QuestionFeedback>> findAll() {
         return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery("select p from QuestionFeedback p", QuestionFeedback.class).getResultList()));
     }
 
-    QuestionFeedback _findById(Integer id){
-        return jpaApi.withTransaction(em -> {
-            QuestionFeedback tfb = em.find(QuestionFeedback.class, id);
-            return tfb;
-        });
-    }
-
+    /**
+     * 通过id获取一个问题反馈的实体信息
+     * @param id
+     * @return
+     */
     @Override
     public CompletionStage<QuestionFeedback> findById(Integer id){
         return supplyAsync(() -> _findById(id));
     }
 
-    QuestionFeedback findByCode(Integer code){
+    /**
+     * 通过问题编号查询一个问题实体
+     * @param code
+     * @return
+     */
+    QuestionFeedback findByCode(String code){
         return jpaApi.withTransaction(em -> {
             QuestionFeedback tfb = em.createQuery("select q from QuestionFeedback q where q.questionCode = ?1", QuestionFeedback.class)
                     .setParameter(1, code).getSingleResult();
             return tfb;
         });
     }
-
-
-    private CompletionStage<Void> wrap(Function<EntityManager, Void> fn){
-        return supplyAsync(() -> jpaApi.withTransaction(em -> fn.apply(em)));
-    }
-
+    /**
+     * 保存一个问题
+     * @param fb
+     * @return
+     */
     public CompletionStage<Void> save(QuestionFeedback fb){
         return wrap(em -> {
             em.persist(fb);
@@ -64,6 +70,11 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
         });
     }
 
+    /**
+     * 更新一个问题实体
+     * @param fb
+     * @return
+     */
     public CompletionStage<Void> update(QuestionFeedback fb){
         return wrap(em -> {
             em.merge(fb);
@@ -71,25 +82,46 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
         });
     }
 
+    /**
+     * 通过问题id或问题编号更新一个问题，包括条件为空的判断
+     * @param fb
+     * @return
+     */
     public CompletionStage<Void> updateNotNull(QuestionFeedback fb){
         return wrap(em ->{
-
             if(fb.getQuestionId() != null){
                 QuestionFeedback tfb = em.find(QuestionFeedback.class, fb.getQuestionId());
                 _syncQuestion(fb, tfb);
 
-            }else{
-                QuestionFeedback tfb = em.createQuery("select q from QuestionFeedback q where q.questionCode = ?1", QuestionFeedback.class)
-                        .setParameter(1, fb.getQuestionCode())
-                        .getSingleResult();
+            }else if(fb.getQuestionCode()!=null){
+                QuestionFeedback tfb =findByCode(fb.getQuestionCode());
+                //QuestionFeedback tfb = em.createQuery("select q from QuestionFeedback q where q.questionCode = ?1", QuestionFeedback.class).setParameter(1, code).getSingleResult().getSingleResult();
                 _syncQuestion(fb, tfb);
             }
-
             return null;
         });
     }
 
-    void _syncQuestion(QuestionFeedback fb, QuestionFeedback tfb) {
+    //==============================================以下为私有方法
+
+   //通过id获取一个问题实体并返回实体
+    private QuestionFeedback _findById(Integer id){
+        return jpaApi.withTransaction(em -> {
+            QuestionFeedback tfb = em.find(QuestionFeedback.class, id);
+            return tfb;
+        });
+    }
+    //包装
+    private CompletionStage<Void> wrap(Function<EntityManager, Void> fn){
+        return supplyAsync(() -> jpaApi.withTransaction(em -> fn.apply(em)));
+    }
+
+    /**
+     *
+     * @param fb：要更新的实体
+     * @param tfb：数据库中目前的实体信息
+     */
+   private  void _syncQuestion(QuestionFeedback fb, QuestionFeedback tfb) {
         try{
             Class<QuestionFeedback> clz = QuestionFeedback.class;
             for(Field f: Arrays.asList(clz.getDeclaredFields())){
