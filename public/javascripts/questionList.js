@@ -1,15 +1,4 @@
-        /*$.ajax({
-            url: "/listQuestion",
-            success: function(data){
-                console.log("questions:", data);
-                $.each(data, function(i, e){
-                     $('#questions').append('<li>' + e.questionId+ ' --- ' + e.questionTitle + '</li>');
-                 });
-            },
-            error: function(data){
-                alert("error!!! " + data);
-            }
-        });*/
+
         var classCss;
         $.ajax({
             url: "/listQuestion",
@@ -20,7 +9,7 @@
                     }else{
                         classCss="odd";
                     }
-                     $('#questionTable').append('<tr class='+classCss+'><td>' + '<a>'+e.questionId+'</a>'+ '</td><td>' + e.questionTitle+ '</td><td>' + e.bugHeader + '</td><td>' + e.questionDescription + '</td> <td>' + e.feedbackSuggestion+ '</td> <td>' + getMyDate(e.feedbackTime)+'</td></tr>');
+                     $('#questionTable').append('<tr class='+classCss+'><td>' + '<a href="myQuestionDeal/'+e.questionId+'">'+e.questionId+'</a>'+ '</td><td>' + e.questionTitle+ '</td><td>' + e.bugHeader + '</td><td>' + e.questionDescription + '</td> <td>' + e.feedbackSuggestion+ '</td> <td>' + getMyDate(e.feedbackTime)+'</td></tr>');
                  });
             },
             error: function(data){

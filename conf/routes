@@ -27,6 +27,12 @@ GET    /myQuestion                     controllers.QuestionFeedbackController.my
 # myQuestionSubmit
 GET    /myQuestionSubmit               controllers.QuestionFeedbackController.myQuestionSubmit()
 
+# myQuestionDeal
+GET    /myQuestionDeal/:questionId               controllers.QuestionFeedbackController.myQuestionDeal(questionId :Integer)
+
+# myQuestionInfo
+GET    /getQuestionInfo/:questionId              controllers.QuestionFeedbackController.getQuestionInfo(questionId :Integer)
+
 # myQuestionSubmit
 POST    /addQuestion               controllers.QuestionFeedbackController.addQuestion()
 

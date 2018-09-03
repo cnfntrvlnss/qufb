@@ -52,6 +52,7 @@ public class QuestionFeedbackController extends Controller {
 		return ok(views.html.myQuestionSubmit.render());
 	}
 
+
 	/**
 	 * 保存一个问题
 	 * @return
@@ -71,6 +72,28 @@ public class QuestionFeedbackController extends Controller {
 	public CompletionStage<Result> listQuestion() {
 		return questRepo.findAll().thenApplyAsync(questionList -> {
 			return ok(toJson(questionList));
+		}, ec.current());
+	}
+	/**
+	 * 问题处理页面
+	 * lixin
+	 * 2018-9-3 13:53:32
+	 * @return
+	 */
+	public Result myQuestionDeal(Integer questionId) {
+		return ok(views.html.myQuestionDeal.render(questionId));
+	}
+	/**
+	 * 通过问题id获取一个问题信息
+	 * lixin
+	 * 2018-9-3 15:39:15
+	 * @param questionId：问题id，数据库主键
+	 * @return
+	 */
+	public CompletionStage<Result> getQuestionInfo(Integer questionId) {
+		CompletionStage<QuestionFeedback> questionFeedback=questRepo.findById(questionId);
+		return questionFeedback.thenApplyAsync(questionInfo -> {
+			return ok(toJson(questionInfo));
 		}, ec.current());
 	}
 }

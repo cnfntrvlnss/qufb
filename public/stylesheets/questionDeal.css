@@ -1,0 +1,24 @@
+.oddDiv{
+    background-color: #7fd3ff47;
+}
+.evenDiv{
+    background-color:#7fd3ff17;
+}
+textarea{
+    width: 100%;
+}
+.buttonDiv{
+    margin-left:85%;
+   }
+ input{
+   width: 100%;
+   height: 30px;
+   float:left;
+   }
+label{
+    text-align:right;
+}
+.firstDiv{
+    margin-left:5%;
+    margin-top:1%;
+}
