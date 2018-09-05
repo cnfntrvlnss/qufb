@@ -34,6 +34,7 @@
                data:JSON.stringify(saveParam), //转JSON字符串
                success: function(data){
                     alert("保存成功");
+                    location.href = "myQuestionSubmit";
                 }
                 });
         }

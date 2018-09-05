@@ -1,27 +1,27 @@
 package controllers;
 
-import javax.inject.Inject;
-import models.QuestionFeedback;
+import akka.util.ByteString;
+import com.fasterxml.jackson.databind.JsonNode;
 import dao.QuestionFeedbackRepository;
+import models.QuestionFeedback;
 import play.data.FormFactory;
+import play.libs.F;
+import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
-import play.mvc.Controller;
-import play.mvc.Result;
+import play.libs.streams.Accumulator;
+import play.mvc.*;
 import views.html.myQuestion;
+
+import javax.inject.Inject;
+import java.lang.reflect.ParameterizedType;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import play.mvc.BodyParser;
 import java.util.concurrent.Executor;
-import play.mvc.Http.RequestBody;
-import  play.api.mvc.RequestHeader;
-import play.libs.streams.Accumulator;
+
 import static play.libs.Json.toJson;
 
-import play.libs.streams.Accumulator;
-import play.libs.F;
 //import akka.util;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class QuestionFeedbackController extends Controller {
 
@@ -67,42 +67,45 @@ public class QuestionFeedbackController extends Controller {
 	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> addQuestion() {
-		RequestBody body = request().body();
-
-		QuestionFeedback questionFeedback =new QuestionFeedback();
-		questionFeedback.setQuestionTitle(body.asJson().get("questionTitle").toString());
-		questionFeedback.setFeedbackTime(new Date());
-		return questRepo.save(questionFeedback).thenApplyAsync(p -> {
-			return redirect(routes.QuestionFeedbackController.myQuestionSubmit());
+        QuestionFeedback quest = Json.fromJson(request().body().asJson(), QuestionFeedback.class);
+        quest.setFeedbackTime(new Date());
+		return questRepo.save(quest).thenApplyAsync(p -> {
+			return ok();
 		}, ec.current());
 	}
-	/*public static  class QuestionBodyParser implements  BodyParser<QuestionFeedback> {
+
+	public static  class QuestionBodyParser<Q> implements  BodyParser<Q> {
 		public BodyParser.Json jsonParser;
 		public Executor executor;
+		Class<Q> clz;
 		@Inject
 		public QuestionBodyParser(BodyParser.Json jsonParser, Executor executor) {
 			this.jsonParser = jsonParser;
 			this.executor = executor;
-		}
-	}*/
+            clz = (Class<Q>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        }
 
-	/*public Accumulator<ByteString, F.Either<Result, QuestionFeedback>> apply(RequestHeader request) {
-		Accumulator<ByteString, F.Either<Result, JsonNode>> jsonAccumulator = jsonParser.apply(request);
-		return jsonAccumulator.map(resultOrJson -> {
-			if (resultOrJson.left.isPresent()) {
-				return F.Either.Left(resultOrJson.left.get());
-			} else {
-				JsonNode json = resultOrJson.right.get();
-				try {
-					User user = play.libs.Json.fromJson(json, User.class);
-					return F.Either.Right(user);
-				} catch (Exception e) {
-					return F.Either.Left(Results.badRequest(
-							"Unable to read User from json: " + e.getMessage()));
+		@Override
+		public Accumulator<ByteString, F.Either<Result, Q>> apply(Http.RequestHeader request) {
+			Accumulator<ByteString, F.Either<Result, JsonNode>> jsonAccumulator = jsonParser.apply(request);
+			return jsonAccumulator.map(resultOrJson -> {
+				if (resultOrJson.left.isPresent()) {
+					return F.Either.Left(resultOrJson.left.get());
+				} else {
+					JsonNode json = resultOrJson.right.get();
+					try {
+						Q qust = play.libs.Json.fromJson(json, clz);
+						return F.Either.Right(qust);
+					} catch (Exception e) {
+						return F.Either.Left(Results.badRequest(
+								"Unable to read User from json: " + e.getMessage()));
+					}
 				}
-			}
-		}, executor);
-	}*/
+			}, executor);
+		}
+
+	}
+
 
 	/**
 	 * 获取问题列表

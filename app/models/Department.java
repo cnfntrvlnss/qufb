@@ -1,6 +1,4 @@
-package backend.entity;
-
-import jdk.Exported;
+package models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
