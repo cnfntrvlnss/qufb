@@ -1,36 +1,64 @@
-@()
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>问题反馈列表</title>
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("stylesheets/questionList.css")' />
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("stylesheets/bootstrap.css")'/>
+    <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery-1.8.0.min.js")'></script>
 
-@main("Welcome to Play") {
+</head>
+<body>
+<div class="row col-md-12" style="margin-left: 30%;margin-bottom: 2%">
+    <form  method="post" action="@routes.QuestionFeedbackController.addQuestion()">
+        @helper.CSRF.formField
+        <table class="submitTables" style="margin-left:35%;">
+            <tr>
+                <td><label style="letter-spacing:6.5px;" >问题标题:</label></td>
+                <td><input name="questionTitle" style="width:100%;height: 30px;"/></td>
+                <td><label style="color:red">*</label></td>
+            </tr>
+            <tr >
+                <td><label style="letter-spacing:2.5px;">BUG负责人:</label></td>
+                <td><input class="easyui-validatebox" name="bugHeader" style="    width: 100%;    height: 30px;" ></input></td>
+                <td><label class="submitLable">*</label></td>
+            </tr>
+            <tr >
+                <td>  <label style="letter-spacing:6.5px;">问题描述:</label></td>
+                <td><textarea  name="questionDescription"  style="width: 100%;"  prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea></td>
+                <td><label class="submitLable">*</label></td>
+            </tr>
+            <tr>
+                <td><label style="letter-spacing:6.5px;">修改建议:</label></td>
+                <td><textarea class="easyui-textbox" name="feedbackSuggestion" style="width:100%;" prompt="请限制在1024个字数以内" data-options=" multiline:true"></textarea></td>
 
+            </tr>
+            <tr><td><button  type="submit" id="btnSave">保存</button></td>
+                <td><button  type="submit" id="btnSubmit">提交</button></td></tr>
+        </table>
+    </form>
+
+</div>
+
+<div class="row col-md-12" >
+    <table class="table" title="问题反馈系统列表" dataformatas="center-block" align="center">
+        <thead>
+        <tr>
+            <td>问题id</td>
+            <td>问题标题</td>
+            <td>BUG负责人</td>
+            <td>问题描述</td>
+            <td>修改意见</td>
+            <td>反馈时间</td>
+        </tr>
+        </thead>
+        <tbody id="questionTable">
+
+        </tbody>
+
+    </table>
+</div>
 <script type='text/javascript' src='@routes.Assets.at("javascripts/questionList.js")'></script>
 
-<form class="form" style="margin-left:25%"  id="submitQuestion" method="post" action="@routes.QuestionFeedbackController.addQuestion()">
-	@helper.CSRF.formField
-	<table>
-		<tr>
-			<td><label>问题标题:</label></td>
-			<td> <input name="questionTitle" class="f1 easyui-textbox" style="width:100%;height:30px;" ></input></td>
-		</tr>
-		<tr>
-			<td><label style="letter-spacing:2.5px;">反馈者邮箱:</label></td>
-			<td><input class="easyui-validatebox" type="email" name="email" data-options="validType:'email'" ></input></td>
-
-		</tr>
-		<tr>
-			<td>  <label style="letter-spacing:6.5px;">问题描述:</label></td>
-			<td><input class="easyui-textbox" name="questionDescription" style="width:100%;height:60px;" prompt="请限制在1024个字数以内" data-options="multiline:true"></input></td>
-		</tr>
-		<tr>
-			<td><label style="letter-spacing:6.5px;">修改建议:</label></td>
-			<td><input class="easyui-textbox" name="suggest" style="width:100%;height:60px" prompt="请限制在1024个字数以内" data-options=" multiline:true"></input></td>
-		</tr>
-
-		<tr><td><button style="margin-left:110%;margin-top:5%;width:110px;" type="submit" id="login-button">提交问题</button></td></tr>
-		<tr>
-			<td><label style="font-size:13px;margin-top:15%">若遇反馈问题，请邮件联络：</label></td>
-			<td><label style="font-size:13px;margin-top:15%">李欣（li.xin@@inspur.com）</label></td>
-		</tr>
-	</table>
-</form>
-<ul id="questions"></ul>
-}
+</body>
+</html>
