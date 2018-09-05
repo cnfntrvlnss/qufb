@@ -8,12 +8,20 @@ import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.myQuestion;
-import com.google.gson.GsonBuilder;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import play.mvc.BodyParser;
+import java.util.concurrent.Executor;
+import play.mvc.Http.RequestBody;
+import  play.api.mvc.RequestHeader;
+import play.libs.streams.Accumulator;
 import static play.libs.Json.toJson;
 
+import play.libs.streams.Accumulator;
+import play.libs.F;
+//import akka.util;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class QuestionFeedbackController extends Controller {
 
@@ -57,13 +65,44 @@ public class QuestionFeedbackController extends Controller {
 	 * 保存一个问题
 	 * @return
 	 */
+	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> addQuestion() {
-		QuestionFeedback questionFeedback = formFactory.form(QuestionFeedback.class).bindFromRequest().get();
+		RequestBody body = request().body();
+
+		QuestionFeedback questionFeedback =new QuestionFeedback();
+		questionFeedback.setQuestionTitle(body.asJson().get("questionTitle").toString());
 		questionFeedback.setFeedbackTime(new Date());
 		return questRepo.save(questionFeedback).thenApplyAsync(p -> {
 			return redirect(routes.QuestionFeedbackController.myQuestionSubmit());
 		}, ec.current());
 	}
+	/*public static  class QuestionBodyParser implements  BodyParser<QuestionFeedback> {
+		public BodyParser.Json jsonParser;
+		public Executor executor;
+		@Inject
+		public QuestionBodyParser(BodyParser.Json jsonParser, Executor executor) {
+			this.jsonParser = jsonParser;
+			this.executor = executor;
+		}
+	}*/
+
+	/*public Accumulator<ByteString, F.Either<Result, QuestionFeedback>> apply(RequestHeader request) {
+		Accumulator<ByteString, F.Either<Result, JsonNode>> jsonAccumulator = jsonParser.apply(request);
+		return jsonAccumulator.map(resultOrJson -> {
+			if (resultOrJson.left.isPresent()) {
+				return F.Either.Left(resultOrJson.left.get());
+			} else {
+				JsonNode json = resultOrJson.right.get();
+				try {
+					User user = play.libs.Json.fromJson(json, User.class);
+					return F.Either.Right(user);
+				} catch (Exception e) {
+					return F.Either.Left(Results.badRequest(
+							"Unable to read User from json: " + e.getMessage()));
+				}
+			}
+		}, executor);
+	}*/
 
 	/**
 	 * 获取问题列表

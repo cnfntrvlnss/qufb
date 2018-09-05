@@ -1,7 +1,5 @@
+        //获取一个问题信息
         var questionId=$("#questionId").val();
-        var questionId2=$("input[id='questionId']").val();
-        console.log(questionId);
-        console.log(questionId2);
         $.ajax({
             url: "/getQuestionInfo/"+questionId,
            dataType:"json",
