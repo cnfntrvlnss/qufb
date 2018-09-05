@@ -255,8 +255,8 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
         if(fb.getQuestionLevel() != null){
             tfb.setQuestionLevel(fb.getQuestionLevel());
         }
-        if(fb.getFlowId() != null){
-            tfb.setFlowId(fb.getFlowId());
+        if(fb.getFlowState() != null){
+            tfb.setFlowState(fb.getFlowState());
         }
 
     }

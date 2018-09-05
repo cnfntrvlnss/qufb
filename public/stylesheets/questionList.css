@@ -5,6 +5,12 @@
 .even{
     background-color:#7fd3ff17;
 }
+.buttonDiv{
+ background-color: #84d7ff;
+}
+.buttonPlace{
+    margin-left:45%;
+}
 .table thead{
     background-color: #aae3fe;
 }

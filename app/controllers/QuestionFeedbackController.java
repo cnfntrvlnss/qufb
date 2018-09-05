@@ -135,4 +135,11 @@ public class QuestionFeedbackController extends Controller {
 			return ok(toJson(questionInfo));
 		}, ec.current());
 	}
+
+	public CompletionStage<Void> updateQuestionInfo() {
+		QuestionFeedback questionFeedback =new QuestionFeedback();
+		questRepo.updateNotNull(questionFeedback).thenApplyAsync(() -> {
+			return ok();
+		}, ec.current());
+	}
 }

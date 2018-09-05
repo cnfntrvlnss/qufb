@@ -10,8 +10,7 @@
 </head>
 <body>
 <div class="row col-md-12" style="margin-left: 30%;margin-bottom: 2%">
-    <form  >
-        @helper.CSRF.formField
+
         <table class="submitTables" style="margin-left:35%;">
             <tr>
                 <td><label style="letter-spacing:6.5px;" >问题标题:</label></td>
@@ -33,14 +32,17 @@
                 <td><textarea class="easyui-textbox" name="feedbackSuggestion"  id="feedbackSuggestion" style="width:100%;" prompt="请限制在1024个字数以内" data-options=" multiline:true"></textarea></td>
             </tr>
         </table>
-    </form>
-    <div>
+    <div class="buttonPlace">
         <button  type="submit" id="btnSave">保存</button>
         <button  type="submit" id="btnSubmit">提交</button>
     </div>
+
 </div>
 
 <div class="row col-md-12" >
+    <div class="buttonDiv">
+        <button  class="btn-primary" type="submit" id="btnNew">新建</button>
+    </div>
     <table class="table" title="问题反馈系统列表" dataformatas="center-block" align="center">
         <thead>
         <tr>
@@ -50,6 +52,8 @@
             <td>问题描述</td>
             <td>修改意见</td>
             <td>反馈时间</td>
+            <td>问题状态</td>
+            <td>流程状态</td>
         </tr>
         </thead>
         <tbody id="questionTable">

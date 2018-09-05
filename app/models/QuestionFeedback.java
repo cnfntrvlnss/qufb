@@ -67,7 +67,7 @@ public class QuestionFeedback {
 	public Integer questionType;//问题类型
 	public Integer questionLevel;//问题等级
 
-	public Integer flowId;//流程id
+	public Integer flowState;//流程id
 
 
 	public Integer getQuestionId() {
@@ -380,11 +380,11 @@ public class QuestionFeedback {
 		this.questionLevel = questionLevel;
 	}
 
-	public Integer getFlowId() {
-		return flowId;
+	public Integer getFlowState() {
+		return flowState;
 	}
 
-	public void setFlowId(Integer flowId) {
-		this.flowId = flowId;
+	public void setFlowState(Integer flowState) {
+		this.flowState = flowState;
 	}
 }
