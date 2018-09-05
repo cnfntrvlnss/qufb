@@ -1,46 +1,47 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
-
 # Home page
-GET     /                           controllers.Application.index()
+GET /       controllers.Application.index()
 
 # login page
-GET     /login                          controllers.Application.login()
+GET /login      controllers.Application.login()
 
 # loginSubmit page
-#GET     /loginSubmit                          controllers.LoginController.loginSubmit()
+#GET    /loginSubmit        controllers.LoginController.loginSubmit()
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET /assets/*file       controllers.Assets.at(path="/public", file)
 
 # form page
-GET     /form                           controllers.Application.form()
+GET /form       controllers.Application.form()
 
 # postForm
-POST     /postForm                      controllers.Application.postForm()
+POST    /postForm       controllers.Application.postForm()
 
 # myQuestion
-GET    /myQuestion                     controllers.QuestionFeedbackController.myQuestion()
+GET /myQuestion     controllers.QuestionFeedbackController.myQuestion()
 
 # myQuestionSubmit
-GET    /myQuestionSubmit               controllers.QuestionFeedbackController.myQuestionSubmit()
+GET /myQuestionSubmit       controllers.QuestionFeedbackController.myQuestionSubmit()
 
 # myQuestionDeal
-GET    /myQuestionDeal/:questionId               controllers.QuestionFeedbackController.myQuestionDeal(questionId :Integer)
+GET /myQuestionDeal/:questionId     controllers.QuestionFeedbackController.myQuestionDeal(questionId :Integer)
 
 # myQuestionInfo
-GET    /getQuestionInfo/:questionId              controllers.QuestionFeedbackController.getQuestionInfo(questionId :Integer)
+GET /getQuestionInfo/:questionId        controllers.QuestionFeedbackController.getQuestionInfo(questionId :Integer)
 
 # myQuestionSubmit
-POST    /addQuestion               controllers.QuestionFeedbackController.addQuestion()
+POST    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
+
+#GET    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
 
 # listQuestion
-GET    /listQuestion               controllers.QuestionFeedbackController.listQuestion()
+GET /listQuestion       controllers.QuestionFeedbackController.listQuestion()
 
-GET     /person                           controllers.PersonController.index()
+GET /person     controllers.PersonController.index()
 
-POST    /person/person                     controllers.PersonController.addPerson()
+POST    /person/person      controllers.PersonController.addPerson()
 
-GET     /person/persons                    controllers.PersonController.getPersons()
+GET /person/persons     controllers.PersonController.getPersons()

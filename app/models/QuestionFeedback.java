@@ -18,56 +18,56 @@ import java.util.List;
 public class QuestionFeedback {
 	@Id
 	@GeneratedValue(strategy= GenerationType.AUTO)
-	private Integer questionId;//问题反馈系统id
-	private String questionCode;//问题编号
-	private String questionTitle;//问题标题
+	public Integer questionId;//问题反馈系统id
+	public String questionCode;//问题编号
+	public String questionTitle;//问题标题
 
-    private String feedbacker;//反馈人
-	private String feedbackerId;//反馈人id
-    private Date feedbackTime;//反馈时间
-    private String feedbackSuggestion;//用户修改意见
+    public String feedbacker;//反馈人
+	public String feedbackerId;//反馈人id
+    public Date feedbackTime;//反馈时间
+    public String feedbackSuggestion;//用户修改意见
 
-	private String bugHeader;//ָBUG负责人
-	private String bugHeaderId;//ָBUG负责人id
-	private String auditSuggestion;//审核意见
-	private Date auditTime;//审核时间
+	public String bugHeader;//ָBUG负责人
+	public String bugHeaderId;//ָBUG负责人id
+	public String auditSuggestion;//审核意见
+	public Date auditTime;//审核时间
 
-	private String transferName;//接口人姓名
-	private String transferId;//接口人id
-	private String transferSuggestion;//接口人意见
-	private Date transferTime;//接口人处理时间
+	public String transferName;//接口人姓名
+	public String transferId;//接口人id
+	public String transferSuggestion;//接口人意见
+	public Date transferTime;//接口人处理时间
 
-	private String  developerName;//方案责任人姓名
-	private String  developerId;//方案责任人id
-	private String solution;//解决方案
-	private Date soluteTime;//解决时间
+	public String  developerName;//方案责任人姓名
+	public String  developerId;//方案责任人id
+	public String solution;//解决方案
+	public Date soluteTime;//解决时间
 
-	private String  schemeAuditName;//方案审核人姓名
-	private String  schemeAuditId;//方案审核人id
-	private String schemeAuditSuggestion;//方案审核意见
-	private Date schemeAuditTime;//方案审核时间
+	public String  schemeAuditName;//方案审核人姓名
+	public String  schemeAuditId;//方案审核人id
+	public String schemeAuditSuggestion;//方案审核意见
+	public Date schemeAuditTime;//方案审核时间
 
-	private String  resultAuditName;//结果审核人姓名
-	private String  resultAuditId;//结果审核人id
-	private String resultAuditSuggestion;//结果审核意见
-	private Date resultAuditTime;//结果审核时间
+	public String  resultAuditName;//结果审核人姓名
+	public String  resultAuditId;//结果审核人id
+	public String resultAuditSuggestion;//结果审核意见
+	public Date resultAuditTime;//结果审核时间
 
-	private String  verifyName;//验证人姓名
-	private String  verifyId;//验证人id
-	private String verifySuggestion;//验证意见
-	private Date verifyTime;//验证时间
+	public String  verifyName;//验证人姓名
+	public String  verifyId;//验证人id
+	public String verifySuggestion;//验证意见
+	public Date verifyTime;//验证时间
 
-    private Date estimateFinishTime;//预计完成时间
-	private Date latestUpdateTime;//最近更新时间
+    public Date estimateFinishTime;//预计完成时间
+	public Date latestUpdateTime;//最近更新时间
 
-	private Integer projectId;//问题所属项目id
-	private String projectName;//问题所属项目名称
-	private String questionDescription;//问题描述
-	private Integer questionState;//问题状态״̬
-	private Integer questionType;//问题类型
-	private Integer questionLevel;//问题等级
+	public Integer projectId;//问题所属项目id
+	public String projectName;//问题所属项目名称
+	public String questionDescription;//问题描述
+	public Integer questionState;//问题状态״̬
+	public Integer questionType;//问题类型
+	public Integer questionLevel;//问题等级
 
-	private Integer flowId;//流程id
+	public Integer flowId;//流程id
 
 
 	public Integer getQuestionId() {
