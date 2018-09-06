@@ -115,7 +115,7 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
     }
     //包装
     private CompletionStage<Void> wrap(Function<EntityManager, Void> fn){
-        return supplyAsync(() -> jpaApi.withTransaction(em -> fn.apply(em)));
+        return supplyAsync(() -> jpaApi.withTransaction(fn), executionContext);
     }
 
     /**

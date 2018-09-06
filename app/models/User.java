@@ -1,17 +1,19 @@
 package models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
+@NamedQueries(
+        @NamedQuery(name = "User.findByNumber",
+        query = "select u from User u where u.number = :number")
+)
 public class User {
     private String userId;//用户id
-    private String userNumber;//用户编号
-    private String userName;//用户名称
+    private String number;//用户编号
+    private String name;//用户名称
     private String password;//密码
 
-    private Department department;
+    private Unit unit;
     private String phone;
     private String email;
 
@@ -19,25 +21,25 @@ public class User {
     public String getUserId() {
         return userId;
     }
-
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public String getUserNumber() {
-        return userNumber;
+    @Column(unique=true, nullable=false)
+    public String getNumber() {
+        return number;
     }
 
-    public void setUserNumber(String userNumber) {
-        this.userNumber = userNumber;
+    public void setNumber(String number) {
+        this.number = number;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPassword() {
@@ -49,12 +51,12 @@ public class User {
     }
 
     @ManyToOne
-    public Department getDepartment() {
-        return department;
+    public Unit getUnit() {
+        return unit;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
 
     public String getPhone() {

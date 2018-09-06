@@ -9,7 +9,10 @@ GET /login      controllers.Application.login()
 
 # loginSubmit page
 #GET    /loginSubmit        controllers.LoginController.loginSubmit()
+POST    /loginSubmit    controllers.UserController.login()
+POST    /logoutSubmit    controllers.UserController.logout()
 
+GET    /testSecure   controllers.UserController.testSecure()
 
 # Map static resources from the /public folder to the /assets URL path
 GET /assets/*file       controllers.Assets.at(path="/public", file)
@@ -45,3 +48,6 @@ GET /person     controllers.PersonController.index()
 POST    /person/person      controllers.PersonController.addPerson()
 
 GET /person/persons     controllers.PersonController.getPersons()
+
+POST    /addUsers      controllers.UserController.addUsers()
+POST  /deleteAllUsers   controllers.UserController.deleteAllUsers()
