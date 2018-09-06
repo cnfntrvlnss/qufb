@@ -13,7 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class QuestionFeedbackRepositoryTest extends WithApplication {
     @Override
     protected Application provideApplication() {
-        return new GuiceApplicationBuilder().build();
+        return new GuiceApplicationBuilder()
+                .configure("jpa.default", "testPersistenceUnit")
+                .build();
     }
 
     @Test
@@ -22,7 +24,7 @@ public class QuestionFeedbackRepositoryTest extends WithApplication {
 
         QuestionFeedback fb = new QuestionFeedback();
         //生成一个唯一的code
-        fb.setQuestionCode("QT" + Long.toString(new Date().getTime()));
+        fb.setQuestionCode("QT001");
         fb.setQuestionTitle("address error");
         repo.save(fb).toCompletableFuture().join();
         assertThat(fb.getQuestionId()).isNotNull();
@@ -38,6 +40,7 @@ public class QuestionFeedbackRepositoryTest extends WithApplication {
         Integer id = fb.getQuestionId();
         fb.setQuestionId(null);
         fb.setQuestionTitle("phone error");
+        fb.setFeedbackTime(new Date());
         repo.updateNotNull(fb).toCompletableFuture().join();
         fb = repo.findById(id).toCompletableFuture().join();
         assertThat(fb.getQuestionTitle()).isEqualTo("phone error");

@@ -9,33 +9,142 @@
 
 </head>
 <body>
+<!-查询条件->
 <div class="row col-md-12" style="margin-left: 30%;margin-bottom: 2%">
-
-        <table class="submitTables" style="margin-left:35%;">
-            <tr>
-                <td><label style="letter-spacing:6.5px;" >问题标题:</label></td>
-                <td><input name="questionTitle" id="questionTitle" style="width:100%;height: 30px;"/></td>
-                <td><label style="color:red">*</label></td>
-            </tr>
-            <tr >
-                <td><label style="letter-spacing:2.5px;">BUG负责人:</label></td>
-                <td><input class="easyui-validatebox" name="bugHeader" id="bugHeader" style="    width: 100%;    height: 30px;" ></input></td>
-                <td><label class="submitLable">*</label></td>
-            </tr>
-            <tr >
-                <td>  <label style="letter-spacing:6.5px;">问题描述:</label></td>
-                <td><textarea  name="questionDescription" id="questionDescription" style="width: 100%;"  prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea></td>
-                <td><label class="submitLable">*</label></td>
-            </tr>
-            <tr>
-                <td><label style="letter-spacing:6.5px;">修改建议:</label></td>
-                <td><textarea class="easyui-textbox" name="feedbackSuggestion"  id="feedbackSuggestion" style="width:100%;" prompt="请限制在1024个字数以内" data-options=" multiline:true"></textarea></td>
-            </tr>
-        </table>
-    <div class="buttonPlace">
-        <button  type="submit" id="btnSave">保存</button>
-        <button  type="submit" id="btnSubmit">提交</button>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group clearfix">
+                    <div class="col-xs-4 text-right">
+                        <label>标题：</label>
+                    </div>
+                    <div class="col-xs-6 col-md-8">
+                        <input id="questionTitle" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group clearfix">
+                    <div class="col-xs-4 text-right">
+                        <label>问题描述：</label>
+                    </div>
+                    <div class="col-xs-6 col-md-8">
+                        <input id="questionDescription" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div style="position: absolute; right: 60px; top: 0px;">
+                <div class="form-group clearfix">
+                    <button type="button" id="btnSelect" class="btn btn-primary btn-sm">查询</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group clearfix">
+                    <div class="col-xs-4 text-right">
+                        <label>问题提出者：</label>
+                    </div>
+                    <div class="col-xs-6 col-md-8">
+                        <select id="feedbacker" class="form-control">
+                            <option>请选择</option>
+                            <option>李欣</option>
+                            <option>陈小天</option>
+                            <option>秦秀凡</option>
+                            <option>张松</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group clearfix">
+                    <div class="col-xs-4 text-right">
+                        <label>BUG负责人：</label>
+                    </div>
+                    <div class="col-xs-6 col-md-8">
+                        <select id="feedbacker" class="form-control">
+                            <option>请选择</option>
+                            <option>李欣</option>
+                            <option>陈小天</option>
+                            <option>秦秀凡</option>
+                            <option>张松</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group clearfix">
+                    <div class="col-xs-4 text-right">
+                        <label>问题接口人：</label>
+                    </div>
+                    <div class="col-xs-6 col-md-8">
+                        <select id="feedbacker" class="form-control">
+                            <option>请选择</option>
+                            <option>李欣</option>
+                            <option>陈小天</option>
+                            <option>秦秀凡</option>
+                            <option>张松</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group clearfix">
+                    <div class="col-xs-4 text-right">
+                        <label>方案责任人：</label>
+                    </div>
+                    <div class="col-xs-6 col-md-8">
+                        <select id="feedbacker" class="form-control">
+                            <option>请选择</option>
+                            <option>李欣</option>
+                            <option>陈小天</option>
+                            <option>秦秀凡</option>
+                            <option>张松</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group clearfix">
+                    <div class="col-xs-4 text-right">
+                        <label>方案审核人：</label>
+                    </div>
+                    <div class="col-xs-6 col-md-8">
+                        <select id="feedbacker" class="form-control">
+                            <option>请选择</option>
+                            <option>李欣</option>
+                            <option>陈小天</option>
+                            <option>秦秀凡</option>
+                            <option>张松</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group clearfix">
+                    <div class="col-xs-4 text-right">
+                        <label>问题验证人：</label>
+                    </div>
+                    <div class="col-xs-6 col-md-8">
+                        <select id="feedbacker" class="form-control">
+                            <option>请选择</option>
+                            <option>李欣</option>
+                            <option>陈小天</option>
+                            <option>秦秀凡</option>
+                            <option>张松</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+</div>
+</div>
 
 </div>
 

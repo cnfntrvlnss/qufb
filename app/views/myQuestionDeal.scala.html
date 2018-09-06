@@ -4,207 +4,257 @@
 <head>
     <meta charset="UTF-8">
     <title>问题处理</title>
-    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("stylesheets/questionDeal.css")' />
+
     <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("stylesheets/bootstrap.css")'/>
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("stylesheets/layer.css")'/>
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("stylesheets/questionDeal.css")' />
     <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery-1.8.0.min.js")'></script>
+    <script type="text/javascript" src='@routes.Assets.at("javascripts/layer.js")'></script>
 </head>
 <body>
 <div class="col-md-11 firstDiv">
     <div>
         <input name="questionId" id="questionId"  type="hidden"  value=@questionId >
     </div>
-    <div class="oddDiv" >
-        <!-提交问题的基本信息->
-        <div>
-            <div class="col-md-6">
-                <div class="col-md-4">
-                    <label  >问题标题:</label>
+    <!-提交问题信息->
+    <div class="col-md-12">
+        <div class="titleDiv">提交问题</div>
+        <div class="col-md-12 oddDiv" >
+            <!-提交问题的基本信息->
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="col-md-4">
+                        <label  >问题标题:</label>
+                    </div>
+                    <div  class="col-md-8">
+                        <input name="questionTitle" class ="form-control" id="questionTitle"/>
+                    </div>
                 </div>
-                <div  class="col-md-8">
-                    <input name="questionTitle" id="questionTitle"/>
+                <div class="col-md-6">
+                    <div  class="col-md-4">
+                        <label >BUG负责人:</label>
+                    </div>
+                    <div  class="col-md-8">
+                        <input class ="form-control"name="bugHeader"  id="bugHeader"/>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div  class="col-md-4">
-                    <label >BUG负责人:</label>
+            <div  class="col-md-12">
+                <div class="col-md-6">
+                    <div class="col-md-4"><label>问题描述:</label></div>
+                    <div class="col-md-8"><textarea class ="form-control" name="questionDescription"    prompt="请限制在1024个字数以内" data-options="multiline:true" id="questionDescription"></textarea></div>
                 </div>
-                <div  class="col-md-8">
-                    <input class="easyui-validatebox" name="bugHeader"  id="bugHeader"/>
+                <div class="col-md-6">
+                    <div class="col-md-4"><label >修改建议:</label></div>
+                    <div class="col-md-8"><textarea class ="form-control" name="feedbackSuggestion"  prompt="请限制在1024个字数以内" data-options=" multiline:true" id="feedbackSuggestion"></textarea></div>
                 </div>
             </div>
         </div>
-        <div >
-            <div class="col-md-6">
-                <div class="col-md-4"><label>问题描述:</label></div>
-                <div class="col-md-8"><textarea class="easyui-textbox" name="questionDescription"    prompt="请限制在1024个字数以内" data-options="multiline:true" id="questionDescription"></textarea></div>
-            </div>
-            <div class="col-md-6">
-                <div class="col-md-4"><label >修改建议:</label></div>
-                <div class="col-md-8"><textarea class="easyui-textbox" name="feedbackSuggestion"  prompt="请限制在1024个字数以内" data-options=" multiline:true" id="feedbackSuggestion"></textarea></div>
-            </div>
+        <div class="col-md-12 buttonDiv" id="btnGroup1">
+            <button class="btn btn-primary"type="submit" id="btnSave1">保存</button>
+            <button class="btn btn-primary" type="submit" id="btnSubmit1">提交</button>
         </div>
-        <div class="buttonDiv" id="btnGroup1">
-            <button type="submit" id="btnSave1">保存</button>
-            <button class="btn-primary"type="submit" id="btnSubmit1">提交</button>
-        </div>
+        <div class="col-md-12 lineDiv"></div>
     </div>
-    <div class="evenDiv">
-        <!-审核问题的信息->
-        <div>
-            <div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label>选择问题接口人:</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="easyui-validatebox" name="bugHeader"  id="transferName">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label >审核意见:</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea class="easyui-textbox" name="questionDescription" id="auditSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="buttonDiv" id="btnGroup2">
-                <button  type="submit" id="btnSave2">驳回</button>
-                <button class="btn-primary" type="submit" id="btnSubmit2">提交</button>
-            </div>
-        </div>
-    </div>
-    <div class="oddDiv">
-        <!-接口人处理问题->
-        <div>
-            <div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label>选择方案责任人:</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="easyui-validatebox" name="developerName"  id="developerName" >
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label >审核意见:</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea class="easyui-textbox" name="transferSuggestion"  id="transferSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="buttonDiv" id="btnGroup3">
-                <button  type="submit" id="btnSave3">驳回</button>
-                <button class="btn-primary" type="submit" id="btnSubmit3">提交</button>
-            </div>
-        </div>
-    </div>
-    <div class="evenDiv">
-        <!-方案责任人处理问题->
-        <div>
-            <div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label>选择方案审核人:</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="easyui-validatebox" name="schemeAuditName"  id="schemeAuditName" >
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label >解决方案:</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea class="easyui-textbox" name="solution"  id="solution" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="buttonDiv" id="btnGroup4">
-                <button  type="submit" id="btnSave4">驳回</button>
-                <button class="btn-primary" type="submit" id="btnSubmit4">提交</button>
-            </div>
-        </div>
-    </div>
-    <div class="oddDiv">
-        <!-审核方案->
 
-        <div>
+    <!-bug负责人处理问题->
+    <div class="col-md-12">
+        <div class="titleDiv">BUG负责人审核问题规范性</div>
+        <div class="col-md-12 evenDiv">
+            <!-审核问题的信息->
             <div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label>选择BUG负责人:</label>
+                <div>
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label>选择问题接口人:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input class ="form-control" name="transferName"  id="transferName">
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <input class="easyui-validatebox" name="resultAuditName"  id="resultAuditName"   >
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label >审核意见:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea class ="form-control" name="auditSuggestion" id="auditSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label >审核意见:</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea class="easyui-textbox" name="schemeAuditSuggestion"  id="schemeAuditSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="buttonDiv" id="btnGroup5">
-                <button  type="submit" id="btnSave5">驳回</button>
-                <button  class="btn-primary" type="submit" id="btnSubmit5">提交</button>
+
             </div>
         </div>
+        <div class="col-md-12 buttonDiv" id="btnGroup2">
+            <button  class="btn btn-warning" type="submit" id="btnReject2">驳回</button>
+            <button class="btn btn-primary" type="submit" id="btnSubmit2">提交</button>
+        </div>
+        <div class="col-md-12 lineDiv"></div>
     </div>
-    <div  class="evenDiv">
-        <!-bug负责人审核->
-        <div>
+
+    <!-问题接口人处理问题->
+    <div class="col-md-12">
+        <div class="titleDiv">问题接口人处理处理问题</div>
+        <div class="col-md-12 oddDiv">
+            <!-接口人处理问题->
             <div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label>选择验证人员:</label>
+                <div>
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label>选择方案责任人:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input class ="form-control" name="developerName"  id="developerName" >
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <input class="easyui-validatebox" name="verifyName"  id="verifyName"   >
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label >审核意见:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea class ="form-control" name="transferSuggestion"  id="transferSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label >审核意见:</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea class="easyui-textbox" name="resultAuditSuggestion"  id="resultAuditSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="buttonDiv" id="btnGroup6">
-                <button  type="submit" id="btnSave6">驳回</button>
-                <button  class="btn-primary" type="submit" id="btnSubmit6">提交</button>
+
             </div>
         </div>
+        <div class="col-md-12 buttonDiv" id="btnGroup3">
+            <button class="btn btn-warning" type="submit" id="btnReject3">驳回</button>
+            <button  class="btn btn-primary" type="submit" id="btnSubmit3">提交</button>
+        </div>
+        <div class="col-md-12 lineDiv"></div>
     </div>
-    <div class="oddDiv">
-        <!-验证问题->
-        <div>
+
+    <!-方案责任人处理问题->
+    <div class="col-md-12">
+        <div class="titleDiv">方案责任人提交解决方案</label></div>
+        <div class="col-md-12 evenDiv">
+            <!-方案责任人处理问题->
             <div>
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label >审核意见:</label>
+                <div>
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label>选择方案审核人:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input class ="form-control" name="schemeAuditName"  id="schemeAuditName" >
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <textarea class="easyui-textbox" name="verifySuggestion"  id="verifySuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label >解决方案:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea class ="form-control" name="solution"  id="solution" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-12 buttonDiv" id="btnGroup7">
-                <button  type="submit" id="btnSave7">驳回</button>
-                <button class="btn-primary" type="submit" id="btnSubmit7">关闭</button>
+
             </div>
         </div>
+        <div class="col-md-12 buttonDiv" id="btnGroup4">
+            <button  class="btn btn-warning" type="submit" id="btnReject4">驳回</button>
+            <button class="btn btn-primary" type="submit" id="btnSubmit4">提交</button>
+        </div>
+        <div class="col-md-12 lineDiv"></div>
+    </div>
+    <!-方案审核人处理->
+    <div class="col-md-12">
+        <div class="titleDiv">方案审核人审核方案></div>
+        <div class="col-md-12 oddDiv">
+            <!-审核方案->
+            <div>
+                <div>
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label>选择BUG负责人:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input class ="form-control" name="resultAuditName"  id="resultAuditName"   >
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label >方案审核意见:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea class ="form-control" name="schemeAuditSuggestion"  id="schemeAuditSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-12 buttonDiv" id="btnGroup5">
+            <button class="btn btn-warning"  type="submit" id="btnReject5">驳回</button>
+            <button class="btn btn-primary"  type="submit" id="btnSubmit5">提交</button>
+        </div>
+        <div class="col-md-12 lineDiv"></div>
+    </div>
+
+    <!-bug负责人审核方案->
+    <div class="col-md-12">
+        <div class="titleDiv">BUG负责人审核方案</div>
+        <div  class="col-md-12 evenDiv">
+            <!-bug负责人审核->
+            <div>
+                <div>
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label>选择验证人员:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input class ="form-control" name="verifyName"  id="verifyName"   >
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label >方案审核意见:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea class ="form-control" name="resultAuditSuggestion"  id="resultAuditSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-12 buttonDiv" id="btnGroup6">
+            <button  class="btn btn-warning"  type="submit" id="btnReject6">驳回</button>
+            <button class="btn btn-primary" type="submit" id="btnSubmit6">提交</button>
+        </div>
+        <div class="col-md-12 lineDiv"></div>
+    </div>
+
+    <!-验证人员验证问题->
+    <div class="col-md-12">
+        <div class="titleDiv">验证人员验证问题</div>
+        <div  class="col-md-12 evenDiv">
+            <!-验证人员验证问题->
+            <div>
+                <div>
+                    <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label >验证意见:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea class ="form-control" name="resultAuditSuggestion"  id="verifySuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-12 buttonDiv" id="btnGroup7">
+            <button  class="btn btn-warning"  type="submit" id="btnReject7">驳回</button>
+            <button class="btn btn-primary" type="submit" id="btnSubmit7">关闭问题</button>
+        </div>
+        <div class="col-md-12 lineDiv"></div>
     </div>
 </div>
-<script type='text/javascript' src='@routes.Assets.at("javascripts/questionDeal.js")'></script>
+
+    <script type='text/javascript' src='@routes.Assets.at("javascripts/questionDeal.js")'></script>
+
 
 </body>
 </html>

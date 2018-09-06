@@ -40,6 +40,13 @@ POST    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
 # listQuestion
 GET /listQuestion       controllers.QuestionFeedbackController.listQuestion()
 
+# updateQuestionInfo
+POST /updateQuestionInfo       controllers.QuestionFeedbackController.updateQuestionInfo()
+
+
+
+
+
 GET /person     controllers.PersonController.index()
 
 POST    /person/person      controllers.PersonController.addPerson()

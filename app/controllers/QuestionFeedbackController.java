@@ -1,27 +1,29 @@
 package controllers;
 
-import javax.inject.Inject;
-import models.QuestionFeedback;
+import akka.util.ByteString;
+import com.fasterxml.jackson.databind.JsonNode;
 import dao.QuestionFeedbackRepository;
+import models.QuestionFeedback;
+import  models.viewModels.SubmitTypeEnum;
+import  models.viewModels.QuestionStateEnum;
+import  models.viewModels.FlowStateEnum;
 import play.data.FormFactory;
+import play.libs.F;
+import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
-import play.mvc.Controller;
-import play.mvc.Result;
+import play.libs.streams.Accumulator;
+import play.mvc.*;
 import views.html.myQuestion;
+
+import javax.inject.Inject;
+import java.lang.reflect.ParameterizedType;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import play.mvc.BodyParser;
 import java.util.concurrent.Executor;
-import play.mvc.Http.RequestBody;
-import  play.api.mvc.RequestHeader;
-import play.libs.streams.Accumulator;
+
 import static play.libs.Json.toJson;
 
-import play.libs.streams.Accumulator;
-import play.libs.F;
-//import akka.util;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class QuestionFeedbackController extends Controller {
 
@@ -67,42 +69,20 @@ public class QuestionFeedbackController extends Controller {
 	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> addQuestion() {
-		RequestBody body = request().body();
-
-		QuestionFeedback questionFeedback =new QuestionFeedback();
-		questionFeedback.setQuestionTitle(body.asJson().get("questionTitle").toString());
+        QuestionFeedback questionFeedback = Json.fromJson(request().body().asJson(), QuestionFeedback.class);
 		questionFeedback.setFeedbackTime(new Date());
-		return questRepo.save(questionFeedback).thenApplyAsync(p -> {
-			return redirect(routes.QuestionFeedbackController.myQuestionSubmit());
-		}, ec.current());
-	}
-	/*public static  class QuestionBodyParser implements  BodyParser<QuestionFeedback> {
-		public BodyParser.Json jsonParser;
-		public Executor executor;
-		@Inject
-		public QuestionBodyParser(BodyParser.Json jsonParser, Executor executor) {
-			this.jsonParser = jsonParser;
-			this.executor = executor;
+		//用户的提交类型，用来判断问题状态和流程状态的变换
+		int submitType=questionFeedback.getSubmitType();
+		if(submitType == SubmitTypeEnum.QUESTION_SAVE.getValue()){//第一次保存
+			questionFeedback.setQuestionState(QuestionStateEnum.FEEDBACKER.getValue());//设置问题状态为1
+			questionFeedback.setFlowState(FlowStateEnum.DRAFT.getValue());//设置流程状态为1
+		}else if(submitType == SubmitTypeEnum.QUESTION_SUBMIT.getValue()){//第一次提交
+			questionFeedback.setQuestionState(QuestionStateEnum.BUG_HEADER.getValue());//设置问题状态为2
+			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());//设置流程状态为2
 		}
-	}*/
+		return questRepo.save(questionFeedback).thenApplyAsync(p -> { return  ok();	}, ec.current());
+	}
 
-	/*public Accumulator<ByteString, F.Either<Result, QuestionFeedback>> apply(RequestHeader request) {
-		Accumulator<ByteString, F.Either<Result, JsonNode>> jsonAccumulator = jsonParser.apply(request);
-		return jsonAccumulator.map(resultOrJson -> {
-			if (resultOrJson.left.isPresent()) {
-				return F.Either.Left(resultOrJson.left.get());
-			} else {
-				JsonNode json = resultOrJson.right.get();
-				try {
-					User user = play.libs.Json.fromJson(json, User.class);
-					return F.Either.Right(user);
-				} catch (Exception e) {
-					return F.Either.Left(Results.badRequest(
-							"Unable to read User from json: " + e.getMessage()));
-				}
-			}
-		}, executor);
-	}*/
 
 	/**
 	 * 获取问题列表
@@ -130,16 +110,62 @@ public class QuestionFeedbackController extends Controller {
 	 * @return
 	 */
 	public CompletionStage<Result> getQuestionInfo(Integer questionId) {
-		CompletionStage<QuestionFeedback> questionFeedback=questRepo.findById(questionId);
-		return questionFeedback.thenApplyAsync(questionInfo -> {
-			return ok(toJson(questionInfo));
-		}, ec.current());
+			CompletionStage<QuestionFeedback> questionFeedback=questRepo.findById(questionId);
+			return questionFeedback.thenApplyAsync(questionInfo -> {
+				return ok(toJson(questionInfo));
+			}, ec.current());
 	}
 
-	public CompletionStage<Void> updateQuestionInfo() {
-		QuestionFeedback questionFeedback =new QuestionFeedback();
-		questRepo.updateNotNull(questionFeedback).thenApplyAsync(() -> {
-			return ok();
-		}, ec.current());
+	/**
+	 * 更新一个问题信息
+	 * lixin
+	 * 2018-9-5 11:32:13
+	 * @return
+	 */
+	public CompletionStage<Result> updateQuestionInfo() {
+		QuestionFeedback questionFeedback = Json.fromJson(request().body().asJson(), QuestionFeedback.class);
+		//用户的提交类型，用来判断问题状态和流程状态的变换
+		int submitType=questionFeedback.getSubmitType();
+		if(submitType==SubmitTypeEnum.QUESTION_SUBMIT.getValue()){//问题提交者提交问题后，问题状态和流程状态分别变为2 2
+			questionFeedback.setQuestionState(QuestionStateEnum.BUG_HEADER.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());
+		}else if(submitType==SubmitTypeEnum.BUG_HEADER_REJECT.getValue()){//bug负责人驳回问题状态和流程状态分别变为 11
+			questionFeedback.setQuestionState(QuestionStateEnum.FEEDBACKER.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.DRAFT.getValue());
+		}else if(submitType==SubmitTypeEnum.BUG_HEADER_SUBMIT.getValue()){//bug负责人提交 问题状态和流程状态分别变为3 2
+			questionFeedback.setQuestionState(QuestionStateEnum.TRANSFER.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());
+		}else if(submitType==SubmitTypeEnum.TRANSFER_REJECT.getValue()){//接口人驳回 问题状态和流程状态分别变为2 2
+			questionFeedback.setQuestionState(QuestionStateEnum.BUG_HEADER.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());
+		}else if(submitType==SubmitTypeEnum.TRANSFER_SUBMIT.getValue()){//接口人提交 问题状态和流程状态分别变为4 3
+			questionFeedback.setQuestionState(QuestionStateEnum.DEVELOPER.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.ANALYSE.getValue());
+		}else if(submitType==SubmitTypeEnum.DEVELOPER_REJECT.getValue()){//方案责任人驳回 问题状态和流程状态分别变为3 2
+			questionFeedback.setQuestionState(QuestionStateEnum.TRANSFER.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());
+		}else if(submitType==SubmitTypeEnum.DEVELOPER_SUBMIT.getValue()){//方案责任人提交 问题状态和流程状态分别变为5 4
+			questionFeedback.setQuestionState(QuestionStateEnum.SCHEME_AUDITOR.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.REVIEW.getValue());
+		}else if(submitType==SubmitTypeEnum.SCHEMER_AUDIT_REJECT.getValue()){//方案审核人驳回 问题状态和流程状态分别变为4 3
+			questionFeedback.setQuestionState(QuestionStateEnum.DEVELOPER.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.ANALYSE.getValue());
+		}else if(submitType==SubmitTypeEnum.SCHEMER_AUDIT_SUBMIT.getValue()){//方案审核人提交 问题状态和流程状态分别变为6 5
+			questionFeedback.setQuestionState(QuestionStateEnum.AUDITOR.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.VERIFY.getValue());
+		}else if(submitType==SubmitTypeEnum.RESULT_AUDIT_REJECT.getValue()){//结果审核人驳回 问题状态和流程状态分别变为4 3
+			questionFeedback.setQuestionState(QuestionStateEnum.DEVELOPER.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.ANALYSE.getValue());
+		}else if(submitType==SubmitTypeEnum.RESULT_AUDIT_SUBMIT.getValue()){//结果审核人提交 问题状态和流程状态分别变为7 5
+			questionFeedback.setQuestionState(QuestionStateEnum.VERIFY.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.VERIFY.getValue());
+		}else if(submitType==SubmitTypeEnum.VARIFY_REJECT.getValue()){//验证人员驳回 问题状态和流程状态分别变为4 3
+			questionFeedback.setQuestionState(QuestionStateEnum.DEVELOPER.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.ANALYSE.getValue());
+		}else if(submitType==SubmitTypeEnum.VERIFY_CLOSE.getValue()){//验证人员关闭问题 问题状态和流程状态分别变为8 6
+			questionFeedback.setQuestionState(QuestionStateEnum.DONE.getValue());
+			questionFeedback.setFlowState(FlowStateEnum.CLOSED.getValue());
+		}
+		return questRepo.updateNotNull(questionFeedback).thenApplyAsync((v) -> ok());
 	}
 }

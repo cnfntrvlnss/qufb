@@ -1,12 +1,8 @@
 package models;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 问题反馈实体
@@ -68,7 +64,9 @@ public class QuestionFeedback {
 	public Integer questionLevel;//问题等级
 
 	public Integer flowState;//流程id
-
+	// 冗余字段
+	@Transient
+	public Integer submitType;//提交方式
 
 	public Integer getQuestionId() {
 		return questionId;
@@ -76,7 +74,7 @@ public class QuestionFeedback {
 	public void setQuestionId(Integer questionId) {
 		this.questionId = questionId;
 	}
-
+	@Column(unique=true, nullable=false)
 	public String getQuestionCode() {
 		return questionCode;
 	}
@@ -87,7 +85,6 @@ public class QuestionFeedback {
 	public String getQuestionTitle() {
 		return questionTitle;
 	}
-
 	public void setQuestionTitle(String questionTitle) {
 		this.questionTitle = questionTitle;
 	}
@@ -95,7 +92,6 @@ public class QuestionFeedback {
 	public String getFeedbacker() {
 		return feedbacker;
 	}
-
 	public void setFeedbacker(String feedbacker) {
 		this.feedbacker = feedbacker;
 	}
@@ -103,7 +99,6 @@ public class QuestionFeedback {
 	public String getFeedbackerId() {
 		return feedbackerId;
 	}
-
 	public void setFeedbackerId(String feedbackerId) {
 		this.feedbackerId = feedbackerId;
 	}
@@ -111,7 +106,6 @@ public class QuestionFeedback {
 	public Date getFeedbackTime() {
 		return feedbackTime;
 	}
-
 	public void setFeedbackTime(Date feedbackTime) {
 		this.feedbackTime = feedbackTime;
 	}
@@ -386,5 +380,13 @@ public class QuestionFeedback {
 
 	public void setFlowState(Integer flowState) {
 		this.flowState = flowState;
+	}
+
+	public Integer getSubmitType() {
+		return submitType;
+	}
+
+	public void setSubmitType(Integer submitType) {
+		this.submitType = submitType;
 	}
 }
