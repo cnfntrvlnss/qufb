@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" src="/assets/javascripts/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="/assets/javascripts/jquery.form.js"></script>
+    <title>登录页面</title>
+</head>
+<body>
+<form id="loginForm" >
+    <table>
+        <tr>
+            <td>用户名</td>
+            <td><input name="name" /></td>
+        </tr>
+        <tr>
+            <td>密码</td>
+            <td><input name="password" /></td>
+        </tr>
+    </table>
+    <button type="submit">登录</button>
+</form>
+
+<script>
+$(document).ready(function(){
+    $('#loginForm').submit(function() {
+        $(this).ajaxSubmit({
+            type: 'POST',
+            url: '/loginSubmit',
+            success: function(responseText){
+                location.href = "/myQuestionSubmit";
+            },
+            error: function(xhr, status, err){
+            //console.info(xhr, status, err);
+                alert('登录失败！' + xhr.responseText);
+            }
+        });
+        return false;
+    });
+});
+</script>
+</body>
+</html>
