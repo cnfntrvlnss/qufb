@@ -1,7 +1,7 @@
 
         var classCss;
         $.ajax({
-            url: "/listQuestion",
+            url: "/listMyQuestion",
             success: function(data){
                 $.each(data, function(i, e){
                     if(i % 2==0){

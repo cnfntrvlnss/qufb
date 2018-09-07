@@ -43,6 +43,9 @@ POST    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
 # listQuestion
 GET /listQuestion       controllers.QuestionFeedbackController.listQuestion()
 
+#listMyQuesiton
+GET /listMyQuestion     controllers.QuestionFeedbackController.listMyQuestion()
+
 # updateQuestionInfo
 POST /updateQuestionInfo       controllers.QuestionFeedbackController.updateQuestionInfo()
 

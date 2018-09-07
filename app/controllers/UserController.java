@@ -49,7 +49,7 @@ public class UserController extends Controller {
             }
             session().put("username", name);
             session().put("email", user.getEmail());
-            return ok("welcome");
+            return ok(views.html.myQuestionSubmit.render());
         }, ec.current());
     }
 

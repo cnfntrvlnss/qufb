@@ -14,7 +14,6 @@ import play.libs.concurrent.HttpExecutionContext;
 import play.libs.streams.Accumulator;
 import play.mvc.*;
 import views.html.myQuestion;
-
 import javax.inject.Inject;
 import java.lang.reflect.ParameterizedType;
 import java.util.Date;
@@ -69,8 +68,10 @@ public class QuestionFeedbackController extends Controller {
 	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> addQuestion() {
+		String userName=session().get("userName");
         QuestionFeedback questionFeedback = Json.fromJson(request().body().asJson(), QuestionFeedback.class);
-		questionFeedback.setFeedbackTime(new Date());
+		questionFeedback.setFeedbackTime(new Date());//反馈时间
+		questionFeedback.setFeedbacker(userName);
 		//用户的提交类型，用来判断问题状态和流程状态的变换
 		int submitType=questionFeedback.getSubmitType();
 		if(submitType == SubmitTypeEnum.QUESTION_SAVE.getValue()){//第一次保存
@@ -110,10 +111,31 @@ public class QuestionFeedbackController extends Controller {
 	 * @return
 	 */
 	public CompletionStage<Result> getQuestionInfo(Integer questionId) {
-			CompletionStage<QuestionFeedback> questionFeedback=questRepo.findById(questionId);
-			return questionFeedback.thenApplyAsync(questionInfo -> {
-				return ok(toJson(questionInfo));
-			}, ec.current());
+		String userName=session().get("userName");//当前登录用户名
+		//操作标志码1：第一个环节2、第二个环节 3、第三个环节 4、第四个环节 5、第五个环节 6、第六个环节 7、第七个环节 8、第八个环节
+
+		//判断当前问题状态，获取需要处理问题的人，与当前登录用户进行对比，若是同一个人，允许操作。否则只展示信息，隐藏按钮的操作。
+		CompletionStage<QuestionFeedback> questionFeedback=questRepo.findById(questionId);
+		if(questionFeedback.getQuestionState() == QuestionStateEnum.SUBMIT.getValue() && userName.equals(questionFeedback.getFeedbacker())){//第一个节点的人，需要对比问题提交人
+			questionFeedback.setOperateFlag(1);
+		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.BUG_HEADER.getValue() && userName.equals(questionFeedback.getBugHeader())){//第二个节点的人，需要对比bug负责人
+			questionFeedback.setOperateFlag(2);
+		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.TRANSFER.getValue() && userName.equals(questionFeedback.getTransferName())){//第二个节点的人，需要对比bug负责人
+			questionFeedback.setOperateFlag(3);
+		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.DEVELOPER.getValue() && userName.equals(questionFeedback.getDeveloper)){//第二个节点的人，需要对比bug负责人
+			questionFeedback.setOperateFlag(4);
+		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.SCHEME_AUDITOR.getValue() && userName.equals(questionFeedback.getSchemeAuditName())){//第二个节点的人，需要对比bug负责人
+			questionFeedback.setOperateFlag(5);
+		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.AUDITOR.getValue() && userName.equals(questionFeedback.getResultAuditName())){//第二个节点的人，需要对比bug负责人
+			questionFeedback.setOperateFlag(6);
+		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.VERIFY.getValue() && userName.equals(questionFeedback.getVerifyName())){//第二个节点的人，需要对比bug负责人
+			questionFeedback.setOperateFlag(7);
+		}else{
+			questionFeedback.setOperateFlag(8);
+		}
+		return questionFeedback.thenApplyAsync(questionInfo -> {
+			return ok(toJson(questionInfo));
+		}, ec.current());
 	}
 
 	/**
@@ -167,5 +189,18 @@ public class QuestionFeedbackController extends Controller {
 			questionFeedback.setFlowState(FlowStateEnum.CLOSED.getValue());
 		}
 		return questRepo.updateNotNull(questionFeedback).thenApplyAsync((v) -> ok());
+	}
+
+	/**
+	 * 获取权限过滤后的问题列表
+	 * lixin
+	 * 2018-9-7 08:31:25
+	 * @return
+	 */
+	public CompletionStage<Result> listMyQuestion() {
+		String userName = session().get("username");
+		return questRepo.findAll(userName).thenApplyAsync(questionList -> {
+			return ok(toJson(questionList));
+		}, ec.current());
 	}
 }

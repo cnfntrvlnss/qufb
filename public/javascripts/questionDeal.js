@@ -21,19 +21,19 @@
                    asnyc:false,
                    success: function(data){
                         //判断问题状态
-                        if(data.questionState==1){//提交问题
+                        if(data.operateFlag==1){//提交问题
                             btnGroup1();
-                        }else if(data.questionState==2){
+                        }else if(data.operateFlag==2){
                             btnGroup2();//bug负责人处理问题
-                        }else if(data.questionState==3){
+                        }else if(data.operateFlag==3){
                             btnGroup3();//问题接口人处理问题
-                        }else if(data.questionState==4){
+                        }else if(data.operateFlag==4){
                             btnGroup4();//方案负责人处理问题
-                        }else if(data.questionState==5){
+                        }else if(data.operateFlag==5){
                             btnGroup5();//审核人处理问题
-                        }else if(data.questionState==6){
+                        }else if(data.operateFlag==6){
                             btnGroup6();//bug负责人审核问题
-                        }else if(data.questionState==7){
+                        }else if(data.operateFlag==7){
                             btnGroup7();//验证问题
                         }else{//只是展示信息，隐藏所有的button
                             btnGroup8();//隐藏全部按钮

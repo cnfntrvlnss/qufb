@@ -35,9 +35,21 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
      */
     @Override
     public CompletionStage<List<QuestionFeedback>> findAll() {
-        return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery("select p from QuestionFeedback p", QuestionFeedback.class).getResultList()));
+        return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery("select p from QuestionFeedback p order by p.feedbackTime desc", QuestionFeedback.class).getResultList()));
     }
 
+    /**
+     * 带条件的查询语句
+     * lixin
+     * 2018-9-7 09:10:42
+     * @param questionFeedback
+     * @param userName
+     * @return
+     */
+    @Override
+    public CompletionStage<List<QuestionFeedback>> findAll(String userName) {
+        return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery("select p from QuestionFeedback p where p.feedbacker=?1 or p.bugHeader=?1 or p.transferName =?1 or p.developerName =?1 or p.schemeAuditName=?1 or p.resultAuditName=?1 or p.verifyName =?1   order by p.feedbackTime desc", QuestionFeedback.class) .setParameter(1, userName).getResultList()));
+    }
     /**
      * 通过id获取一个问题反馈的实体信息
      * @param id

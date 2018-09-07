@@ -68,6 +68,9 @@ public class QuestionFeedback {
 	@Transient
 	public Integer submitType;//提交方式
 
+	@Transient
+	public Integer operateFlag;//操作标志码1：第一个环节2、第二个环节 3、第三个环节 4、第四个环节 5、第五个环节 6、第六个环节 7、第七个环节 8、第八个环节
+
 	public Integer getQuestionId() {
 		return questionId;
 	}
@@ -388,5 +391,13 @@ public class QuestionFeedback {
 
 	public void setSubmitType(Integer submitType) {
 		this.submitType = submitType;
+	}
+
+	public Integer getOperateFlag() {
+		return operateFlag;
+	}
+
+	public void setOperateFlag(Integer operateFlag) {
+		this.operateFlag = operateFlag;
 	}
 }

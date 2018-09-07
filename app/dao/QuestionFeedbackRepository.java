@@ -44,4 +44,13 @@ public interface QuestionFeedbackRepository {
      */
      CompletionStage<Void> updateNotNull(QuestionFeedback fb);
 
+    /**
+     * 带有条件的查询条件
+     * lixin
+     * 2018-9-7 08:27:39
+      * @param questionFeedback
+     * @return
+     */
+    CompletionStage<List<QuestionFeedback>> findAll(String userName);
+
 }
