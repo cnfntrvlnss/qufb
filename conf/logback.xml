@@ -28,6 +28,7 @@
   <logger name="play" level="INFO" />
   <logger name="application" level="DEBUG" />
   <logger name="controllers" level="DEBUG"/>
+    <logger name="dao" level="DEBUG" />
 
     <logger name="play.mvc.Action" level="DEBUG" />
 
@@ -47,7 +48,7 @@
 
   <root level="WARN">
     <appender-ref ref="ASYNCFILE" />
-    <appender-ref ref="ASYNCSTDOUT" />
+    <appender-ref ref="STDOUT" />
   </root>
 
 </configuration>

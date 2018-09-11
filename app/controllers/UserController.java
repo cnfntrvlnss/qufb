@@ -1,5 +1,7 @@
 package controllers;
 
+import be.objectify.deadbolt.java.actions.Group;
+import be.objectify.deadbolt.java.actions.Restrict;
 import com.fasterxml.jackson.databind.JsonNode;
 import dao.impl.JPAUserRepository;
 import models.Unit;
@@ -12,7 +14,6 @@ import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import play.mvc.Security;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class UserController extends Controller {
                 }
             }
             session().put("username", name);
-            session().put("email", user.getEmail());
+            // session().put("email", user.getEmail());
             return ok(views.html.myQuestionSubmit.render());
         }, ec.current());
     }
@@ -66,7 +67,7 @@ public class UserController extends Controller {
         for(int i=0; i< unitPart.size(); i++){
             units.add(Json.fromJson(unitPart.get(i), Unit.class));
         }
-
+        //先添加部门，处信息
         userRepo.addUnitsIfNone(units).toCompletableFuture().join();
 
         Map<String, Unit> unitMap = units.stream().collect(HashMap::new, (r, t)->{
@@ -85,7 +86,7 @@ public class UserController extends Controller {
             }
             return u1;
         }).collect(Collectors.toList());
-
+        //添加用户列表
         //logger.debug("in testAddUser, before: {}", Json.toJson(users));
         userRepo.addUsers(users).toCompletableFuture().join();
         //logger.debug("in testAddUser, after: {}", Json.toJson(users));
@@ -102,9 +103,10 @@ public class UserController extends Controller {
         return ok(userId);
     }
 
-    @Security.Authenticated
+    @Restrict(@Group("ADMIN"))
     public Result testSecure(){
         String userId = session().get("username");
         return ok("pass " + userId);
     }
+
 }
