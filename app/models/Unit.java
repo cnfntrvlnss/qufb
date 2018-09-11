@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -49,6 +50,7 @@ public class Unit {
         this.section = section;
     }
 
+    @JsonIgnore
     @OneToMany(mappedBy = "unit")
     public List<User> getStaffs() {
         return staffs;
@@ -58,6 +60,8 @@ public class Unit {
         this.staffs = staffs;
     }
 
+    //防止toJson时的循环引用， manager->unit->manger->......
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "none",value = ConstraintMode.NO_CONSTRAINT))
     @NotFound(action = NotFoundAction.IGNORE)

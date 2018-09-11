@@ -1,25 +1,22 @@
 package controllers;
 
-import akka.util.ByteString;
-import com.fasterxml.jackson.databind.JsonNode;
 import dao.QuestionFeedbackRepository;
 import models.QuestionFeedback;
-import  models.viewModels.SubmitTypeEnum;
-import  models.viewModels.QuestionStateEnum;
-import  models.viewModels.FlowStateEnum;
+import models.viewModels.FlowStateEnum;
+import models.viewModels.QuestionStateEnum;
+import models.viewModels.SubmitTypeEnum;
 import play.data.FormFactory;
-import play.libs.F;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
-import play.libs.streams.Accumulator;
-import play.mvc.*;
+import play.mvc.BodyParser;
+import play.mvc.Controller;
+import play.mvc.Result;
 import views.html.myQuestion;
+
 import javax.inject.Inject;
-import java.lang.reflect.ParameterizedType;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
 
 import static play.libs.Json.toJson;
 
@@ -116,6 +113,7 @@ public class QuestionFeedbackController extends Controller {
 
 		//判断当前问题状态，获取需要处理问题的人，与当前登录用户进行对比，若是同一个人，允许操作。否则只展示信息，隐藏按钮的操作。
 		CompletionStage<QuestionFeedback> questionFeedback=questRepo.findById(questionId);
+        /*
 		if(questionFeedback.getQuestionState() == QuestionStateEnum.SUBMIT.getValue() && userName.equals(questionFeedback.getFeedbacker())){//第一个节点的人，需要对比问题提交人
 			questionFeedback.setOperateFlag(1);
 		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.BUG_HEADER.getValue() && userName.equals(questionFeedback.getBugHeader())){//第二个节点的人，需要对比bug负责人
@@ -133,6 +131,7 @@ public class QuestionFeedbackController extends Controller {
 		}else{
 			questionFeedback.setOperateFlag(8);
 		}
+		*/
 		return questionFeedback.thenApplyAsync(questionInfo -> {
 			return ok(toJson(questionInfo));
 		}, ec.current());
