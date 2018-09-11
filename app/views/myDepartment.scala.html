@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>部门列表</title>
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("stylesheets/questionList.css")' />
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("stylesheets/bootstrap.css")'/>
+    <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery-1.8.0.min.js")'></script>
+
+</head>
+<body>
+<!-查询条件->
+
+
+<div class="row col-md-12" >
+
+    <table class="table" title="部门" dataformatas="center-block" align="center">
+        <thead>
+        <tr>
+            <td>部门id</td>
+            <td>部门名称</td>
+
+        </tr>
+        </thead>
+        <tbody id="departmentTable">
+
+        </tbody>
+
+    </table>
+    <table class="table" title="二级部门" dataformatas="center-block" align="center">
+        <thead>
+        <tr>
+            <td>二级部门id</td>
+            <td>二级部门名称</td>
+        </tr>
+        </thead>
+        <tbody id="secondDepartmentTable">
+        </tbody>
+    </table>
+    <table class="table" title="用户表" dataformatas="center-block" align="center">
+        <thead>
+        <tr>
+            <td>用户id</td>
+            <td>用户名称</td>
+        </tr>
+        </thead>
+        <tbody id="userTable">
+        </tbody>
+    </table>
+</div>
+<script type='text/javascript' src='@routes.Assets.at("javascripts/departmentList.js")'></script>
+
+
+</body>
+</html>

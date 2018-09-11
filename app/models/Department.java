@@ -9,63 +9,59 @@ import javax.persistence.*;
  *
  */
 @Entity
-@NamedQueries({
+/*@NamedQueries({
 		@NamedQuery(name = "Department.findByNameAndParent",
 				query = "select d from Department d where d.name = :name and d.parent = :parent"),
 		@NamedQuery(name="Department.findByNameAndParentId",
 				query = "select d from Department d left join d.parent p where d.name = :name and p.id = :parentId")
-})
+})*/
 public class Department {
-	private Integer id;//部门id
-	private String name;//部门名称
-	private String type;//部门类型
-	//private Integer parentDepartmentId;//父级部门id
-	private Department parent;
+	private Integer departmentId;//部门id
+	private String departmentName;//部门名称
+	private Integer departmentType;//部门类型
+	private Integer parentDepartmentId;//父级部门id
 	private Integer orderCode;//排序号
 	private String memo;//备注
 
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer departmentId) {
-		this.id = departmentId;
+
+	public Integer getDepartmentId() {
+		return departmentId;
 	}
 
-	public String getName() {
-		return name;
-	}
-	public void setName(String departmentName) {
-		this.name = departmentName;
+	public void setDepartmentId(Integer departmentId) {
+		this.departmentId = departmentId;
 	}
 
-	public String getType() {
-		return type;
-	}
-	public void setType(String departmentType) {
-		this.type = departmentType;
+	public String getDepartmentName() {
+		return departmentName;
 	}
 
-	@ManyToOne(cascade=CascadeType.MERGE)
-	public Department getParent() {
-		return parent;
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
 	}
 
-	public void setParent(Department parent) {
-		this.parent = parent;
+	public Integer getDepartmentType() {
+		return departmentType;
 	}
 
-	//	public Integer getParentDepartmentId() {
-//		return parentDepartmentId;
-//	}
-//	public void setParentDepartmentId(Integer parentDepartmentId) {
-//		this.parentDepartmentId = parentDepartmentId;
-//	}
+	public void setDepartmentType(Integer departmentType) {
+		this.departmentType = departmentType;
+	}
+
+	public Integer getParentDepartmentId() {
+		return parentDepartmentId;
+	}
+
+	public void setParentDepartmentId(Integer parentDepartmentId) {
+		this.parentDepartmentId = parentDepartmentId;
+	}
 
 	public Integer getOrderCode() {
 		return orderCode;
 	}
+
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
@@ -73,8 +69,8 @@ public class Department {
 	public String getMemo() {
 		return memo;
 	}
+
 	public void setMemo(String memo) {
 		this.memo = memo;
 	}
-
 }

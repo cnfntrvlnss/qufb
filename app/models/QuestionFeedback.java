@@ -13,7 +13,7 @@ import java.util.Date;
 @Entity
 public class QuestionFeedback {
 	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO)
+	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	public Integer questionId;//问题反馈系统id
 	public String questionCode;//问题编号
 	public String questionTitle;//问题标题

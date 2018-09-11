@@ -72,6 +72,7 @@
                     },
                     error: function(data){
                         alert("获取问题信息失败，请及时联系管理员解决问题 " );
+                        return;
                     }
                 });
         }

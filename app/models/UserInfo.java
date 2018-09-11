@@ -13,8 +13,8 @@ public class UserInfo {
 	private String userName;//用户名称
 	private String password;//密码
 	private Integer  deptId;//所属部门id
-	private String phone;
-	private String email;
+	private String phone;//联系电话
+	private String email;//邮件
 
 	@Id
 	public String getUserId() {

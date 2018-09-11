@@ -49,7 +49,17 @@ GET /listMyQuestion     controllers.QuestionFeedbackController.listMyQuestion()
 # updateQuestionInfo
 POST /updateQuestionInfo       controllers.QuestionFeedbackController.updateQuestionInfo()
 
+#myDepartment
+GET /myDepartment        controllers.DepartmentController.myDepartment()
 
+#getFirstDepartment
+GET /getFirstDepartment      controllers.DepartmentController.getFirstDepartment()
+
+#getFirstDepartment
+GET /getSecondDepartment/:firstDepartmentId     controllers.DepartmentController.getSecondDepartment(firstDepartmentId : Integer)
+
+#getUserList
+GET /getUserList/:departmentId     controllers.DepartmentController.getUserList(departmentId : Integer)
 
 
 

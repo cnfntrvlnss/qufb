@@ -1,5 +1,8 @@
 package controllers;
 
+import play.Logger;
+
+import java.util.HashMap;
 import akka.util.ByteString;
 import com.fasterxml.jackson.databind.JsonNode;
 import dao.QuestionFeedbackRepository;
@@ -25,6 +28,7 @@ import static play.libs.Json.toJson;
 
 
 public class QuestionFeedbackController extends Controller {
+	private final Logger.ALogger logger = Logger.of(QuestionFeedbackController.class);
 
 	@Inject
 	QuestionFeedbackRepository questRepo;
@@ -111,29 +115,31 @@ public class QuestionFeedbackController extends Controller {
 	 * @return
 	 */
 	public CompletionStage<Result> getQuestionInfo(Integer questionId) {
-		String userName=session().get("userName");//当前登录用户名
+		String userName=session().get("username");//当前登录用户名
 		//操作标志码1：第一个环节2、第二个环节 3、第三个环节 4、第四个环节 5、第五个环节 6、第六个环节 7、第七个环节 8、第八个环节
 
 		//判断当前问题状态，获取需要处理问题的人，与当前登录用户进行对比，若是同一个人，允许操作。否则只展示信息，隐藏按钮的操作。
 		CompletionStage<QuestionFeedback> questionFeedback=questRepo.findById(questionId);
-		if(questionFeedback.getQuestionState() == QuestionStateEnum.SUBMIT.getValue() && userName.equals(questionFeedback.getFeedbacker())){//第一个节点的人，需要对比问题提交人
-			questionFeedback.setOperateFlag(1);
-		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.BUG_HEADER.getValue() && userName.equals(questionFeedback.getBugHeader())){//第二个节点的人，需要对比bug负责人
-			questionFeedback.setOperateFlag(2);
-		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.TRANSFER.getValue() && userName.equals(questionFeedback.getTransferName())){//第二个节点的人，需要对比bug负责人
-			questionFeedback.setOperateFlag(3);
-		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.DEVELOPER.getValue() && userName.equals(questionFeedback.getDeveloper)){//第二个节点的人，需要对比bug负责人
-			questionFeedback.setOperateFlag(4);
-		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.SCHEME_AUDITOR.getValue() && userName.equals(questionFeedback.getSchemeAuditName())){//第二个节点的人，需要对比bug负责人
-			questionFeedback.setOperateFlag(5);
-		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.AUDITOR.getValue() && userName.equals(questionFeedback.getResultAuditName())){//第二个节点的人，需要对比bug负责人
-			questionFeedback.setOperateFlag(6);
-		}else if(questionFeedback.getQuestionState() == QuestionStateEnum.VERIFY.getValue() && userName.equals(questionFeedback.getVerifyName())){//第二个节点的人，需要对比bug负责人
-			questionFeedback.setOperateFlag(7);
-		}else{
-			questionFeedback.setOperateFlag(8);
-		}
 		return questionFeedback.thenApplyAsync(questionInfo -> {
+			logger.debug("{},{},{},{}", questionInfo.getQuestionState(),QuestionStateEnum.DEVELOPER.getValue(), questionInfo.getDeveloperName(),userName);
+			if(questionInfo.getQuestionState() == QuestionStateEnum.FEEDBACKER.getValue() && questionInfo.getFeedbacker().equals(userName)){//第一个节点的人，需要对比问题提交人
+				questionInfo.setOperateFlag(1);
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.BUG_HEADER.getValue() && questionInfo.getBugHeader().equals(userName)){//第二个节点的人，需要对比bug负责人
+				questionInfo.setOperateFlag(2);
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.TRANSFER.getValue() && questionInfo.getTransferName().equals(userName)){//第二个节点的人，需要对比bug负责人
+				questionInfo.setOperateFlag(3);
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.DEVELOPER.getValue() && questionInfo.getDeveloperName().equals(userName)){//第二个节点的人，需要对比bug负责人
+				questionInfo.setOperateFlag(4);
+			}
+			else if(questionInfo.getQuestionState() == QuestionStateEnum.SCHEME_AUDITOR.getValue() && questionInfo.getSchemeAuditName().equals(userName)){//第二个节点的人，需要对比bug负责人
+				questionInfo.setOperateFlag(5);
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.AUDITOR.getValue() && questionInfo.getResultAuditName().equals(userName)){//第二个节点的人，需要对比bug负责人
+				questionInfo.setOperateFlag(6);
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.VERIFY.getValue() && questionInfo.getVerifyName().equals(userName)){//第二个节点的人，需要对比bug负责人
+				questionInfo.setOperateFlag(7);
+			}else{
+				questionInfo.setOperateFlag(8);
+			}
 			return ok(toJson(questionInfo));
 		}, ec.current());
 	}
