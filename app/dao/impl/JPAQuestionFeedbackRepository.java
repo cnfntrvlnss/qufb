@@ -5,8 +5,12 @@ import dao.QuestionFeedbackRepository;
 import models.QuestionFeedback;
 import play.Logger;
 import play.db.jpa.JPAApi;
+import scala.collection.immutable.Page;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.awt.print.Pageable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -42,7 +46,6 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
      * 带条件的查询语句
      * lixin
      * 2018-9-7 09:10:42
-     * @param questionFeedback
      * @param userName
      * @return
      */
@@ -50,6 +53,22 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
     public CompletionStage<List<QuestionFeedback>> findAll(String userName) {
         return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery("select p from QuestionFeedback p where p.feedbacker=?1 or p.bugHeader=?1 or p.transferName =?1 or p.developerName =?1 or p.schemeAuditName=?1 or p.resultAuditName=?1 or p.verifyName =?1   order by p.feedbackTime desc", QuestionFeedback.class) .setParameter(1, userName).getResultList()));
     }
+
+    /**
+     *
+     * @param questionFeedback
+     * @return
+     */
+    @Override
+    public Page<QuestionFeedback> getQuestionPagingList(QuestionFeedback questionFeedback, Integer page, Integer size) {
+       /* Pageable pageable=PageRequest.of(page-1,size);
+        Page<QuestionFeedback> questionPage
+   */             return null;
+
+
+
+    }
+
     /**
      * 通过id获取一个问题反馈的实体信息
      * @param id

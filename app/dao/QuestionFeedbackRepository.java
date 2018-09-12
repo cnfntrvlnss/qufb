@@ -3,6 +3,7 @@ package dao;
 import com.google.inject.ImplementedBy;
 import models.QuestionFeedback;
 import dao.impl.JPAQuestionFeedbackRepository;
+import scala.collection.immutable.Page;
 
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
@@ -52,5 +53,7 @@ public interface QuestionFeedbackRepository {
      * @return
      */
     CompletionStage<List<QuestionFeedback>> findAll(String userName);
+
+    Page<QuestionFeedback> getQuestionPagingList(QuestionFeedback questionFeedback,Integer page,Integer size);
 
 }
