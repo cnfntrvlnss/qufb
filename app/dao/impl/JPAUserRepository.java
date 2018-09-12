@@ -11,6 +11,7 @@ import util.PeekingIterator;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -82,13 +83,53 @@ public class JPAUserRepository implements UserRepository {
         }), executionContext);
     }
 
-    public CompletionStage<List<Unit>> findAllUnitBySection(String sectionName){
+
+    @Override
+    public CompletionStage<List<Section>> findSections(){
+        return supplyAsync(() -> jpaApi.withTransaction((EntityManager em) -> {
+            return em.createNamedQuery("Section.findAll", Section.class).getResultList();
+        }));
+    }
+
+    @Override
+    public CompletionStage<List<Unit>> findUnitsBySection(String sectionName){
         return supplyAsync(()->jpaApi.withTransaction((EntityManager em)->{
             return em.createNamedQuery("Unit.findAllBySection").setParameter("sectionName", sectionName)
                     .getResultList();
         }));
     }
 
+    @Override
+    public CompletionStage<List<User>> findUsersByUnit(String sectionName, String unitName) {
+        return supplyAsync(() -> jpaApi.withTransaction((EntityManager em)->{
+            List<Unit> units = em.createNamedQuery("Unit.findByName", Unit.class).setParameter("name", unitName)
+                    .setParameter("sectionName", sectionName)
+                    .getResultList();
+            if(units.size() == 0){
+                return new ArrayList<User>();
+            }else{
+                return units.get(0).getStaffs();
+            }
+        }));
+    }
+
+    @Override
+    public CompletionStage<List<User>> findUsersBySection(String sectionName) {
+        return supplyAsync(() -> jpaApi.withTransaction((EntityManager em) -> {
+            List<Unit> units = em.createNamedQuery("Unit.findAllBySection").setParameter("sectionName", sectionName)
+                    .getResultList();
+            List<User> users = new ArrayList<User>();
+            for(Unit u: units){
+                List<Unit> curUnits = em.createNamedQuery("Unit.findByName", Unit.class).setParameter("name", u.getName())
+                        .setParameter("sectionName", sectionName)
+                        .getResultList();
+                if(curUnits.size() > 0){
+                    users.addAll(u.getStaffs());
+                }
+            }
+            return users;
+        }));
+    }
 
     private void _addUnitsIfNone(EntityManager em, List<Unit> units){
         for(Unit u: units) {

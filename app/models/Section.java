@@ -8,7 +8,9 @@ import java.util.List;
 @Entity
 @NamedQueries({
         @NamedQuery(name="Section.findByName",
-            query = "select s from Section s where s.name = :name")
+            query = "select s from Section s where s.name = :name"),
+        @NamedQuery(name="Section.findAll",
+            query = "select s from Section s")
 })
 public class Section {
     private  Integer id;
