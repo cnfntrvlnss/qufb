@@ -244,8 +244,8 @@ public class QuestionFeedbackController extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> listUser() {
 		JsonNode json = request().body().asJson();
-		//Integer departmentId=json.get("departmentId").asInt();
-		//Integer unitId=json.get("unitId").asInt();
-		return userRepository.findUsersByUnit("测试验证部","测试一处").thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
+		Integer departmentId=json.get("departmentId").asInt();
+		Integer unitId=json.get("unitId").asInt();
+		return userRepository.findUsersByUnit(departmentId,unitId).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
 	}
 }

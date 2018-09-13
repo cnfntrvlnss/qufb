@@ -11,7 +11,8 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name="Unit.findByName", query = "select u from Unit u join u.section p where p.name = :parentName " +
         "and u.name = :name"),
-        @NamedQuery(name="Unit.findAllBySection", query = "select u from Unit u join u.section s where s.name = :sectionName"),
+        @NamedQuery(name="Unit.findBySection", query = "select u from Unit u join u.section s where s.id = :sectionId"),
+        @NamedQuery(name="Unit.findAllBySectionName", query = "select u from Unit u join u.section s where s.name = :sectionName"),
         @NamedQuery(name="Unit.updateManager", query = "update Unit u set u.manager.userId = :userId where" +
                 " u.id= :id")
 })

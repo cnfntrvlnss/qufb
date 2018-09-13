@@ -3,7 +3,7 @@ package controllers;
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import com.fasterxml.jackson.databind.JsonNode;
-import dao.impl.JPAUserRepository;
+import dao.UserRepository;
 import models.Unit;
 import models.User;
 import play.Logger;
@@ -14,6 +14,7 @@ import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import util.HashFunctions;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -31,7 +32,11 @@ public class UserController extends Controller {
     @Inject
     private HttpExecutionContext ec;
     @Inject
-    JPAUserRepository userRepo;
+    UserRepository userRepo;
+
+    private String createHashed(String user, String pwd){
+        return HashFunctions.createHash(user + pwd);
+    }
 
     public CompletionStage<Result> login(){
         DynamicForm form = formFactory.form().bindFromRequest();
@@ -44,7 +49,8 @@ public class UserController extends Controller {
                 return forbidden("user is not found!");
             }
             if(user.getPassword() != null){
-                if(!user.getPassword().equals(password)){
+                String hashed = createHashed(user.getUserId(), user.getPassword());
+                if(!hashed.equals(password)){
                     return forbidden("password is not matched!");
                 }
             }
@@ -59,6 +65,11 @@ public class UserController extends Controller {
         return ok("bye");
     }
 
+    /*****
+     * 当前的导入逻辑是, 提交json中前一部分是部门处信息，后一部分是用户列表信息；
+     * 部门处信息已经存在就添加不进去了， 用户信息已经存在就先删除旧的再添加新的。
+     * @return
+     */
     @BodyParser.Of(BodyParser.Json.class)
     public Result addUsers(){
         JsonNode body = request().body().asJson();
@@ -79,7 +90,10 @@ public class UserController extends Controller {
         for(JsonNode n: userPart){
             users.add(Json.fromJson(n, User.class));
         }
-         users = users.stream().map((User u1) ->{
+         users = users.stream().map((User u1) -> {
+             if(u1.getPassword() != null){
+                 u1.setPassword(createHashed(u1.getUserId(), u1.getPassword()));
+             }
             Unit u = u1.getUnit();
             if(unitMap.containsKey(u.getName())){
                 u1.setUnit(unitMap.get(u.getName()));
@@ -88,9 +102,15 @@ public class UserController extends Controller {
         }).collect(Collectors.toList());
         //添加用户列表
         //logger.debug("in testAddUser, before: {}", Json.toJson(users));
-        userRepo.addUsers(users).toCompletableFuture().join();
+        userRepo.readdUsers(users).toCompletableFuture().join();
         //logger.debug("in testAddUser, after: {}", Json.toJson(users));
 
+        return ok();
+    }
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public Result addUsersN(){
+        JsonNode body = request().body().asJson();
         return ok();
     }
 
