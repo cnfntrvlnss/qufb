@@ -3,6 +3,7 @@ package dao.impl;
 import com.google.inject.Singleton;
 import dao.QuestionFeedbackRepository;
 import models.QuestionFeedback;
+import models.viewModels.QuestionStateEnum;
 import play.Logger;
 import play.db.jpa.JPAApi;
 import scala.collection.immutable.Page;
@@ -67,6 +68,38 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
 
 
 
+    }
+
+    @Override
+    public CompletionStage<List<QuestionFeedback>> findAll(QuestionFeedback questionFeedback,String userName) {
+        String sql="select q from QuestionFeedback q    where 1=1 and (q.feedbacker=?1 or q.bugHeader=?1 or q.transferName =?1 or q.developerName =?1 or q.schemeAuditName=?1 or q.resultAuditName=?1 or q.verifyName =?1)   " ;
+                if(questionFeedback.getQuestionTitle()!=null){
+                    sql+=" and q.questionTitle like '%"+questionFeedback.getQuestionTitle()+"%'";
+                }
+                if(questionFeedback.getBugHeader()!=null){
+                    sql+=" and q.bugHeader = '"+questionFeedback.getBugHeader()+"'";
+                }
+                if(questionFeedback.getFeedbacker()!=null){
+                    sql+=" and q.feedbacker = '"+questionFeedback.getFeedbacker()+"'";
+                }
+                if(questionFeedback.getTransferName()!=null){
+                    sql+=" and q.transferName = '"+questionFeedback.getTransferName()+"'";
+                }
+                if(questionFeedback.getDeveloperName()!=null){
+                    sql+=" and q.developerName = '"+questionFeedback.getDeveloperName()+"'";
+                }
+                if(questionFeedback.getSchemeAuditName()!=null){
+                    sql+=" and q.schemeAuditName = '"+questionFeedback.getSchemeAuditName()+"'";
+                }
+                if(questionFeedback.getVerifyName()!=null){
+                    sql+=" and q.verifyName = '"+questionFeedback.getVerifyName()+"'";
+                }
+
+
+               sql += " order by q.feedbackTime desc";
+                String sqlQuery=sql;
+        logger.debug("{}", sqlQuery);
+        return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery(sqlQuery, QuestionFeedback.class) .setParameter(1, userName).getResultList()));
     }
 
     /**

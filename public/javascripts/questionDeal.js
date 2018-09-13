@@ -1,3 +1,6 @@
+        //加载下拉框的内容
+        listDepartment();
+
         var questionId=$("#questionId").val();
         var updateParam={};//参数对象
 
@@ -250,7 +253,24 @@
             updateParam.submitType=13;//第七个节点关闭问题
             save7();
         })
+         var listUserParam={};
+        //一级部门更改，触发联动二级部门和用户
+        $("#department").change(function(){
+            if($("#department").val()!=0){
+                  listUnit();
+                  listUserParam.departmentId=$("#department").val();
+                  listUser();
+            }
+        })
+        //二级部门更改，触发联动用户
 
+        $("#unit").change(function(){
+            if($("#unit").val()!=0){
+            listUserParam.departmentId=$("#department").val();
+            listUserParam.unitId=$("#unit").val()
+                  listUser();
+            }
+        })
 
         //============================业务逻辑处理=======================================================================
 
@@ -503,4 +523,62 @@
         function divGroup7(){
             $("#verifySuggestion").attr("disabled","true");
         }
+        //====================================获取下拉框的内容====================================================
+        function listDepartment(){
+             $.ajax({
+                  url: "/listDepartment",
+                  dataType:"json",
+                  contentType : 'application/json;charset=UTF-8',
+                  type: 'GET',
+                  asnyc:false,
+                  success: function (result) {
+                   $("#department").html("");
+                   $("#department").append("<option value='0'>请选择一级部门</option>");
+                        for(var i=0;i<result.length;i++){
+                            $("#department").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                        }
+                   },
+                    error:function(){
+                    }
+               });
 
+        }
+        //获取二级部门
+        function listUnit(){
+             $.ajax({
+                  url: "/listUnit/"+$("#department option:selected").text(),
+                  dataType:"json",
+                  contentType : 'application/json;charset=UTF-8',
+                  type: 'GET',
+                  asnyc:false,
+                  success: function (result) {
+                   $("#unit").html("");
+                   $("#unit").append("<option value='0'>请选择二级部门</option>");
+                        for(var i=0;i<result.length;i++){
+                            $("#unit").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                        }
+                   },
+                    error:function(){
+                    }
+               });
+        }
+        //获取所有的用户列表
+        function listUser(){
+             $.ajax({
+                  url: "/listUser/",
+                  dataType:"json",
+                  contentType : 'application/json;charset=UTF-8',
+                  type: 'GET',
+                  asnyc:false,
+                   data:JSON.stringify(listUserParam), //转JSON字符串
+                  success: function (result) {
+                   $("#bugHeader").html("");
+                   $("#bugHeader").append("<option value='0'>请选择用户</option>");
+                        for(var i=0;i<result.length;i++){
+                            $("#bugHeader").append("<option value='"+result[i].userid+"'>"+result[i].name+"</option>");
+                        }
+                   },
+                    error:function(){
+                    }
+               });
+        }

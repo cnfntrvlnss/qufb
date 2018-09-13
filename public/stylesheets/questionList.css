@@ -44,3 +44,14 @@
     color:red;
     font-size:18px;
 }
+.topbar{
+    background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#008eef), to(#f6f6f8));/*谷歌*/
+    height:60px;
+}
+.menu{
+ background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#008eef), to(#f6f6f8));/*谷歌*/
+ height:180px;
+}
+.work{
+ background-color: #7fd3ff47;
+}

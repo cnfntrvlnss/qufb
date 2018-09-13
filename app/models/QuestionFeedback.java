@@ -13,7 +13,7 @@ import java.util.Date;
 @Entity
 public class QuestionFeedback {
 	@Id
-	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	@GeneratedValue(strategy= GenerationType.AUTO)
 	public Integer questionId;//问题反馈系统id
 	public String questionCode;//问题编号
 	public String questionTitle;//问题标题
@@ -77,7 +77,6 @@ public class QuestionFeedback {
 	public void setQuestionId(Integer questionId) {
 		this.questionId = questionId;
 	}
-	@Column(unique=true, nullable=false)
 	public String getQuestionCode() {
 		return questionCode;
 	}
