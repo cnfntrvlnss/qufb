@@ -92,15 +92,32 @@ public class JPAUserRepository implements UserRepository {
     }
 
     @Override
-    public CompletionStage<List<Unit>> findUnitsBySection(String sectionName){
-        return supplyAsync(()->jpaApi.withTransaction((EntityManager em)->{
-            return em.createNamedQuery("Unit.findAllBySection").setParameter("sectionName", sectionName)
+    public CompletionStage<List<Unit>> findUnitsBySection(Integer sectionId){
+        return supplyAsync(() -> jpaApi.withTransaction(em ->{
+            return em.createNamedQuery("Unit.findBySection", Unit.class).setParameter("sectionId", sectionId)
                     .getResultList();
         }));
     }
 
     @Override
-    public CompletionStage<List<User>> findUsersByUnit(String sectionName, String unitName) {
+    public CompletionStage<List<Unit>> findUnitsBySectionName(String sectionName) {
+        return supplyAsync(()->jpaApi.withTransaction((EntityManager em)->{
+            return em.createNamedQuery("Unit.findAllBySectionName").setParameter("sectionName", sectionName)
+                    .getResultList();
+        }));
+    }
+
+    @Override
+    public CompletionStage<List<User>> findUsersByUnit(Integer unitId){
+        return supplyAsync(()-> jpaApi.withTransaction((EntityManager em) -> {
+                Unit u = em.find(Unit.class, unitId);
+                return u.getStaffs();
+            }
+         ));
+    }
+
+    @Override
+    public CompletionStage<List<User>> findUsersByUnitName(String sectionName, String unitName) {
         return supplyAsync(() -> jpaApi.withTransaction((EntityManager em)->{
             List<Unit> units = em.createNamedQuery("Unit.findByName", Unit.class).setParameter("name", unitName)
                     .setParameter("sectionName", sectionName)
@@ -113,10 +130,22 @@ public class JPAUserRepository implements UserRepository {
         }));
     }
 
-    @Override
-    public CompletionStage<List<User>> findUsersBySection(String sectionName) {
+    public CompletionStage<List<User>> findUsersBySection(Integer sectionId) {
         return supplyAsync(() -> jpaApi.withTransaction((EntityManager em) -> {
-            List<Unit> units = em.createNamedQuery("Unit.findAllBySection").setParameter("sectionName", sectionName)
+            List<Unit> us = em.createNamedQuery("Unit.findBySection", Unit.class).setParameter("sectionId", sectionId)
+                    .getResultList();
+            List<User> users = new ArrayList<>();
+            for(Unit u: us){
+                users.addAll(u.getStaffs());
+            }
+            return users;
+        }));
+    }
+
+    @Override
+    public CompletionStage<List<User>> findUsersBySectionName(String sectionName) {
+        return supplyAsync(() -> jpaApi.withTransaction((EntityManager em) -> {
+            List<Unit> units = em.createNamedQuery("Unit.findAllBySectionName").setParameter("sectionName", sectionName)
                     .getResultList();
             List<User> users = new ArrayList<User>();
             for(Unit u: units){
@@ -159,7 +188,15 @@ public class JPAUserRepository implements UserRepository {
         }
     }
 
+    public CompletionStage<Void> addSection(Section section){
+        return wrap(em -> {
+            em.persist(section);
+            return null;
+        });
+    }
+
     //添加处及部门，若部门不存在就添加部门，在判定部门下的处存在与否，若不存在处就添加处。
+    @Override
     public CompletionStage<Void> addUnitsIfNone(List<Unit> units){
         return wrap(em->{
             _addUnitsIfNone(em, units);
@@ -174,9 +211,23 @@ public class JPAUserRepository implements UserRepository {
             }
             return null;
         });
-
     }
 
+    @Override
+    public CompletionStage<Void> readdUsers(List<User> users){
+        return wrap(em -> {
+            for(User u: users){
+                User u1 = em.find(User.class, u.getUserId());
+                if(u1 != null){
+                    em.remove(u1);
+                }
+                em.persist(u);
+            }
+            return null;
+        });
+    }
+
+    @Override
     public CompletionStage<Void> deleteAllUsers(){
         return wrap(em ->{
             em.createQuery("delete from User").executeUpdate();

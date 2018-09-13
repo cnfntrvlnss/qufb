@@ -18,11 +18,24 @@ public interface UserRepository {
 
     CompletionStage<List<Section>> findSections();
 
-    CompletionStage<List<Unit>> findUnitsBySection(String sectionName);
+    CompletionStage<List<Unit>> findUnitsBySection(Integer sectionId);
 
-    CompletionStage<List<User>> findUsersByUnit(String sectionName, String unitName);
+    CompletionStage<List<User>> findUsersByUnit(Integer unitId);
 
-    CompletionStage<List<User>> findUsersBySection(String sectionName);
+    CompletionStage<List<User>> findUsersBySection(Integer sectionId);
+
+    CompletionStage<List<Unit>> findUnitsBySectionName(String sectionName);
+
+    CompletionStage<List<User>> findUsersByUnitName(String sectionName, String unitName);
+
+    CompletionStage<List<User>> findUsersBySectionName(String sectionName);
+
+    //添加处及部门，若部门不存在就添加部门，在判定部门下的处存在与否，若不存在处就添加处。
+    CompletionStage<Void> addUnitsIfNone(List<Unit> units);
+
+    CompletionStage<Void> readdUsers(List<User> users);
+
+    CompletionStage<Void> deleteAllUsers();
 
     public CompletionStage<List<MyRole>> findAllRoles();
 

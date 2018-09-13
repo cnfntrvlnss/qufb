@@ -12,9 +12,9 @@ import java.util.Date;
  */
 @Entity
 public class QuestionFeedback {
-	@Id
-	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	public Integer questionId;//问题反馈系统id
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    public Integer questionId;//问题反馈系统id
 	public String questionCode;//问题编号
 	public String questionTitle;//问题标题
 
@@ -71,13 +71,15 @@ public class QuestionFeedback {
 	@Transient
 	public Integer operateFlag;//操作标志码1：第一个环节2、第二个环节 3、第三个环节 4、第四个环节 5、第五个环节 6、第六个环节 7、第七个环节 8、第八个环节
 
-	public Integer getQuestionId() {
+
+
+    public Integer getQuestionId() {
 		return questionId;
 	}
 	public void setQuestionId(Integer questionId) {
 		this.questionId = questionId;
 	}
-	@Column(unique=true, nullable=false)
+	//@Column(unique=true, nullable=false)
 	public String getQuestionCode() {
 		return questionCode;
 	}
