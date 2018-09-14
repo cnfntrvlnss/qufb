@@ -45,7 +45,7 @@ POST    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
 GET /listQuestion       controllers.QuestionFeedbackController.listQuestion()
 
 #listMyQuesiton
-GET /listMyQuestion     controllers.QuestionFeedbackController.listMyQuestion()
+POST /listMyQuestion     controllers.QuestionFeedbackController.listMyQuestion()
 
 # updateQuestionInfo
 POST /updateQuestionInfo       controllers.QuestionFeedbackController.updateQuestionInfo()
@@ -61,6 +61,15 @@ GET /getSecondDepartment/:firstDepartmentId     controllers.DepartmentController
 
 #getUserList
 GET /getUserList/:departmentId     controllers.DepartmentController.getUserList(departmentId : Integer)
+
+#listDepartment
+GET    /listDepartment     controllers.QuestionFeedbackController.listDepartment()
+
+#listUnit
+GET    /listUnit/:departmentName    controllers.QuestionFeedbackController.listUnit(departmentName : String)
+
+#listUser
+GET /listUser    controllers.QuestionFeedbackController.listUser()
 
 
 

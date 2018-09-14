@@ -1,10 +1,9 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import dao.UserRepository;
 import play.Logger;
 
-import java.util.HashMap;
-import akka.util.ByteString;
-import com.fasterxml.jackson.databind.JsonNode;
 import dao.QuestionFeedbackRepository;
 import models.QuestionFeedback;
 import models.viewModels.FlowStateEnum;
@@ -31,6 +30,9 @@ public class QuestionFeedbackController extends Controller {
 
 	@Inject
 	QuestionFeedbackRepository questRepo;
+	@Inject
+	UserRepository userRepository;
+
 	@Inject
 	private HttpExecutionContext ec;
 	@Inject
@@ -71,10 +73,11 @@ public class QuestionFeedbackController extends Controller {
 	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> addQuestion() {
-		String userName=session().get("userName");
+		String userName=session().get("username");
         QuestionFeedback questionFeedback = Json.fromJson(request().body().asJson(), QuestionFeedback.class);
 		questionFeedback.setFeedbackTime(new Date());//反馈时间
 		questionFeedback.setFeedbacker(userName);
+		logger.debug("测试新建问题时的问题提交者"+userName);
 		//用户的提交类型，用来判断问题状态和流程状态的变换
 		int submitType=questionFeedback.getSubmitType();
 		if(submitType == SubmitTypeEnum.QUESTION_SAVE.getValue()){//第一次保存
@@ -203,10 +206,46 @@ public class QuestionFeedbackController extends Controller {
 	 * 2018-9-7 08:31:25
 	 * @return
 	 */
+	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> listMyQuestion() {
 		String userName = session().get("username");
-		return questRepo.findAll(userName).thenApplyAsync(questionList -> {
-			return ok(toJson(questionList));
-		}, ec.current());
+
+		QuestionFeedback questionFeedback = Json.fromJson(request().body().asJson(), QuestionFeedback.class);
+		//QuestionFeedback questionFeedback =new QuestionFeedback();
+		//questionFeedback.setQuestionTitle("00");
+		return questRepo.findAll(questionFeedback,userName).thenApplyAsync(questionList -> ok(toJson(questionList)), ec.current());
+	}
+
+	/**
+	 * 获取所有的一级部门
+	 * lixin
+	 * 2018-9-13 08:18:09
+	 * @return
+	 */
+	public CompletionStage<Result> listDepartment() {
+		return userRepository.findSections().thenApplyAsync(departmentList -> ok(toJson(departmentList)), ec.current());
+	}
+
+	/**
+	 * 根据一级部门id获取该一级部门下所有的二级部门
+	 * lixin
+	 * 2018-9-13 09:25:12
+	 * @param departmentName:
+	 * @return
+	 */
+	public CompletionStage<Result> listUnit(String departmentName) {
+		return userRepository.findUnitsBySection(departmentName).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
+	}
+
+	/**
+	 * 获取规定条件下的用户
+	 * @return
+	 */
+	@BodyParser.Of(BodyParser.Json.class)
+	public CompletionStage<Result> listUser() {
+		JsonNode json = request().body().asJson();
+		Integer departmentId=json.get("departmentId").asInt();
+		Integer unitId=json.get("unitId").asInt();
+		return userRepository.findUsersByUnit(departmentId,unitId).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
 	}
 }

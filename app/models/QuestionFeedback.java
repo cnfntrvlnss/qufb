@@ -79,7 +79,7 @@ public class QuestionFeedback {
 	public void setQuestionId(Integer questionId) {
 		this.questionId = questionId;
 	}
-	//@Column(unique=true, nullable=false)
+
 	public String getQuestionCode() {
 		return questionCode;
 	}

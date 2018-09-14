@@ -3,10 +3,15 @@ package dao.impl;
 import com.google.inject.Singleton;
 import dao.QuestionFeedbackRepository;
 import models.QuestionFeedback;
+import models.viewModels.QuestionStateEnum;
 import play.Logger;
 import play.db.jpa.JPAApi;
+import scala.collection.immutable.Page;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.awt.print.Pageable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -42,7 +47,6 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
      * 带条件的查询语句
      * lixin
      * 2018-9-7 09:10:42
-     * @param questionFeedback
      * @param userName
      * @return
      */
@@ -50,6 +54,54 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
     public CompletionStage<List<QuestionFeedback>> findAll(String userName) {
         return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery("select p from QuestionFeedback p where p.feedbacker=?1 or p.bugHeader=?1 or p.transferName =?1 or p.developerName =?1 or p.schemeAuditName=?1 or p.resultAuditName=?1 or p.verifyName =?1   order by p.feedbackTime desc", QuestionFeedback.class) .setParameter(1, userName).getResultList()));
     }
+
+    /**
+     *
+     * @param questionFeedback
+     * @return
+     */
+    @Override
+    public Page<QuestionFeedback> getQuestionPagingList(QuestionFeedback questionFeedback, Integer page, Integer size) {
+       /* Pageable pageable=PageRequest.of(page-1,size);
+        Page<QuestionFeedback> questionPage
+   */             return null;
+
+
+
+    }
+
+    @Override
+    public CompletionStage<List<QuestionFeedback>> findAll(QuestionFeedback questionFeedback,String userName) {
+        String sql="select q from QuestionFeedback q    where 1=1 and (q.feedbacker=?1 or q.bugHeader=?1 or q.transferName =?1 or q.developerName =?1 or q.schemeAuditName=?1 or q.resultAuditName=?1 or q.verifyName =?1)   " ;
+                if(questionFeedback.getQuestionTitle()!=null){
+                    sql+=" and q.questionTitle like '%"+questionFeedback.getQuestionTitle()+"%'";
+                }
+                if(questionFeedback.getBugHeader()!=null){
+                    sql+=" and q.bugHeader = '"+questionFeedback.getBugHeader()+"'";
+                }
+                if(questionFeedback.getFeedbacker()!=null){
+                    sql+=" and q.feedbacker = '"+questionFeedback.getFeedbacker()+"'";
+                }
+                if(questionFeedback.getTransferName()!=null){
+                    sql+=" and q.transferName = '"+questionFeedback.getTransferName()+"'";
+                }
+                if(questionFeedback.getDeveloperName()!=null){
+                    sql+=" and q.developerName = '"+questionFeedback.getDeveloperName()+"'";
+                }
+                if(questionFeedback.getSchemeAuditName()!=null){
+                    sql+=" and q.schemeAuditName = '"+questionFeedback.getSchemeAuditName()+"'";
+                }
+                if(questionFeedback.getVerifyName()!=null){
+                    sql+=" and q.verifyName = '"+questionFeedback.getVerifyName()+"'";
+                }
+
+
+               sql += " order by q.feedbackTime desc";
+                String sqlQuery=sql;
+        logger.debug("{}", sqlQuery);
+        return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery(sqlQuery, QuestionFeedback.class) .setParameter(1, userName).getResultList()));
+    }
+
     /**
      * 通过id获取一个问题反馈的实体信息
      * @param id
