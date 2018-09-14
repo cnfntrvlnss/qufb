@@ -3,7 +3,10 @@ package controllers;
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import dao.UserRepository;
+import models.Section;
 import models.Unit;
 import models.User;
 import play.Logger;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
@@ -108,10 +112,105 @@ public class UserController extends Controller {
         return ok();
     }
 
+    private void modifyUserNode(ObjectNode userNode) {
+        if(userNode.get("userId") == null) {
+            String email = userNode.get("email").asText();
+            String userId = email.substring(0, email.indexOf("@"));
+            userNode.put("userId", userId);
+        }
+        if(userNode.get("roles") != null){
+            JsonNode rolesNode = userNode.get("roles");
+            if(rolesNode.isArray()){
+                //修改角色结构
+                if(rolesNode != null){
+                    ArrayNode nroles = Json.newArray();
+                    for(int j=0; j< rolesNode.size(); j++){
+                        ObjectNode nrole = Json.newObject();
+                        nrole.set("id", rolesNode.get(j));
+                        nroles.add(nrole);
+                    }
+                    userNode.set("roles", nroles);
+                }
+            }
+        }
+    }
+
+    private void modifyDepartmentNode(JsonNode body){
+        ObjectNode bodyNode = (ObjectNode) body;
+        ArrayNode unitsNode = bodyNode.withArray("units");
+
+        for(int i=0; i< unitsNode.size(); i++) {
+            JsonNode staffsNode = unitsNode.get(i).get("staffs");
+            if(staffsNode == null) continue;
+            for(int j=0; j< staffsNode.size(); j++){
+                modifyUserNode((ObjectNode)staffsNode.get(j));
+            }
+        }
+
+        if(body.get("staffs") != null || body.get("manager") != null){
+            //创建经理处，适应本数据库的设计
+            ObjectNode objNode = Json.newObject();
+            objNode.put("name", "经理处");
+            if(body.get("staffs") != null){
+                ArrayNode usersNode = (ArrayNode) body.get("staffs");
+                for(int i=0; i< usersNode.size(); i++){
+                    modifyUserNode((ObjectNode)usersNode.get(i));
+                }
+                objNode.set("staffs", body.get("staffs"));
+                bodyNode.remove("staffs");
+            }
+            if(body.get("manager") != null){
+                objNode.set("manager", body.get("manager"));
+                bodyNode.remove("manager");
+            }
+            unitsNode.insert(0, objNode);
+        }
+    }
+
+    private Section parseDepartmentJson(JsonNode deptNode){
+        Section section = Json.fromJson(deptNode, Section.class);
+        JsonNode unitsNode = deptNode.get("units");
+        List<Unit> units = new ArrayList<>();
+        for(int i=0; i< unitsNode.size(); i++){
+            Unit unit = Json.fromJson(unitsNode.get(i), Unit.class);
+            unit.setSection(section);
+            units.add(unit);
+            JsonNode staffsNode = unitsNode.get(i).get("staffs");
+            if(staffsNode != null){
+                List<User> users = new ArrayList<>();
+                for(int j=0; j< staffsNode.size(); j++) {
+                    User user = Json.fromJson(staffsNode.get(j), User.class);
+                    user.setUnit(unit);
+                    users.add(user);
+                }
+                unit.setStaffs(users);
+            }
+            JsonNode managerNode = unitsNode.get(i).get("manager");
+            if(managerNode != null){
+                unit.setManager(new User(){
+                    {
+                        setUserId(managerNode.asText());
+                    }
+                });
+            }
+        }
+        section.setUnits(units);
+        return section;
+    }
+
     @BodyParser.Of(BodyParser.Json.class)
-    public Result addUsersN(){
+    public CompletionStage<Result> addUsersN(){
+
         JsonNode body = request().body().asJson();
-        return ok();
+        CompletionStage stags = CompletableFuture.completedFuture(null);
+        for(int i=0; i <body.get("departments").size(); i++){
+            JsonNode deptNode = body.get("departments").get(i);
+            modifyDepartmentNode(deptNode);
+            logger.debug("in addUsersN, after modification, body: {}", Json.prettyPrint(deptNode));
+            Section dept = parseDepartmentJson(deptNode);
+            stags = stags.thenComposeAsync(v -> userRepo.updateSectionInner(dept));
+        }
+        return stags.thenApplyAsync(v -> ok(), ec.current());
     }
 
     public Result deleteAllUsers(){

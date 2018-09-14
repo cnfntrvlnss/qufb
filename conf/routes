@@ -79,5 +79,5 @@ POST    /person/person      controllers.PersonController.addPerson()
 
 GET /person/persons     controllers.PersonController.getPersons()
 
-POST    /addUsers      controllers.UserController.addUsers()
+POST    /addUsers      controllers.UserController.addUsersN()
 POST  /deleteAllUsers   controllers.UserController.deleteAllUsers()
