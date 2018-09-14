@@ -35,6 +35,8 @@ public interface UserRepository {
 
     CompletionStage<Void> readdUsers(List<User> users);
 
+    CompletionStage<Void> updateSectionInner(Section section);
+
     CompletionStage<Void> deleteAllUsers();
 
     public CompletionStage<List<MyRole>> findAllRoles();

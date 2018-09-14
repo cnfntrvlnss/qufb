@@ -29,7 +29,7 @@ public class ScheduledTask {
                 Duration.create(10, TimeUnit.SECONDS),
                 Duration.create(1, TimeUnit.SECONDS),
                 () -> {
-                    logger.debug("!!!!!!!!!!!!!!! test scheduler once per second.");
+                    //logger.debug("!!!!!!!!!!!!!!! test scheduler once per second.");
                 },
                 executionContext
         );

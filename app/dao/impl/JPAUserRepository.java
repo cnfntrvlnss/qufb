@@ -227,6 +227,58 @@ public class JPAUserRepository implements UserRepository {
         });
     }
 
+    /**
+     * 先添加section, 再添加section下的units, 最后添加unit下的staffs
+     * section， unit已经存在了，就不在添加; user先删除旧的，再添加新的.
+     * @param section
+     * @return
+     */
+    @Override
+    public CompletionStage<Void> updateSectionInner(Section section){
+        return wrap(em -> {
+            List<Section> sections = em.createNamedQuery("Section.findByName", Section.class)
+                    .setParameter("name", section.getName())
+                    .getResultList();
+            List<Unit> units = section.getUnits();
+            if(sections.size() == 0){
+                em.persist(section);
+            }else{
+                section.setId(sections.get(0).getId());
+            }
+            for(Unit u: units) {
+                List<Unit> us = em.createNamedQuery("Unit.findByName", Unit.class)
+                        .setParameter("name", u.getName())
+                        .setParameter("parentName", u.getSection().getName())
+                        .getResultList();
+                List<User> users = u.getStaffs();
+                u.setStaffs(null);// 后添加staffs，就需要在更新unit时设置为null.
+                User manager = u.getManager();
+                u.setManager(null);//后添加Manager，就需要在更新unit时设置为null.
+                if(us.isEmpty()){
+                    em.persist(u);
+                    if(manager != null){
+                        em.createNamedQuery("Unit.updateManager").setParameter("id", u.getId())
+                                .setParameter("userId", manager.getUserId()).executeUpdate();
+                    }
+                }else{
+                    u.setId(us.get(0).getId());
+                }
+                Unit u1 = em.merge(u);
+                //user中的Unit必须要被managed，才能保持user.
+                for(User user: users) {
+                    User user1 = em.find(User.class, user.getUserId());
+                    if(user1 != null){
+                        em.remove(user1);
+                    }
+                    user.setUnit(u1);
+                    em.persist(user);
+                }
+            }
+
+            return null;
+        });
+    }
+
     @Override
     public CompletionStage<Void> deleteAllUsers(){
         return wrap(em ->{
