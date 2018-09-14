@@ -66,10 +66,10 @@ GET /getUserList/:departmentId     controllers.DepartmentController.getUserList(
 GET    /listDepartment     controllers.QuestionFeedbackController.listDepartment()
 
 #listUnit
-GET    /listUnit/:departmentName    controllers.QuestionFeedbackController.listUnit(departmentName : String)
+GET    /listUnit/:departmentId    controllers.QuestionFeedbackController.listUnit(departmentId : Integer)
 
 #listUser
-GET /listUser    controllers.QuestionFeedbackController.listUser()
+GET /listUser/    controllers.QuestionFeedbackController.listUser(departmentId :Integer,unitId:Integer)
 
 
 

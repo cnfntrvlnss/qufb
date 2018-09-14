@@ -1,4 +1,4 @@
-package controllers.deadbolt;
+package services.deadbolt;
 
 import be.objectify.deadbolt.java.DeadboltHandler;
 import be.objectify.deadbolt.java.cache.HandlerCache;

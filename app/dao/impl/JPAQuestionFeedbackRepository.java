@@ -77,22 +77,22 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
                     sql+=" and q.questionTitle like '%"+questionFeedback.getQuestionTitle()+"%'";
                 }
                 if(questionFeedback.getBugHeader()!=null){
-                    sql+=" and q.bugHeader = '"+questionFeedback.getBugHeader()+"'";
+                    sql+=" and q.bugHeader like '%"+questionFeedback.getBugHeader()+"%'";
                 }
                 if(questionFeedback.getFeedbacker()!=null){
-                    sql+=" and q.feedbacker = '"+questionFeedback.getFeedbacker()+"'";
+                    sql+=" and q.feedbacker like '%"+questionFeedback.getFeedbacker()+"%'";
                 }
                 if(questionFeedback.getTransferName()!=null){
-                    sql+=" and q.transferName = '"+questionFeedback.getTransferName()+"'";
+                    sql+=" and q.transferName like '%"+questionFeedback.getTransferName()+"%'";
                 }
                 if(questionFeedback.getDeveloperName()!=null){
-                    sql+=" and q.developerName = '"+questionFeedback.getDeveloperName()+"'";
+                    sql+=" and q.developerName like '%"+questionFeedback.getDeveloperName()+"%'";
                 }
                 if(questionFeedback.getSchemeAuditName()!=null){
-                    sql+=" and q.schemeAuditName = '"+questionFeedback.getSchemeAuditName()+"'";
+                    sql+=" and q.schemeAuditNamelike '%"+questionFeedback.getSchemeAuditName()+"%'";
                 }
                 if(questionFeedback.getVerifyName()!=null){
-                    sql+=" and q.verifyName = '"+questionFeedback.getVerifyName()+"'";
+                    sql+=" and q.verifyName like '%"+questionFeedback.getVerifyName()+"%'";
                 }
 
 

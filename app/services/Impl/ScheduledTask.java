@@ -27,9 +27,9 @@ public class ScheduledTask {
     private void initialize() {
         actorSystem.scheduler().schedule(
                 Duration.create(10, TimeUnit.SECONDS),
-                Duration.create(1, TimeUnit.SECONDS),
+                Duration.create(10, TimeUnit.SECONDS),
                 () -> {
-                    logger.debug("!!!!!!!!!!!!!!! test scheduler once per second.");
+                    //logger.debug("!!!!!!!!!!!!!!! test scheduler once per second.");
                 },
                 executionContext
         );

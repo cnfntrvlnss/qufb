@@ -35,7 +35,7 @@ public class JPAUserRepository implements UserRepository {
     }
 
     enum RoLe {
-        ADMIN, STAFF, MANAGER;
+        ADMIN, STAFF, MANAGER, VP;
     }
 
     //把RoLe中的元素同步到数据库中
@@ -111,6 +111,8 @@ public class JPAUserRepository implements UserRepository {
     public CompletionStage<List<User>> findUsersByUnit(Integer unitId){
         return supplyAsync(()-> jpaApi.withTransaction((EntityManager em) -> {
                 Unit u = em.find(Unit.class, unitId);
+                if(u == null) return new ArrayList<>();
+                logger.debug("in findUsersByUnit, staffs: {}", u.getStaffs().size());
                 return u.getStaffs();
             }
          ));

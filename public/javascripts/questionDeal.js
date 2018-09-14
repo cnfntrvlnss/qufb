@@ -1,17 +1,10 @@
         //加载下拉框的内容
-        listDepartment();
-
         var questionId=$("#questionId").val();
         var updateParam={};//参数对象
-
-        //若问题id为0，则表示从“新建”进入该页面，否则是从超链接进入该页面
-        if(questionId != 0 && questionId != "" && questionId != null){
-            updateParam.questionId = questionId;
-            getQuestionInfo();
-        }else{
-            btnGroup1();//显示第一组按钮，提供保存和提交的操作。
-        }
-
+        var listAllUserParam={};
+        listAllUserParam.departmentId=1;
+        listAllUserParam.unitId=0;
+       listAllUser();
 
 
         //=====================实际的ajax方法==========================================================================
@@ -26,25 +19,38 @@
                         //判断问题状态
                         if(data.operateFlag==1){//提交问题
                             btnGroup1();
+                            listDepartment(1);
+                           // listAllUser(1);
                         }else if(data.operateFlag==2){
                             btnGroup2();//bug负责人处理问题
+                            listDepartment(2);
+                            //listAllUser(2);
                         }else if(data.operateFlag==3){
                             btnGroup3();//问题接口人处理问题
+                             listDepartment(3);
+                             //listAllUser(3);
                         }else if(data.operateFlag==4){
                             btnGroup4();//方案负责人处理问题
+                            listDepartment(4);
+                            //listAllUser(4);
                         }else if(data.operateFlag==5){
                             btnGroup5();//审核人处理问题
+                            listDepartment(5);
+                            //listAllUser(5);
                         }else if(data.operateFlag==6){
                             btnGroup6();//bug负责人审核问题
+                            listDepartment(6);
+                            //listAllUser(6);
                         }else if(data.operateFlag==7){
                             btnGroup7();//验证问题
+                            //listAllUser(7);
                         }else{//只是展示信息，隐藏所有的button
                             btnGroup8();//隐藏全部按钮
+                            //listAllUser(8);
                         }
-
                         //1
                         $("#questionTitle").val(data.questionTitle);
-                        $("#bugHeader").val(data.bugHeader);
+                        $("#bugHeader").val(data.bugHeaderId);
                         $("#questionDescription").val(data.questionDescription);
                         $("#feedbackSuggestion").val(data.feedbackSuggestion);
                         //2
@@ -131,6 +137,12 @@
         $("#btnSubmit1").click(function(){
             operateType=2;//提交操作
             updateParam.submitType=1;//第一个节点提交
+            if($("#bugHeader").val() != null && $("#bugHeader").val() != "" && $("#bugHeader").val() != 0){
+                 updateParam.bugHeader=$("#bugHeader").val();
+            }else{
+                layer.msg("请选择bug负责人");
+                return ;
+            }
             save1();
         })
 
@@ -146,8 +158,8 @@
 
         //bug负责人点击提交
         $("#btnSubmit2").click(function(){
-             if($("#transferName").val() == "" || $("#transferName").val() == null){
-                    layer.msg("请填写问题接口人");
+             if($("#transferName").val() == "" || $("#transferName").val() == null || $("#transferName").val() == 0){
+                    layer.msg("请选择问题接口人");
                     return;
              }
              updateParam.submitType=3;//第二个节点提交
@@ -166,8 +178,8 @@
 
         //问题接口人点击提交
         $("#btnSubmit3").click(function(){
-            if($("#developerName").val()=="" || $("#developerName").val() ==null){
-                   layer.msg("请填写方案责任人");
+            if($("#developerName").val()=="" || $("#developerName").val() ==null || $("#developerName").val() ==0){
+                   layer.msg("请选择方案责任人");
                    return;
              }
             updateParam.submitType=5;//第三个节点提交
@@ -186,8 +198,8 @@
 
         //方案责任人点击提交
         $("#btnSubmit4").click(function(){
-            if($("#schemeAuditName").val()=="" || $("#schemeAuditName").val() ==null){
-                   layer.msg("请填写方案审核人");
+            if($("#schemeAuditName").val() == "" || $("#schemeAuditName").val() == null || $("#schemeAuditName").val() == 0){
+                   layer.msg("请选择方案审核人");
                    return;
             }
             if($("#solution").val()=="" || $("#solution").val() ==null){
@@ -210,8 +222,8 @@
 
         //方案审核人点击提交
         $("#btnSubmit5").click(function(){
-            if($("#schemeAuditName").val()=="" || $("#schemeAuditName").val() ==null){
-                   layer.msg("请填写方案审核人");
+            if($("#resultAuditName").val()== "" || $("#resultAuditName").val() == null || $("#resultAuditName").val() == 0){
+                   layer.msg("请选择方案审核人");
                    return;
             }
             updateParam.submitType=9;//第五个节点提交
@@ -230,8 +242,8 @@
 
         //bug负责人点击提交
         $("#btnSubmit6").click(function(){
-            if($("#verifyName").val()=="" || $("#verifyName").val() ==null){
-                   layer.msg("请填写验证人员");
+            if($("#verifyName").val()== "" || $("#verifyName").val() == null ||  $("#verifyName").val() == 0){
+                   layer.msg("请选择验证人员");
                    return;
             }
             updateParam.submitType=11;//第六个节点提交
@@ -255,23 +267,195 @@
         })
          var listUserParam={};
         //一级部门更改，触发联动二级部门和用户
-        $("#department").change(function(){
-            if($("#department").val()!=0){
-                  listUnit();
-                  listUserParam.departmentId=$("#department").val();
-                  listUser();
+        $("#department1").change(function(){
+            if($("#department1").val()!=0){
+                listUnit(1);
+                listUserParam.departmentId=$("#department1").val();
+                listUserParam.unitId=0;
+                listUser(1);
+            }else if($("#unit1").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit1").val();
+                listUser(1);
+            }else{
+                $("#unit1").html("");
+                $("#bugHeader").html("");
             }
         })
         //二级部门更改，触发联动用户
-
-        $("#unit").change(function(){
-            if($("#unit").val()!=0){
-            listUserParam.departmentId=$("#department").val();
-            listUserParam.unitId=$("#unit").val()
-                  listUser();
+        $("#unit1").change(function(){
+            if($("#unit1").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit1").val();
+                listUser(1);
+            }else if($("#department1").val()!=0){
+                listUserParam.departmentId=$("#department1").val();
+                listUserParam.unitId=0;
+                listUser(1);
+            }else{
+                $("#unit1").html("");
+                $("#bugHeader").html("");
             }
         })
 
+        //一级部门更改，触发联动二级部门和用户
+        $("#department2").change(function(){
+            if($("#department2").val()!=0){
+                listUnit(2);
+                listUserParam.departmentId=$("#department2").val();
+                listUserParam.unitId=0;
+                listUser(2);
+            }else if($("#unit2").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit2").val();
+                listUser(2);
+            }else{
+                $("#unit2").html("");
+                $("#transferName").html("");
+            }
+        })
+        //二级部门更改，触发联动用户
+        $("#unit2").change(function(){
+            if($("#unit2").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit2").val();
+                listUser(2);
+            }else if($("#department2").val()!=0){
+                listUserParam.departmentId=$("#department2").val();
+                listUserParam.unitId=0;
+                listUser(2);
+            }else{
+                $("#unit2").html("");
+                $("#transferName").html("");
+            }
+        })
+
+         //一级部门更改，触发联动二级部门和用户
+        $("#department3").change(function(){
+            if($("#department3").val()!=0){
+                listUnit(3);
+                listUserParam.departmentId=$("#department3").val();
+                listUserParam.unitId=0;
+                listUser(3);
+            }else if($("#unit3").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit3").val();
+                listUser(3);
+            }else{
+                $("#unit3").html("");
+                $("#developerName").html("");
+            }
+        })
+        //二级部门更改，触发联动用户
+        $("#unit3").change(function(){
+           if($("#unit3").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit3").val();
+                listUser(3);
+            }else if($("#department3").val()!=0){
+                listUserParam.departmentId=$("#department3").val();
+                listUserParam.unitId=0;
+                listUser(3);
+            }else{
+                $("#unit3").html("");
+                $("#developerName").html("");
+            }
+        })
+
+         //一级部门更改，触发联动二级部门和用户
+        $("#department4").change(function(){
+            if($("#department4").val()!=0){
+                listUnit(4);
+                listUserParam.departmentId=$("#department4").val();
+                listUserParam.unitId=0;
+                listUser(4);
+            }else if($("#unit4").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit4").val();
+                listUser(4);
+            }else{
+                $("#unit4").html("");
+                $("#schemeAuditName").html("");
+            }
+        })
+        //二级部门更改，触发联动用户
+        $("#unit4").change(function(){
+            if($("#unit4").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit4").val();
+                listUser(4);
+            }else if($("#department4").val()!=0){
+                listUserParam.departmentId=$("#department4").val();
+                listUserParam.unitId=0;
+                listUser(4);
+            }else{
+                $("#unit4").html("");
+                $("#schemeAuditName").html("");
+            }
+        })
+
+         //一级部门更改，触发联动二级部门和用户
+        $("#department5").change(function(){
+            if($("#department5").val()!=0){
+                listUnit(5);
+                listUserParam.departmentId=$("#department5").val();
+                listUserParam.unitId=0;
+                listUser(5);
+            }else if($("#unit5").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit5").val();
+                listUser(5);
+            }else{
+                $("#unit5").html("");
+                $("#resultAuditName").html("");
+            }
+        })
+        //二级部门更改，触发联动用户
+        $("#unit5").change(function(){
+            if($("#unit5").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit5").val();
+                listUser(5);
+            }else if($("#department5").val()!=0){
+                listUserParam.departmentId=$("#department5").val();
+                listUserParam.unitId=0;
+                listUser(5);
+            }else{
+                $("#unit5").html("");
+                $("#resultAuditName").html("");
+            }
+        })
+ //一级部门更改，触发联动二级部门和用户
+        $("#department6").change(function(){
+            if($("#department6").val()!=0){
+                listUnit(6);
+                listUserParam.departmentId=$("#department6").val();
+                listUserParam.unitId=0;
+                listUser(6);
+            }else if($("#unit6").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit6").val();
+                listUser(6);
+            }else{
+                $("#unit6").html("");
+                $("#verifyName").html("");
+            }
+        })
+        //二级部门更改，触发联动用户
+        $("#unit6").change(function(){
+            if($("#unit6").val()!=0){
+                listUserParam.departmentId=0;
+                listUserParam.unitId=$("#unit6").val();
+                listUser(6);
+            }else if($("#department6").val()!=0){
+                listUserParam.departmentId=$("#department6").val();
+                listUserParam.unitId=0;
+                listUser(6);
+            }else{
+                $("#unit6").html("");
+                $("#verifyName").html("");
+            }
+        })
         //============================业务逻辑处理=======================================================================
 
         //提交问题者处理
@@ -283,11 +467,13 @@
                 return;
             }
             if($("#bugHeader").val()!=null && $("#bugHeader").val()!=""){
-                 updateParam.bugHeader=$("#bugHeader").val();
-            }else{
+                 updateParam.bugHeaderId=$("#bugHeader").val();
+                 updateParam.bugHeader=$("#bugHeader option:selected").text();
+            }
+            /*else{
                 layer.msg("请填写bug负责人");
                 return ;
-            }
+            }*/
             if($("#questionDescription").val()!=null && $("#questionDescription").val()!=""){
                  updateParam.questionDescription=$("#questionDescription").val();
             }else{
@@ -307,34 +493,39 @@
         //bug负责人处理问题
         function save2(){
             updateParam.auditSuggestion=$("#auditSuggestion").val();//审核意见
-            updateParam.transferName=$("#transferName").val();
+            updateParam.transferName=$("#transferName option:selected").text();
+            updateParam.transferId=$("#transferName").val();
             updateQuestionInfo();
         }
 
         //问题接口人处理问题
         function save3(){
             updateParam.transferSuggestion=$("#transferSuggestion").val();//审核意见
-            updateParam.developerName=$("#developerName").val();
+            updateParam.developerName=$("#developerName option:selected").text();
+            updateParam.developerId=$("#developerName").val();
             updateQuestionInfo();
         }
 
         //方案负责人处理
         function save4(){
             updateParam.solution=$("#solution").val();//审核意见
-            updateParam.schemeAuditName=$("#schemeAuditName").val();
+            updateParam.schemeAuditName=$("#schemeAuditName option:selected").text();
+            updateParam.schemeAuditId=$("#schemeAuditName").val();
             updateQuestionInfo();
         }
 
         //方案审核人处理问题
         function save5(){
-            updateParam.resultAuditName=$("#resultAuditName").val();//审核意见
+            updateParam.resultAuditId=$("#resultAuditName").val();//审核意见
+             updateParam.resultAuditName=$("#resultAuditName option:selected").text();//审核意见
             updateParam.schemeAuditSuggestion=$("#schemeAuditSuggestion").val();
             updateQuestionInfo();
         }
 
         //bug负责人处理问题
         function save6(){
-            updateParam.verifyName=$("#verifyName").val();//审核意见
+            updateParam.verifyId=$("#verifyName").val();//审核意见
+            updateParam.verifyName=$("#verifyName option:selected").text();//审核意见
             updateParam.resultAuditSuggestion=$("#resultAuditSuggestion").val();
             updateQuestionInfo();
            }
@@ -354,7 +545,6 @@
             divGroup5();
             divGroup6();
             divGroup7();
-
             $("#btnGroup2").addClass("btnGroup");//2组隐藏
             $("#btnGroup3").addClass("btnGroup");//3组隐藏
             $("#btnGroup4").addClass("btnGroup");//4组隐藏
@@ -371,6 +561,7 @@
             divGroup5();
             divGroup6();
             divGroup7();
+
             $("#btnGroup1").addClass("btnGroup");//1组隐藏
             $("#btnGroup3").addClass("btnGroup");//3组隐藏
             $("#btnGroup4").addClass("btnGroup");//4组隐藏
@@ -481,42 +672,54 @@
         function divGroup1(){
             $("#questionTitle").attr("disabled","true");
             $("#questionTitle").css("backgroundColor","#f0f0f0");
-            $("#bugHeader").attr("disabled","true");
-            $("#bugHeader").css("backgroundColor","#f0f0f0");
             $("#questionDescription").attr("disabled","true");
             $("#questionDescription").css("backgroundColor","#f0f0f0");
             $("#feedbackSuggestion").attr("disabled","true");
             $("#feedbackSuggestion").css("backgroundColor","#f0f0f0");
+            $("#bugHeader").attr("disabled","true");
+            $("#bugHeader").css("backgroundColor","#f0f0f0");
+            $("#departmentDiv1").css("display","none");//隐藏div
+            $("#unitDiv1").css("display","none");//隐藏div
        }
 
         //disable divGroup2
         function divGroup2(){
             $("#transferName").attr("disabled","true");
             $("#auditSuggestion").attr("disabled","true");
+            $("#departmentDiv2").css("display","none");//隐藏div
+            $("#unitDiv2").css("display","none");//隐藏div
        }
 
         //disable divGroup3
         function divGroup3(){
             $("#developerName").attr("disabled","true");
             $("#transferSuggestion").attr("disabled","true");
+            $("#departmentDiv3").css("display","none");//隐藏div
+            $("#unitDiv3").css("display","none");//隐藏div
         }
 
         //disable divGroup4
         function divGroup4(){
             $("#schemeAuditName").attr("disabled","true");
             $("#solution").attr("disabled","true");
+            $("#departmentDiv4").css("display","none");//隐藏div
+            $("#unitDiv4").css("display","none");//隐藏div
        }
 
         //disable divGroup5
         function divGroup5(){
             $("#resultAuditName").attr("disabled","true");
             $("#schemeAuditSuggestion").attr("disabled","true");
+            $("#departmentDiv5").css("display","none");//隐藏div
+            $("#unitDiv5").css("display","none");//隐藏div
         }
 
         //disable divGroup6
         function divGroup6(){
             $("#verifyName").attr("disabled","true");
             $("#resultAuditSuggestion").attr("disabled","true");
+            $("#departmentDiv6").css("display","none");//隐藏div
+            $("#unitDiv6").css("display","none");//隐藏div
        }
 
         //disable divGroup7
@@ -524,7 +727,7 @@
             $("#verifySuggestion").attr("disabled","true");
         }
         //====================================获取下拉框的内容====================================================
-        function listDepartment(){
+        function listDepartment(department){
              $.ajax({
                   url: "/listDepartment",
                   dataType:"json",
@@ -532,11 +735,44 @@
                   type: 'GET',
                   asnyc:false,
                   success: function (result) {
-                   $("#department").html("");
-                   $("#department").append("<option value='0'>请选择一级部门</option>");
+                  if(department==1){
+                        $("#department1").html("");
+                        $("#department1").append("<option value='0'>请选择一级部门</option>");
                         for(var i=0;i<result.length;i++){
-                            $("#department").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                            $("#department1").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
                         }
+                  }else if(department==2){
+                        $("#department2").html("");
+                        $("#department2").append("<option value='0'>请选择一级部门</option>");
+                        for(var i=0;i<result.length;i++){
+                            $("#department2").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                        }
+                  }else if(department==3){
+                          $("#department3").html("");
+                          $("#department3").append("<option value='0'>请选择一级部门</option>");
+                          for(var i=0;i<result.length;i++){
+                              $("#department3").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                          }
+                    }else if(department==4){
+                           $("#department4").html("");
+                           $("#department4").append("<option value='0'>请选择一级部门</option>");
+                           for(var i=0;i<result.length;i++){
+                               $("#department4").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                           }
+                     }else if(department==5){
+                            $("#department5").html("");
+                            $("#department5").append("<option value='0'>请选择一级部门</option>");
+                            for(var i=0;i<result.length;i++){
+                                $("#department5").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                            }
+                      }else if(department==6){
+                           $("#department6").html("");
+                           $("#department6").append("<option value='0'>请选择一级部门</option>");
+                           for(var i=0;i<result.length;i++){
+                               $("#department6").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                           }
+                     }
+
                    },
                     error:function(){
                     }
@@ -544,41 +780,211 @@
 
         }
         //获取二级部门
-        function listUnit(){
+        function listUnit(unitType){
              $.ajax({
-                  url: "/listUnit/"+$("#department option:selected").text(),
+                  url: "/listUnit/"+$("#department"+unitType).val(),
                   dataType:"json",
                   contentType : 'application/json;charset=UTF-8',
                   type: 'GET',
                   asnyc:false,
                   success: function (result) {
-                   $("#unit").html("");
-                   $("#unit").append("<option value='0'>请选择二级部门</option>");
-                        for(var i=0;i<result.length;i++){
-                            $("#unit").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
-                        }
+                   if(result.length!=0){
+                       if(unitType == 1){
+                            $("#unit1").html("");
+                            $("#unit1").append("<option value='0'>请选择二级部门</option>");
+                            for(var i=0;i<result.length;i++){
+                                $("#unit1").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                            }
+                       }else if(unitType == 2){
+                            $("#unit2").html("");
+                            $("#unit2").append("<option value='0'>请选择二级部门</option>");
+                            for(var i=0;i<result.length;i++){
+                                $("#unit2").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                            }
+                       }else if(unitType == 3){
+                            $("#unit3").html("");
+                            $("#unit3").append("<option value='0'>请选择二级部门</option>");
+                            for(var i=0;i<result.length;i++){
+                                $("#unit3").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                            }
+                       }else if(unitType == 4){
+                            $("#unit4").html("");
+                            $("#unit4").append("<option value='0'>请选择二级部门</option>");
+                            for(var i=0;i<result.length;i++){
+                                $("#unit4").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                            }
+                       }else if(unitType == 5){
+                            $("#unit5").html("");
+                            $("#unit5").append("<option value='0'>请选择二级部门</option>");
+                            for(var i=0;i<result.length;i++){
+                                $("#unit5").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                            }
+                       }else if(unitType == 6){
+                            $("#unit6").html("");
+                            $("#unit6").append("<option value='0'>请选择二级部门</option>");
+                            for(var i=0;i<result.length;i++){
+                                $("#unit6").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                            }
+                       }
+                       }else{
+                             layer.msg("该部门下还没有二级部门，请选择其他部门或在部门管理页面添加相应的二级部门。");
+                       }
                    },
                     error:function(){
                     }
                });
         }
         //获取所有的用户列表
-        function listUser(){
+        function listUser(userType){
+            if(listUserParam.departmentId == 0 && listUserParam.unitId == 0){//一级部门及二级部门都是0，则不执行任何操作
+                   layer.msg("请选择部门");
+            }
              $.ajax({
                   url: "/listUser/",
                   dataType:"json",
-                  contentType : 'application/json;charset=UTF-8',
-                  type: 'GET',
-                  asnyc:false,
-                   data:JSON.stringify(listUserParam), //转JSON字符串
-                  success: function (result) {
-                   $("#bugHeader").html("");
-                   $("#bugHeader").append("<option value='0'>请选择用户</option>");
-                        for(var i=0;i<result.length;i++){
-                            $("#bugHeader").append("<option value='"+result[i].userid+"'>"+result[i].name+"</option>");
+                    contentType : 'application/json;charset=UTF-8',
+                    type: 'GET',
+                    asnyc:false,
+                    data:listUserParam, //转JSON字符串
+                    success: function (result) {
+                        if(result.length != 0){
+                            if(userType == 1){
+                                $("#bugHeader").html("");
+                                for(var i=0;i<result.length;i++){
+                                    $("#bugHeader").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                }
+                            }else if(userType == 2 ){
+                                $("#transferName").html("");
+                                for(var i=0;i<result.length;i++){
+                                    $("#transferName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                }
+                            }else if(userType == 3 ){
+                                 $("#developerName").html("");
+                                 for(var i=0;i<result.length;i++){
+                                     $("#developerName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                 }
+                             }else if(userType == 4 ){
+                                   $("#schemeAuditName").html("");
+                                   for(var i=0;i<result.length;i++){
+                                       $("#schemeAuditName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                   }
+                             }else if(userType == 5 ){
+                                   $("#resultAuditName").html("");
+                                   for(var i=0;i<result.length;i++){
+                                       $("#resultAuditName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                   }
+                             }else if(userType == 6 ){
+                                 $("#verifyName").html("");
+                                 for(var i=0;i<result.length;i++){
+                                     $("#verifyName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                 }
+                            }
+                        }else{
+                            layer.msg("该部门下还没有用户，请选择其他部门或在用户管理页面添加相应的用户。");
                         }
-                   },
+                    },
                     error:function(){
                     }
                });
         }
+
+
+          //获取所有的用户列表
+
+            function listAllUser(allUserType){
+                 $.ajax({
+                      url: "/listUser/",
+                      dataType:"json",
+                        contentType : 'application/json;charset=UTF-8',
+                        type: 'GET',
+                        asnyc:false,
+                        data:listAllUserParam, //转JSON字符串
+                        success: function (result) {
+                            if(result.length != 0){
+                                if(allUserType == 1){
+                                    $("#bugHeader").html("");
+                                     for(var i=0;i<result.length;i++){
+                                        $("#bugHeader").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                    }
+                                }else if(allUserType == 2){
+                                    $("#bugHeader").html("");
+                                    $("#transferName").html("");
+                                     for(var i=0;i<result.length;i++){
+                                        $("#bugHeader").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                        $("#transferName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                    }
+                                }else if(allUserType == 3){
+                                     $("#bugHeader").html("");
+                                     $("#transferName").html("");
+                                     $("#developerName").html("");
+                                      for(var i=0;i<result.length;i++){
+                                         $("#bugHeader").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                         $("#transferName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                         $("#developerName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                     }
+                                 }else if(allUserType == 4){
+                                       $("#bugHeader").html("");
+                                       $("#transferName").html("");
+                                       $("#developerName").html("");
+                                       $("#schemeAuditName").html("");
+                                        for(var i=0;i<result.length;i++){
+                                           $("#bugHeader").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#transferName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#developerName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#schemeAuditName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                       }
+                                   }else if(allUserType == 5){
+                                       $("#bugHeader").html("");
+                                       $("#transferName").html("");
+                                       $("#developerName").html("");
+                                       $("#schemeAuditName").html("");
+                                       $("#resultAuditName").html("");
+                                        for(var i=0;i<result.length;i++){
+                                           $("#bugHeader").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#transferName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#developerName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#schemeAuditName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#resultAuditName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                       }
+                                   }else{
+                                       $("#bugHeader").html("");
+                                       $("#transferName").html("");
+                                       $("#developerName").html("");
+                                       $("#schemeAuditName").html("");
+                                       $("#resultAuditName").html("");
+                                       $("#verifyName").html("");
+                                       $("#bugHeader").append("<option value='0'>请选择</option>");
+                                       $("#transferName").append("<option value='0'>请选择</option>");
+                                       $("#developerName").append("<option value='0'>请选择</option>");
+                                       $("#schemeAuditName").append("<option value='0'>请选择</option>");
+                                       $("#resultAuditName").append("<option value='0'>请选择</option>");
+                                       $("#verifyName").append("<option value='0'>请选择</option>");
+
+                                        for(var i=0;i<result.length;i++){
+                                           $("#bugHeader").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#transferName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#developerName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#schemeAuditName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#resultAuditName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                           $("#verifyName").append("<option value='"+result[i].userId+"'>"+result[i].name+"</option>");
+                                       }
+                                   }
+
+                            }else{
+                                layer.msg("该部门下还没有用户，请选择其他部门或在用户管理页面添加相应的用户。");
+                            }
+
+                            //判断是否调用问题的基本信息
+                            //若问题id为0，则表示从“新建”进入该页面，否则是从超链接进入该页面
+                            if(questionId != 0 && questionId != "" && questionId != null){
+                                updateParam.questionId = questionId;
+                                getQuestionInfo();
+                            }else{
+                               btnGroup1();//显示第一组按钮，提供保存和提交的操作。
+                               listDepartment(1);
+                            }
+                        },
+                        error:function(){
+                        }
+                   });
+            }

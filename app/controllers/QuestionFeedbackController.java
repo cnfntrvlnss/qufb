@@ -83,9 +83,11 @@ public class QuestionFeedbackController extends Controller {
 		if(submitType == SubmitTypeEnum.QUESTION_SAVE.getValue()){//第一次保存
 			questionFeedback.setQuestionState(QuestionStateEnum.FEEDBACKER.getValue());//设置问题状态为1
 			questionFeedback.setFlowState(FlowStateEnum.DRAFT.getValue());//设置流程状态为1
+			questionFeedback.setFlowStateName("DRAFT");//设置流程状态为1
 		}else if(submitType == SubmitTypeEnum.QUESTION_SUBMIT.getValue()){//第一次提交
 			questionFeedback.setQuestionState(QuestionStateEnum.BUG_HEADER.getValue());//设置问题状态为2
 			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());//设置流程状态为2
+			questionFeedback.setFlowStateName("SUBMIT");//设置流程状态为2
 		}
 		return questRepo.save(questionFeedback).thenApplyAsync(p -> { return  ok();	}, ec.current());
 	}
@@ -116,6 +118,7 @@ public class QuestionFeedbackController extends Controller {
 	 * @param questionId：问题id，数据库主键
 	 * @return
 	 */
+
 	public CompletionStage<Result> getQuestionInfo(Integer questionId) {
 		String userName=session().get("username");//当前登录用户名
 		//操作标志码1：第一个环节2、第二个环节 3、第三个环节 4、第四个环节 5、第五个环节 6、第六个环节 7、第七个环节 8、第八个环节
@@ -160,42 +163,55 @@ public class QuestionFeedbackController extends Controller {
 		if(submitType==SubmitTypeEnum.QUESTION_SUBMIT.getValue()){//问题提交者提交问题后，问题状态和流程状态分别变为2 2
 			questionFeedback.setQuestionState(QuestionStateEnum.BUG_HEADER.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());
+			questionFeedback.setFlowStateName("SUBMIT");//设置流程状态为2
 		}else if(submitType==SubmitTypeEnum.BUG_HEADER_REJECT.getValue()){//bug负责人驳回问题状态和流程状态分别变为 11
 			questionFeedback.setQuestionState(QuestionStateEnum.FEEDBACKER.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.DRAFT.getValue());
+			questionFeedback.setFlowStateName("DRAFT");
 		}else if(submitType==SubmitTypeEnum.BUG_HEADER_SUBMIT.getValue()){//bug负责人提交 问题状态和流程状态分别变为3 2
 			questionFeedback.setQuestionState(QuestionStateEnum.TRANSFER.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());
+			questionFeedback.setFlowStateName("SUBMIT");
 		}else if(submitType==SubmitTypeEnum.TRANSFER_REJECT.getValue()){//接口人驳回 问题状态和流程状态分别变为2 2
 			questionFeedback.setQuestionState(QuestionStateEnum.BUG_HEADER.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());
+			questionFeedback.setFlowStateName("SUBMIT");
 		}else if(submitType==SubmitTypeEnum.TRANSFER_SUBMIT.getValue()){//接口人提交 问题状态和流程状态分别变为4 3
 			questionFeedback.setQuestionState(QuestionStateEnum.DEVELOPER.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.ANALYSE.getValue());
+			questionFeedback.setFlowStateName("ANALYSE");
 		}else if(submitType==SubmitTypeEnum.DEVELOPER_REJECT.getValue()){//方案责任人驳回 问题状态和流程状态分别变为3 2
 			questionFeedback.setQuestionState(QuestionStateEnum.TRANSFER.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());
+			questionFeedback.setFlowStateName("SUBMIT");
 		}else if(submitType==SubmitTypeEnum.DEVELOPER_SUBMIT.getValue()){//方案责任人提交 问题状态和流程状态分别变为5 4
 			questionFeedback.setQuestionState(QuestionStateEnum.SCHEME_AUDITOR.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.REVIEW.getValue());
+			questionFeedback.setFlowStateName("REVIEW");
 		}else if(submitType==SubmitTypeEnum.SCHEMER_AUDIT_REJECT.getValue()){//方案审核人驳回 问题状态和流程状态分别变为4 3
 			questionFeedback.setQuestionState(QuestionStateEnum.DEVELOPER.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.ANALYSE.getValue());
+			questionFeedback.setFlowStateName("ANALYSE");
 		}else if(submitType==SubmitTypeEnum.SCHEMER_AUDIT_SUBMIT.getValue()){//方案审核人提交 问题状态和流程状态分别变为6 5
 			questionFeedback.setQuestionState(QuestionStateEnum.AUDITOR.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.VERIFY.getValue());
+			questionFeedback.setFlowStateName("VERIFY");
 		}else if(submitType==SubmitTypeEnum.RESULT_AUDIT_REJECT.getValue()){//结果审核人驳回 问题状态和流程状态分别变为4 3
 			questionFeedback.setQuestionState(QuestionStateEnum.DEVELOPER.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.ANALYSE.getValue());
+			questionFeedback.setFlowStateName("ANALYSE");
 		}else if(submitType==SubmitTypeEnum.RESULT_AUDIT_SUBMIT.getValue()){//结果审核人提交 问题状态和流程状态分别变为7 5
 			questionFeedback.setQuestionState(QuestionStateEnum.VERIFY.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.VERIFY.getValue());
+			questionFeedback.setFlowStateName("VERIFY");
 		}else if(submitType==SubmitTypeEnum.VARIFY_REJECT.getValue()){//验证人员驳回 问题状态和流程状态分别变为4 3
 			questionFeedback.setQuestionState(QuestionStateEnum.DEVELOPER.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.ANALYSE.getValue());
+			questionFeedback.setFlowStateName("ANALYSE");
 		}else if(submitType==SubmitTypeEnum.VERIFY_CLOSE.getValue()){//验证人员关闭问题 问题状态和流程状态分别变为8 6
 			questionFeedback.setQuestionState(QuestionStateEnum.DONE.getValue());
 			questionFeedback.setFlowState(FlowStateEnum.CLOSED.getValue());
+			questionFeedback.setFlowStateName("CLOSED");
 		}
 		return questRepo.updateNotNull(questionFeedback).thenApplyAsync((v) -> ok());
 	}
@@ -230,22 +246,29 @@ public class QuestionFeedbackController extends Controller {
 	 * 根据一级部门id获取该一级部门下所有的二级部门
 	 * lixin
 	 * 2018-9-13 09:25:12
-	 * @param departmentName:
+	 * @param departmentId
+	 * :
 	 * @return
 	 */
-	public CompletionStage<Result> listUnit(String departmentName) {
-		return userRepository.findUnitsBySection(departmentName).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
+	public CompletionStage<Result> listUnit(Integer departmentId) {
+		return userRepository.findUnitsBySection(departmentId).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
 	}
 
 	/**
 	 * 获取规定条件下的用户
 	 * @return
 	 */
-	@BodyParser.Of(BodyParser.Json.class)
-	public CompletionStage<Result> listUser() {
-		JsonNode json = request().body().asJson();
-		Integer departmentId=json.get("departmentId").asInt();
-		Integer unitId=json.get("unitId").asInt();
-		return userRepository.findUsersByUnit(departmentId,unitId).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
+	public CompletionStage<Result> listUser(Integer departmentId,Integer unitId) {
+		if(departmentId == null || departmentId == 0){
+			if(unitId == null || unitId == 0){//若一级部门id和二级部门id都是0
+				return null;
+			}
+		}
+
+		if(unitId==null || unitId ==0){//若二级部门id为空，则取一级部门用户
+			return userRepository.findUsersBySection(departmentId).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
+		}else{
+			return userRepository.findUsersByUnit(unitId).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
+		}
 	}
 }

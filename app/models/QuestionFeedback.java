@@ -13,7 +13,7 @@ import java.util.Date;
 @Entity
 public class QuestionFeedback {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     public Integer questionId;//问题反馈系统id
 	public String questionCode;//问题编号
 	public String questionTitle;//问题标题
@@ -63,7 +63,8 @@ public class QuestionFeedback {
 	public Integer questionType;//问题类型
 	public Integer questionLevel;//问题等级
 
-	public Integer flowState;//流程id
+	public Integer flowState;//流程状态id
+	public String flowStateName;//流程状态名称
 	// 冗余字段
 	@Transient
 	public Integer submitType;//提交方式
@@ -401,5 +402,13 @@ public class QuestionFeedback {
 
 	public void setOperateFlag(Integer operateFlag) {
 		this.operateFlag = operateFlag;
+	}
+
+	public String getFlowStateName() {
+		return flowStateName;
+	}
+
+	public void setFlowStateName(String flowStateName) {
+		this.flowStateName = flowStateName;
 	}
 }

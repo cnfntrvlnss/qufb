@@ -22,47 +22,60 @@
         <div class="col-md-12 oddDiv" >
             <!-提交问题的基本信息->
             <div class="col-md-12">
-                <div class="col-md-6">
-                    <div class="col-md-4">
-                        <label  >问题标题:</label>
-                    </div>
-                    <div  class="col-md-8">
-                        <input name="questionTitle" class ="form-control" id="questionTitle"/>
+                <div class="col-md-12">
+                    <div class="form-group clearfix">
+                        <div class="col-md-2 col-xs-2">
+                            <label  >问题标题:</label>
+                        </div>
+                        <div  class="col-md-9 col-xs-9">
+                            <input name="questionTitle" class ="form-control" id="questionTitle"/>
+                        </div>
+                        <div  class="col-md-1 col-xs-1">
+                            <label style="color:red;font-size:16px;">*</label>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-12">
-
                 <div class="col-md-12">
-                    <div  class="col-md-3">
-                        <label >BUG负责人:</label>
-                    </div>
-                    <div  class="col-md-3">
-                        <select class ="form-control"name="bugHeader"  id="department">
-                            <option value="0">请选择一级部门</option>
-                        </select>
-                    </div>
-                    <div  class="col-md-3">
-                        <select class ="form-control"name="bugHeader"  id="unit">
+                    <div class="form-group clearfix">
+                        <div  class="col-md-2 col-xs-2">
+                            <label >BUG负责人:</label>
+                        </div>
+                        <div  class="col-md-2 col-xs-2" id="departmentDiv1" >
+                            <select class ="form-control"name="bugHeader"  id="department1">
+                            </select>
+                        </div>
+                        <div  class="col-md-2 col-xs-2" id="unitDiv1">
+                            <select class ="form-control"name="bugHeader"  id="unit1">
 
-                        </select>
-                    </div>
-                    <div  class="col-md-3">
-                        <select class ="form-control"name="bugHeader"  id="bugHeader">
+                            </select>
+                        </div>
+                        <div  class="col-md-2 col-xs-2">
+                            <select class ="form-control"name="bugHeader"  id="bugHeader">
 
-                        </select>
+                            </select>
+                        </div>
+
                     </div>
                 </div>
             </div>
             <div  class="col-md-12">
-                <div class="col-md-6">
-                    <div class="col-md-4"><label>问题描述:</label></div>
-                    <div class="col-md-8"><textarea class ="form-control" name="questionDescription"    prompt="请限制在1024个字数以内" data-options="multiline:true" id="questionDescription"></textarea></div>
+                <div class="col-md-12">
+                    <div class="form-group clearfix">
+                    <div class="col-md-2 col-xs-2"><label>问题描述:</label></div>
+                    <div class="col-md-9 col-xs-9"><textarea class ="form-control" name="questionDescription"    prompt="请限制在1024个字数以内" data-options="multiline:true" id="questionDescription"></textarea></div>
+                        <div  class="col-md-1 col-xs-1">
+                            <label style="color:red;font-size:16px;">*</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="col-md-4"><label >修改建议:</label></div>
-                    <div class="col-md-8"><textarea class ="form-control" name="feedbackSuggestion"  prompt="请限制在1024个字数以内" data-options=" multiline:true" id="feedbackSuggestion"></textarea></div>
-                </div>
+                <div class="col-md-12">
+                    <div class="form-group clearfix">
+                    <div class="col-md-2 col-xs-2"><label >修改建议:</label></div>
+                    <div class="col-md-9 col-xs-9"><textarea class ="form-control" name="feedbackSuggestion"  prompt="请限制在1024个字数以内" data-options=" multiline:true" id="feedbackSuggestion"></textarea></div>
+                    </div>
+                    </div>
             </div>
         </div>
         <div class="col-md-12 buttonDiv" id="btnGroup1">
@@ -78,19 +91,33 @@
         <div class="col-md-12 evenDiv">
             <!-审核问题的信息->
                 <div class="col-md-12">
-                    <div class="col-md-6">
-                        <div class="col-md-4">
-                            <label>选择问题接口人:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input class ="form-control" name="transferName"  id="transferName">
+                    <div class="col-md-12">
+                        <div class="form-group clearfix">
+                            <div  class="col-md-2 col-xs-2">
+                                <label >选择问题接口人:</label>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="departmentDiv2">
+                                <select class ="form-control"name="department2"  id="department2">
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="unitDiv2">
+                                <select class ="form-control"name="unit2"  id="unit2">
+
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2">
+                                <select class ="form-control"name="transferName"  id="transferName">
+
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="col-md-4">
+
+                    <div class="col-md-12">
+                        <div class="col-md-2 col-xs-2">
                             <label >审核意见:</label>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9 col-xs-9">
                             <textarea class ="form-control" name="auditSuggestion" id="auditSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
                         </div>
                     </div>
@@ -109,19 +136,34 @@
         <div class="col-md-12 oddDiv">
             <!-接口人处理问题->
                 <div class="col-md-12">
-                    <div class="col-md-6">
-                        <div class="col-md-4">
-                            <label>选择方案责任人:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input class ="form-control" name="developerName"  id="developerName" >
+                    <div class="col-md-12">
+                        <div class="form-group clearfix">
+                            <div  class="col-md-2 col-xs-2">
+                                <label >选择方案责任人:</label>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="departmentDiv3">
+                                <select class ="form-control"name="department3"  id="department3">
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="unitDiv3">
+                                <select class ="form-control"name="unit3"  id="unit3">
+
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2">
+                                <select class ="form-control"name="developerName"  id="developerName">
+
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="col-md-4">
+
+
+                    <div class="col-md-12">
+                        <div class="col-md-2 col-xs-2">
                             <label >审核意见:</label>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9 col-xs-9">
                             <textarea class ="form-control" name="transferSuggestion"  id="transferSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
                         </div>
                     </div>
@@ -140,19 +182,36 @@
         <div class="col-md-12 evenDiv">
             <!-方案责任人处理问题->
                 <div class="col-md-12">
-                    <div class="col-md-6">
-                        <div class="col-md-4">
-                            <label>选择方案审核人:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input class ="form-control" name="schemeAuditName"  id="schemeAuditName" >
+                    <div class="col-md-12">
+                        <div class="form-group clearfix">
+                            <div  class="col-md-2 col-xs-2">
+                                <label >选择方案审核人:</label>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="departmentDiv4">
+                                <select class ="form-control"name="bugHeader"  id="department4">
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="unitDiv4">
+                                <select class ="form-control"name="bugHeader"  id="unit4">
+
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2">
+                                <select class ="form-control"name="schemeAuditName"  id="schemeAuditName">
+
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="col-md-4">
+
+
+
+
+                    <div class="col-md-12">
+                        <div class="col-md-2 col-xs-2">
                             <label >解决方案:</label>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9 col-xs-9">
                             <textarea class ="form-control" name="solution"  id="solution" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
                         </div>
                     </div>
@@ -170,19 +229,34 @@
         <div class="col-md-12 oddDiv">
             <!-审核方案->
                 <div class="col-md-12 ">
-                    <div class="col-md-6">
-                        <div class="col-md-4">
-                            <label>选择BUG负责人:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input class ="form-control" name="resultAuditName"  id="resultAuditName"   >
+                    <div class="col-md-12">
+                        <div class="form-group clearfix">
+                            <div  class="col-md-2 col-xs-2">
+                                <label >选择BUG负责人:</label>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="departmentDiv5">
+                                <select class ="form-control"name="bugHeader"  id="department5">
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="unitDiv5">
+                                <select class ="form-control"name="bugHeader"  id="unit5">
+
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2">
+                                <select class ="form-control"name="resultAuditName"  id="resultAuditName">
+
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="col-md-4">
+
+
+                    <div class="col-md-12">
+                        <div class="col-md-2 col-xs-2">
                             <label >方案审核意见:</label>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9 col-xs-9">
                             <textarea class ="form-control" name="schemeAuditSuggestion"  id="schemeAuditSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
                         </div>
                     </div>
@@ -201,19 +275,33 @@
         <div  class="col-md-12 evenDiv">
             <!-bug负责人审核->
                 <div class="col-md-12">
-                    <div class="col-md-6">
-                        <div class="col-md-4">
-                            <label>选择验证人员:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input class ="form-control" name="verifyName"  id="verifyName"   >
+                    <div class="col-md-12">
+                        <div class="form-group clearfix">
+                            <div  class="col-md-2 col-xs-2">
+                                <label >选择验证人员:</label>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="departmentDiv6">
+                                <select class ="form-control"name="bugHeader"  id="department6">
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2" id="unitDiv6">
+                                <select class ="form-control"name="bugHeader"  id="unit6">
+
+                                </select>
+                            </div>
+                            <div  class="col-md-2 col-xs-2">
+                                <select class ="form-control"name="verifyName"  id="verifyName">
+
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="col-md-4">
+
+                    <div class="col-md-12">
+                        <div class="col-md-2 col-xs-2">
                             <label >方案审核意见:</label>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9 col-xs-9">
                             <textarea class ="form-control" name="resultAuditSuggestion"  id="resultAuditSuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
                         </div>
                     </div>
@@ -232,11 +320,11 @@
         <div  class="col-md-12 evenDiv">
             <!-验证人员验证问题->
                 <div class="col-md-12 ">
-                    <div class="col-md-6">
-                        <div class="col-md-4">
+                    <div class="col-md-12">
+                        <div class="col-md-2 col-xs-2">
                             <label >验证意见:</label>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9 col-xs-9">
                             <textarea class ="form-control" name="resultAuditSuggestion"  id="verifySuggestion" prompt="请限制在1024个字数以内" data-options="multiline:true"></textarea>
                         </div>
                     </div>

@@ -8,9 +8,7 @@
 .buttonDiv{
  background-color: #84d7ff;
 }
-.buttonPlace{
-    margin-left:45%;
-}
+
 .table thead{
     background-color: #aae3fe;
 }
@@ -22,9 +20,7 @@
     border: 1px #7fd3ff47 solid;
     text-align: center;
 }
-.submitTables{
-    margin-left:35%;
-}
+
 .submitTables input{
     width:100%;
     height: 30px;
@@ -35,23 +31,23 @@
 .submitTables textarea{
     width:100%;
 }
-.submitTables button{
-    margin-left:80%;
-    margin-top:5%;
-    width:50px;
-}
+
 .submitLabel{
     color:red;
     font-size:18px;
 }
 .topbar{
-    background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#008eef), to(#f6f6f8));/*谷歌*/
+    background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#52aff0), to(#c8fcff));/*谷歌*/
     height:60px;
 }
 .menu{
- background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#008eef), to(#f6f6f8));/*谷歌*/
- height:180px;
+ background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#c8fcff), to(#2dc3f3));/*谷歌*/
+ height:585px;
+ opacity: 0.45;
 }
 .work{
- background-color: #7fd3ff47;
+  background:rgba(240,251,255,1);
+}
+.select{
+  background:rgba(223,254,254,0.6);
 }

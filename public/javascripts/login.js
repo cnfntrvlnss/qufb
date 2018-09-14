@@ -23,9 +23,9 @@ $(function() {
 		if(!validateUsername()) {
 			bool = false;
 		}
-		if(!validatePassword()) {
+		/*if(!validatePassword()) {
 			bool = false;
-		}
+		}*/
 		if(bool){
 			return true;
 		}
