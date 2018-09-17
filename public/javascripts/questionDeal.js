@@ -4,7 +4,7 @@
         var listAllUserParam={};
         listAllUserParam.departmentId=1;
         listAllUserParam.unitId=0;
-       listAllUser();
+        listAllUser();
 
 
         //=====================实际的ajax方法==========================================================================
@@ -265,6 +265,11 @@
             updateParam.submitType=13;//第七个节点关闭问题
             save7();
         })
+
+         //点击返回按钮
+         $("#btnReturn").click(function(){
+            location.href = "/myQuestionSubmit";
+         });
          var listUserParam={};
         //一级部门更改，触发联动二级部门和用户
         $("#department1").change(function(){

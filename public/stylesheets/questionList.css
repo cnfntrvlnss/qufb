@@ -51,3 +51,15 @@
 .select{
   background:rgba(223,254,254,0.6);
 }
+.exit:hover{
+    color:red;
+    font-size:16px;
+}
+.wu-header-right {
+    position: absolute;
+    z-index: 1;
+    right: 5px;
+    top: 0px;
+    color: #fff;
+    text-align: right;
+}

@@ -2,6 +2,10 @@ package controllers;
 
 
 import play.mvc.Controller;
-public class LoginController extends Controller {
+import play.mvc.Result;
 
+public class LoginController extends Controller {
+    public Result login() {
+        return ok(views.html.login.render());
+    }
 }

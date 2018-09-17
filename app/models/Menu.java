@@ -13,6 +13,7 @@ public class Menu {
     public  String menuName;//菜单名称
     public  Integer menuOrder;//菜单排序
     public Integer menuType;//菜单类型
+    public  Integer parentMenuId;//父级菜单id
 
     public Integer getMenuId() {
         return menuId;
@@ -44,5 +45,13 @@ public class Menu {
 
     public void setMenuType(Integer menuType) {
         this.menuType = menuType;
+    }
+
+    public Integer getParentMenuId() {
+        return parentMenuId;
+    }
+
+    public void setParentMenuId(Integer parentMenuId) {
+        this.parentMenuId = parentMenuId;
     }
 }

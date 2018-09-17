@@ -1,0 +1,118 @@
+.login-btn {
+	transition: all .3s;
+	-webkit-transition: all .3s;
+}
+
+.login-btn:hover {
+	background-color: #0198ee;
+}
+
+.ctxt {
+	top: -1px;
+	left: -1px;
+	height: 36px;
+}
+.black_overlay{
+	            display: none;
+	            position: absolute;
+	            top: 0%;
+	            left: 0%;
+	            width: 100%;
+	            height: 100%;
+	            background-color: black;
+	            z-index:1001;
+	            -moz-opacity: 0.8;
+	            opacity:.80;
+	            filter: alpha(opacity=88);
+	        }
+	        .white_content {
+	            display: none;
+	            position: absolute;
+	            top: 25%;
+	            left: 25%;
+	            width: 55%;
+	            height: 55%;
+	            padding: 20px;
+	            border: 10px solid orange;
+	            background-color: white;
+	            z-index:1002;
+	            overflow: auto;
+	        }
+	        input::-webkit-outer-spin-button,
+		    input::-webkit-inner-spin-button {
+		        -webkit-appearance: none;
+		    }
+		    input[type="number"]{
+		        -moz-appearance: textfield;
+		    }
+		    @media (min-width: 768px) {
+			    .fixedLeft{
+		    		position: fixed;
+		    		left:0;
+		    		top:0;
+		    		bottom:0;
+		    		overflow: hidden;
+		    		overflow-y:auto;
+		   		}
+		   		.fixedRight{
+		    		position: fixed;
+		    		right:0;
+		    		top:0;
+		    		bottom:0;
+		    		overflow: hidden;
+		    		overflow-y:auto;
+		   		}
+		   	}
+		   		/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+				::-webkit-scrollbar {
+				    width: 12px;
+				    height: 12px;
+				    background-color: #F3F3F3;
+				}
+
+				/*定义滑块 内阴影+圆角*/
+				::-webkit-scrollbar-thumb {
+				    border-radius: 2px;
+				    background-color: rgb(190,190,190);
+				}
+	    		.tree-item, .tree-folder-header {
+	    			overflow: hidden;
+					text-overflow:ellipsis;
+					white-space: nowrap;
+	    		}
+
+	    		/*处理数据表格下方操作按钮问题*/
+	    		.table-responsive .dataTables_length select{
+	    			height:25px;
+   					width: 52px;
+	    		}
+	    		.table-responsive .col-md-2{
+	    			width: 140px
+	    		}
+	    		@media (max-width: 1200px) {
+		    		.table-responsive .col-md-4{
+		    			display: none;
+		    		}
+		    		.table-responsive .col-md-6{
+		    			width: 60% !important;
+		    		}
+	    		}
+	    		@media (max-width: 970px) {
+		    		.table-responsive .col-md-6{
+		    			width: 100% !important;
+		    		}
+	    		}
+	    		@media (max-width: 750px) {
+		    		.table-responsive .col-md-2{
+		    			display: none;
+		    		}
+	    		}
+	    		/*表格td超出省略号*/
+	    		.table-striped{
+	    			table-layout: fixed !important;
+	    		}
+	    		.table-striped td{
+	    			overflow: hidden !important;
+					text-overflow:ellipsis !important;
+					white-space: nowrap !important;
+	    		}

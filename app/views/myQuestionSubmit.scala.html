@@ -1,3 +1,4 @@
+@(userName :String)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,13 +13,18 @@
 <div class="col-md-12">
     <!-topbar->
     <div class=" col-md-12 topbar">
+        <div class="wu-header-right">
+            <p><strong><a href="/ipas/user.do/user.view">@userName</a></strong>，欢迎您！</p>
+            <p><a  id="logOut">退出</a></p>
+        </div>
+
 
     </div>
     <!-body->
     <div class="row work col-md-12">
         <!-左侧菜单->
         <div class="menu col-md-3 col-xs-3">
-               <label>问题管理</label>
+               <div id="menuId"></div>
         </div>
         <!-右侧工作区->
         <div class="work col-md-9 col-xs-9" >

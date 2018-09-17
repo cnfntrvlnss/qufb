@@ -63,9 +63,19 @@ public class QuestionFeedbackController extends Controller {
 	 * @return
 	 */
 	public Result myQuestionSubmit() {
-		return ok(views.html.myQuestionSubmit.render());
+		String userName=session().get("username");
+		return ok(views.html.myQuestionSubmit.render(userName));
 	}
 
+	/**
+	 * 尝试添加一个问题反馈系统的主页面
+	 * lixin
+	 * 2018-9-14 16:38:52
+	 * @return
+	 */
+	public Result myQuestionMain() {
+		return ok(views.html.myQuestionMain.render());
+	}
 
 	/**
 	 * 保存一个问题
@@ -225,10 +235,7 @@ public class QuestionFeedbackController extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> listMyQuestion() {
 		String userName = session().get("username");
-
 		QuestionFeedback questionFeedback = Json.fromJson(request().body().asJson(), QuestionFeedback.class);
-		//QuestionFeedback questionFeedback =new QuestionFeedback();
-		//questionFeedback.setQuestionTitle("00");
 		return questRepo.findAll(questionFeedback,userName).thenApplyAsync(questionList -> ok(toJson(questionList)), ec.current());
 	}
 
@@ -271,4 +278,6 @@ public class QuestionFeedbackController extends Controller {
 			return userRepository.findUsersByUnit(unitId).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
 		}
 	}
+
+
 }
