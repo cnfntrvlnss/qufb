@@ -7,6 +7,7 @@ GET /       controllers.Application.index()
 # login page
 GET /login      controllers.Application.login()
 
+
 # loginSubmit page
 #GET    /loginSubmit        controllers.LoginController.loginSubmit()
 POST    /loginSubmit     controllers.UserController.login()
@@ -30,13 +31,16 @@ GET /myQuestion     controllers.QuestionFeedbackController.myQuestion()
 # myQuestionSubmit
 GET /myQuestionSubmit       controllers.QuestionFeedbackController.myQuestionSubmit()
 
+# myQuestionMain
+GET /myQuestionMain       controllers.QuestionFeedbackController.myQuestionMain()
+
 # myQuestionDeal
 GET /myQuestionDeal/:questionId     controllers.QuestionFeedbackController.myQuestionDeal(questionId :Integer)
 
 # myQuestionInfo
 GET /getQuestionInfo/:questionId        controllers.QuestionFeedbackController.getQuestionInfo(questionId :Integer)
 
-# myQuestionSubmit
+# addQuestion
 POST    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
 
 #GET    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
@@ -70,6 +74,17 @@ GET    /listUnit/:departmentId    controllers.QuestionFeedbackController.listUni
 
 #listUser
 GET /listUser/    controllers.QuestionFeedbackController.listUser(departmentId :Integer,unitId:Integer)
+
+#listMenu
+GET /listMenu       controllers.MenuController.listMenu()
+
+#login
+GET /questionLogin      controllers.LoginController.login()
+
+
+
+
+
 
 
 

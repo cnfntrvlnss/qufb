@@ -1,0 +1,88 @@
+@charset "utf-8";
+/*
+说明：登录页面样式表
+时间：2016-8-11 11:15:03
+作者：谢炎
+*/
+div.__01 {
+	margin:0 auto;
+}
+
+div.loginLayout-3 {
+	position:absolute;
+	left:796px;
+	top:561px;
+	width:47px;
+	height:35px;
+}
+
+div.loginLayout-5 {
+	position:absolute;
+	left:845px;
+	top:561px;
+	width:243px;
+	height:35px;
+}
+
+div.loginLayout-7 {
+	position:absolute;
+	left:796px;
+	top:641px;
+	width:48px;
+	height:35px;
+}
+
+div.loginLayout-9 {
+	position:absolute;
+	left:845px;
+	top:641px;
+	width:243px;
+	height:48px;
+}
+
+div.loginLayout-11 {
+	position:absolute;
+	left:976px;
+	top:768px;
+	width:148px;
+	height:48px;
+}
+
+div.loginLayout-18 {
+	position:absolute;
+	left:800px;
+	top:780px;
+	width:19px;
+	height:19px;
+}
+
+div.loginLayout-20 {
+	position:absolute;
+	left:828px;
+	top:778px;
+	width:118px;
+	height:19px;
+}
+div.loginLayout-25 {
+	position:absolute;
+	left:871px;
+	top:913px;
+	width:400px;
+	height:37px;
+}
+
+div.yan-1 {
+	position:absolute;
+	left:796px;
+	top:711px;
+	width:400px;
+	height:37px;
+}
+
+div.yan-2 {
+	position:absolute;
+	left:906px;
+	top:711px;
+	width:400px;
+	height:37px;
+}
