@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -159,6 +160,22 @@ public class JPAUserRepository implements UserRepository {
                 }
             }
             return users;
+        }));
+    }
+
+    @Override
+    public CompletionStage<Optional<Section>> findSectionData(String sectionName){
+        return supplyAsync(() -> jpaApi.withTransaction((EntityManager em) -> {
+            List<Section> sections = em.createNamedQuery("Section.findByName", Section.class)
+                    .setParameter("name", sectionName).getResultList();
+            if(sections.size() == 0) return Optional.empty();
+            else{
+                Section sec = sections.get(0);
+                for(Unit u: sec.getUnits()){
+                    u.getStaffs().size();
+                }
+                return Optional.of(sec);
+            }
         }));
     }
 

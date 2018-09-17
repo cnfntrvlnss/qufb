@@ -213,13 +213,67 @@ public class UserController extends Controller {
         return stags.thenApplyAsync(v -> ok(), ec.current());
     }
 
-    public Result deleteAllUsers(){
-        String userId = session().get("userId");
-        if(userId == null) userId = "";
-        //logger.debug("delete all users for test! ");
-        userRepo.deleteAllUsers().toCompletableFuture().join();
+    //生成的Json格式与导入的是一致的
+    private JsonNode convertSectionToJson(Section section){
+        ObjectNode secNode = (ObjectNode) Json.toJson(section);
+        if(secNode.get("units") == null){
+            List<Unit> units = section.getUnits();
+            ArrayNode unitsNode = Json.newArray();
 
-        return ok(userId);
+            for(Unit u: units){
+                ObjectNode unitNode = (ObjectNode) Json.toJson(u);
+                if(u.getManager() != null){
+                    unitNode.put("manager", u.getManager().getUserId());
+                }
+                unitNode.remove("section");
+                ArrayNode staffsNode = Json.newArray();
+                List<User> staffs = u.getStaffs();
+                for(User user: staffs){
+                    ObjectNode staffNode = (ObjectNode) Json.toJson(user);
+                    staffNode.remove("unit");
+                    ArrayNode rolesNode = (ArrayNode) staffNode.get("roles");
+                    ArrayNode simpleNode = Json.newArray();
+                    for(int i=0; i< rolesNode.size(); i++){
+                        simpleNode.add(rolesNode.get(i).get("id"));
+                    }
+                    staffNode.set("roles", simpleNode);
+                    staffsNode.add(staffNode);
+                }
+
+                unitNode.set("staffs", staffsNode);
+                if(unitNode.get("name").asText().equals("经理处")){
+                    if(unitNode.get("manager") != null){
+                        secNode.set("manager", unitNode.get("manager"));
+                    }
+                    if(unitNode.get("staffs") != null){
+                        secNode.set("staffs", unitNode.get("staffs"));
+                    }
+                }else{
+                    unitsNode.add(unitNode);
+                }
+            }
+            secNode.set("units", unitsNode);
+        }
+
+        return secNode;
+    }
+
+    public CompletionStage<Result> fetchDepartmentData(String sectionName){
+        return userRepo.findSectionData(sectionName).thenApplyAsync(section -> {
+            //生成Json文档返回
+            if(!section.isPresent()) return noContent();
+            ArrayNode secsNode = Json.newArray();
+            secsNode.add(convertSectionToJson(section.get()));
+            ObjectNode bodyNode = Json.newObject();
+            bodyNode.set("departments", secsNode);
+            return ok(bodyNode);
+        });
+    }
+
+    public CompletionStage<Result> deleteAllUsers(){
+        return userRepo.deleteAllUsers().thenApplyAsync(v -> {
+            return ok();
+        });
     }
 
     @Restrict(@Group("ADMIN"))

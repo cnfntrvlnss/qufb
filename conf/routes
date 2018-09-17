@@ -81,3 +81,6 @@ GET /person/persons     controllers.PersonController.getPersons()
 
 POST    /addUsers      controllers.UserController.addUsersN()
 POST  /deleteAllUsers   controllers.UserController.deleteAllUsers()
+
+#导出部门数据
+GET /getSection    controllers.UserController.fetchDepartmentData(sectionName)
