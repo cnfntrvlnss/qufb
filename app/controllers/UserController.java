@@ -276,6 +276,14 @@ public class UserController extends Controller {
         });
     }
 
+    @BodyParser.Of(BodyParser.Json.class)
+    public Result deleteUsers(){
+        JsonNode userIdsNode = request().body().asJson();
+        List<String> userIds = Json.fromJson(userIdsNode, new ArrayList<String>().getClass());
+        logger.debug("!!!!!!!!!!!!!! in deleteUsers, {}", Json.prettyPrint(Json.toJson(userIds)));
+        return ok();
+    }
+
     @Restrict(@Group("ADMIN"))
     public Result testSecure(){
         String userId = session().get("username");
