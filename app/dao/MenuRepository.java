@@ -8,5 +8,9 @@ import java.util.concurrent.CompletionStage;
 
 @ImplementedBy(JPAMenuRepository.class)
 public interface MenuRepository {
-    CompletionStage<List<Menu>> listMenu();
+
+    CompletionStage<List<Menu>> listMenu(Menu menu);
+
+
+    CompletionStage<List<Menu>> listSubMenu(Integer parentMenuId);
 }

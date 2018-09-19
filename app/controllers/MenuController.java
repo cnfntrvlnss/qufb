@@ -3,6 +3,7 @@ package controllers;
 import dao.MenuRepository;
 import dao.QuestionFeedbackRepository;
 import dao.UserRepository;
+import models.Menu;
 import models.QuestionFeedback;
 import models.viewModels.FlowStateEnum;
 import models.viewModels.QuestionStateEnum;
@@ -39,8 +40,11 @@ public class MenuController extends Controller {
 	 * 获取问题列表
 	 * @return
 	 */
+
+	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> listMenu() {
-		return menuRepository.listMenu().thenApplyAsync(menuList -> ok(toJson(menuList)), ec.current());
+		Menu menu = Json.fromJson(request().body().asJson(), Menu.class);
+		return menuRepository.listMenu(menu).thenApplyAsync(menuList -> ok(toJson(menuList)), ec.current());
 	}
 
 

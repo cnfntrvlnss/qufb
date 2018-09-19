@@ -2,3 +2,29 @@ li.remove_frame a {
             padding-top: 5px;
             background-position: 0px -3px;
         }
+
+          *{
+           padding: 0px;
+           margin: 0px;
+          }
+          #top{width: auto;height: 30px;background: #eee;position: relative;}
+           #top li{float: left;
+             text-align: center;
+             width: 80px;
+             height:30px;
+             line-height:30px;
+             list-style: none;
+            }
+            /*…Ë÷√Œª÷√*/
+           .position{
+            position: absolute;
+            border: 1px solid #ccc;
+            top:30px;
+            padding: 3px;
+            font-size: 15px;
+            display: none;
+           }
+           .shoucang{width: auto;left: 10px;}
+           .sell{width: auto;left: 70px;}
+           .customer{width: auto;left: 180px;}
+           .bg{background-color: #DDA0DD;cursor: pointer;}

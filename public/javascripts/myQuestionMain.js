@@ -56,3 +56,35 @@
             $(this).addClass('active');
             return false;
         };
+
+          $(function(){
+                    $(".li1").hover(function(){
+                        $(".shoucang").show();/*显示收藏的菜单内容*/
+                        $(".customer,.sell").hide();/*隐藏其他的菜单内容*/
+                    },function(){
+                        $(".shoucang").hide();/*鼠标离开，收藏的菜单内容隐藏*/
+                    });
+                    $(".li2").hover(function(){
+                        $(".sell").show();
+                        $(".customer,.shoucang").hide();
+                    },function(){
+                        $(".sell").hide();
+                    });
+                    $(".li3").hover(function(){
+                        $(".customer").show();
+                        $(".shoucang,.sell").hide();
+                    },function(){
+                        $(".customer").hide();
+                    });
+                    $("#top div").hover(function(){/*鼠标放置在div位置上，显示下拉菜单*/
+                        $(this).show();
+                    },function(){/*鼠标离开在div位置上，隐藏下拉菜单*/
+                        $(this).hide();
+                    });
+                    $(".sell p,.shoucang p,.customer p").bind("mouseover",function(){
+                        $(this).addClass("bg");
+                    });
+                    $(".sell p,.shoucang p,.customer p").bind("mouseout",function(){
+                        $(this).removeClass("bg");
+                    });
+                });

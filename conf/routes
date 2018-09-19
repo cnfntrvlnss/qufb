@@ -76,7 +76,7 @@ GET    /listUnit/:departmentId    controllers.QuestionFeedbackController.listUni
 GET /listUser/    controllers.QuestionFeedbackController.listUser(departmentId :Integer,unitId:Integer)
 
 #listMenu
-GET /listMenu       controllers.MenuController.listMenu()
+POST /listMenu       controllers.MenuController.listMenu()
 
 #login
 GET /questionLogin      controllers.LoginController.login()

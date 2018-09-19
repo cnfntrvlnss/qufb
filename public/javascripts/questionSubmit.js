@@ -1,6 +1,8 @@
         var selectParam={};
         var classCss;
         selectQuestion();
+        var menu={};
+        menu.menuId=1;
         listMenu();
 
         //点击新建按钮
@@ -106,13 +108,15 @@
          }
 
         //获取所有的菜单
+
         function listMenu(){
              $.ajax({
                  url: "/listMenu",
                  dataType:"json",
                  contentType : 'application/json;charset=UTF-8',
-                 type: 'GET',
+                 type: 'POST',
                  asnyc:false,
+                 data:JSON.stringify(menu), //转JSON字符串
                  success: function(data){
                     $('#menuId').empty();
                     $.each(data, function(i, e){

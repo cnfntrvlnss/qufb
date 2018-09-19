@@ -3,53 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>部门列表</title>
-    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("public", "stylesheets/questionList.css")' />
-    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("public", "stylesheets/bootstrap.css")'/>
-    <script type="text/javascript" src='@routes.Assets.at("public", "javascripts/jquery-1.8.0.min.js")'></script>
-
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "stylesheets/myQuesitonMain.css")' />
+    <script type="text/javascript" src='@routes.Assets.at("/public", "javascripts/jquery-1.8.0.min.js")'></script>
 </head>
 <body>
 <!-查询条件->
 
+<script type='text/javascript' src='@routes.Assets.at("/public", "javascripts/myQuestionMain.js")'></script>
+<div id="top">
+    <ul>
+        <li class="li1">收藏夹</li>
+        <li class="li2">卖家中心</li>
+        <li class="li3">联系客服</li>
 
-<div class="row col-md-12" >
-
-    <table class="table" title="部门" dataformatas="center-block" align="center">
-        <thead>
-        <tr>
-            <td>部门id</td>
-            <td>部门名称</td>
-
-        </tr>
-        </thead>
-        <tbody id="departmentTable">
-
-        </tbody>
-
-    </table>
-    <table class="table" title="二级部门" dataformatas="center-block" align="center">
-        <thead>
-        <tr>
-            <td>二级部门id</td>
-            <td>二级部门名称</td>
-        </tr>
-        </thead>
-        <tbody id="secondDepartmentTable">
-        </tbody>
-    </table>
-    <table class="table" title="用户表" dataformatas="center-block" align="center">
-        <thead>
-        <tr>
-            <td>用户id</td>
-            <td>用户名称</td>
-        </tr>
-        </thead>
-        <tbody id="userTable">
-        </tbody>
-    </table>
+    </ul>
+    <div class="shoucang position">
+        <p>收藏的宝贝</p>
+        <p>收藏的店铺</p>
+    </div>
+    <div class="sell position">
+        <p>免费开店</p>
+        <p>已出售的报宝贝</p>
+        <p>出售中的报宝贝</p>
+        <p>卖家服务市场</p>
+    </div>
+    <div class="customer position">
+        <p>消费者客服</p>
+        <p>卖家客服</p>
+    </div>
 </div>
-<script type='text/javascript' src='@routes.Assets.at("public", "javascripts/departmentList.js")'></script>
-
 
 </body>
 </html>
