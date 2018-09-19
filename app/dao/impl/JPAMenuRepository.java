@@ -24,7 +24,24 @@ public class JPAMenuRepository implements MenuRepository {
     }
 
     @Override
-    public CompletionStage<List<Menu>> listMenu() {
-        return supplyAsync(()-> jpaApi.withTransaction(menuList-> menuList.createQuery("select p from Menu p ", Menu.class).getResultList()));
+    public CompletionStage<List<Menu>> listMenu(Menu menu) {
+        String sql="select m from Menu m where 1=1";
+        if(menu.getMenuId()!=null){
+            sql+=" and m.menuId = "+menu.getMenuId();
+        }else if(menu.getMenuName()!=null){
+            sql+=" and m.menuName = "+menu.getMenuName();
+        }
+        String sqlQuery=sql;
+        return supplyAsync(()-> jpaApi.withTransaction(menuList-> menuList.createQuery(sqlQuery, Menu.class).getResultList()));
+    }
+
+    @Override
+    public CompletionStage<List<Menu>> listSubMenu(Integer parentMenuId) {
+        String sql="select m from Menu m where 1=1";
+        if(parentMenuId!=null){
+            sql+=" and m.parentMenuId = "+parentMenuId;
+        }
+        String sqlQuery=sql;
+        return supplyAsync(()-> jpaApi.withTransaction(menuList-> menuList.createQuery(sqlQuery, Menu.class).getResultList()));
     }
 }
