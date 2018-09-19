@@ -81,6 +81,7 @@ GET /listMenu       controllers.MenuController.listMenu()
 #login
 GET /questionLogin      controllers.LoginController.login()
 
+POST    /addUser       controllers.UserController.addUser()
 POST    /deleteUsers    controllers.UserController.deleteUsers()
 
 

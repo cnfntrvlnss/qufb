@@ -23,7 +23,7 @@ $(document).ready(function(){
     });
 
     $('#confirmMdl').modal({backdrop: 'static', show: false});
-
+    $('#addUserMdl').modal({backdrop: 'static', show: false});
     $(':radio[name="useroptradio"]').click(showUsersByRadio);
 });
 
@@ -225,6 +225,50 @@ function toggleChecks(self){
     }else{
         $(self).closest('thead').next().find(':checked').prop('checked', false);
     }
+}
+
+function submitUserForm(){
+    var fd = new FormData(document.getElementById('addUserForm'));
+    fd.append('userId', fd.get('email'));
+    fd.set('email', fd.get('email') + '@inspur.com');
+    fd.set('number', 'LCJB' + fd.get('number'));
+    console.log('userFormData: ', fd);
+    $.ajax({
+        url: 'addUser',
+        type: 'POST',
+        data: fd,
+        processData: false,
+        contentType: false,
+        success: function(response,status,xhr){
+            alert('submitUserForm success!!!');
+        },
+        error: function(data){
+            alert('submitUserForm error!' + data);
+        }
+    });
+
+    $('#addUserMdl').modal('hide');
+    return false;
+}
+
+function openAddUserDlg(){
+    if(departmentData == undefined || departmentData.name == undefined){
+        alert('没有找到部门名称，请先选到某个部门！');
+        return;
+    }
+    if(departmentData.units == undefined || departmentData.units.length == 0){
+        alert('没有找到二级部门，请先新建二级部门！');
+        return;
+    }
+    $('#userDepartment').text(departmentData.name);
+    $('#userUnit').empty();
+    $.each(departmentData.units, function(idx, e){
+        $('#userUnit').append('<option value=' + e.id + '>' + e.name + '</option>');
+    });
+    $('#userName').val('');
+    $('#userNumber').val('');
+    $('#userEmail').val('');
+    $('#addUserMdl').modal('show');
 }
 
 function openConfirmModal(body, args, fn) {

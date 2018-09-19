@@ -136,7 +136,7 @@
                         </label>
                     </div>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-primary">添加</button>
+                        <button type="button" class="btn btn-primary" onclick="openAddUserDlg()">添加</button>
                         <button type="button" class="btn btn-primary" onclick="deleteUsers()">删除</button>
                         <button type="button" class="btn btn-primary">编辑</button>
                     </div>
@@ -225,9 +225,75 @@
         </div>
     </div>
 
+    <div class="modal fade" id="addUserMdl" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">添加用户</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form class="form container" id="addUserForm">
+                        <div class="form-group row">
+                            <label class="col-3 text-right">部门:</label>
+                            <a class="col-8 form-control-static" id="userDepartment"></a>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 text-right" for="userUnit">二级部门:</label>
+                            <select class="form-control col-8" id="userUnit" name="unitId">
+                            </select>
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 text-right" for="userName">姓名:</label>
+                            <input class="form-control col-8" id="userName" name="name" autocomplete="off">
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 text-right" for="userNumber">职工编号:</label>
+                            <div class="input-group col-8">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">LCJB</span>
+                                </div>
+                                <input class="form-control" id="userNumber" name="number" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 text-right" for="userEmail">邮箱:</label>
+                            <div class="input-group col-8">
+                                <input  class="form-control" id="userEmail" name="email" autocomplete="off">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">@inspur.com</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 text-right" for="userRoles">角色:</label>
+                            <select multiple="" class="form-control col-8" id="userRoles" name="roles">
+                                <option>MANAGER
+                                <option>STAFF
+                                <option>ADMIN
+                            </select>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-important confirmed" onclick="submitUserForm()">Submit</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
 </div>
 
-
+<div id="container">
+</div>
 
 <script type='text/javascript' src='assets/javascripts/usermanagement.js'></script>
 

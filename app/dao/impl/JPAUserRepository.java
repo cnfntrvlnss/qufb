@@ -307,6 +307,19 @@ public class JPAUserRepository implements UserRepository {
     }
 
     @Override
+    public CompletionStage<Void> deleteUsersById(List<String> userIds){
+        return wrap(em -> {
+            for(String id: userIds){
+                User user = em.find(User.class, id);
+                if(user != null){
+                    em.remove(user);
+                }
+            }
+            return null;
+        });
+    }
+
+    @Override
     public CompletionStage<List<MyRole>> findAllRoles(){
         return supplyAsync(() -> jpaApi.withTransaction( (EntityManager em) -> {
             return em.createQuery("select r from MyRole r").getResultList();

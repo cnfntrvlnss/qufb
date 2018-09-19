@@ -28,6 +28,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+
 public class UserController extends Controller {
     private final Logger.ALogger logger = Logger.of(UserController.class);
 
@@ -270,18 +272,30 @@ public class UserController extends Controller {
         });
     }
 
-    public CompletionStage<Result> deleteAllUsers(){
-        return userRepo.deleteAllUsers().thenApplyAsync(v -> {
+    @BodyParser.Of(BodyParser.MultipartFormData.class)
+    public CompletionStage<Result> addUser(){
+        Map<String, String[]> m = request().body().asMultipartFormData().asFormUrlEncoded();
+        
+        return supplyAsync(() -> {
             return ok();
         });
     }
 
+    public CompletionStage<Result> deleteAllUsers(){
+        return userRepo.deleteAllUsers().thenApplyAsync(v -> {
+            return ok();
+        }, ec.current());
+    }
+
     @BodyParser.Of(BodyParser.Json.class)
-    public Result deleteUsers(){
+    public CompletionStage<Result> deleteUsers() {
         JsonNode userIdsNode = request().body().asJson();
         List<String> userIds = Json.fromJson(userIdsNode, new ArrayList<String>().getClass());
         logger.debug("!!!!!!!!!!!!!! in deleteUsers, {}", Json.prettyPrint(Json.toJson(userIds)));
-        return ok();
+
+        return userRepo.deleteUsersById(userIds).thenApplyAsync(v -> {
+            return ok();
+        }, ec.current());
     }
 
     @Restrict(@Group("ADMIN"))
