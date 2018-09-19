@@ -8,6 +8,7 @@ import models.Unit;
 import models.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 @ImplementedBy(JPAUserRepository.class)
@@ -29,6 +30,8 @@ public interface UserRepository {
     CompletionStage<List<User>> findUsersByUnitName(String sectionName, String unitName);
 
     CompletionStage<List<User>> findUsersBySectionName(String sectionName);
+    //把部门数据从数据库中查出，包括了所有处，及员工
+    CompletionStage<Optional<Section>> findSectionData(String sectionName);
 
     //添加处及部门，若部门不存在就添加部门，在判定部门下的处存在与否，若不存在处就添加处。
     CompletionStage<Void> addUnitsIfNone(List<Unit> units);

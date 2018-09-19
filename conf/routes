@@ -81,7 +81,7 @@ POST /listMenu       controllers.MenuController.listMenu()
 #login
 GET /questionLogin      controllers.LoginController.login()
 
-
+POST    /deleteUsers    controllers.UserController.deleteUsers()
 
 
 
@@ -96,3 +96,6 @@ GET /person/persons     controllers.PersonController.getPersons()
 
 POST    /addUsers      controllers.UserController.addUsersN()
 POST  /deleteAllUsers   controllers.UserController.deleteAllUsers()
+
+#导出部门数据
+GET /getSection    controllers.UserController.fetchDepartmentData(sectionName)

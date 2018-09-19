@@ -2,6 +2,7 @@ package models;
 
 import be.objectify.deadbolt.java.models.Permission;
 import be.objectify.deadbolt.java.models.Subject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
@@ -94,12 +95,14 @@ public class User implements Subject {
         return roles;
     }
 
+    @JsonIgnore
     @Transient
     @Override
     public List<? extends Permission> getPermissions() {
         return null;
     }
 
+    @JsonIgnore
     @Transient
     @Override
     public String getIdentifier() {
