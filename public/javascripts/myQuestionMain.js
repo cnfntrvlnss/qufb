@@ -1,58 +1,122 @@
 
-            function fixHeight() {
-                var headerHeight = $("#switcher").height();
-                $("#iframe").attr("height", $(window).height()-54+ "px");
-            }
-            $(window).resize(function () {
-                fixHeight();
-            }).resize();
+function initNav(menuName, iconClass, href, activeFlag, treeviewAry) {
+	var childHtml = "";
+	childHtml = '<li class="';
+	if (activeFlag == "Y") {
+		childHtml += 'active menu-open ';
+	}
+	if (treeviewAry.length > 0) {
+		childHtml += 'treeview">';
+	} else {
+		childHtml += '">';
+	}
+	childHtml += '<a href="' + href + '">';
+	childHtml += '<i class="fa ' + iconClass + '"></i> <span>' + menuName
+			+ '</span>';
+	childHtml += '<span class="pull-right-container">';
+	if (treeviewAry.length > 0) {
+		childHtml += '<i class="fa fa-angle-left pull-right"></i>';
+	}
+	childHtml += '</span></a>';
 
-            $('.icon-monitor').addClass('active');
+	// 子菜单拼接
+	if (treeviewAry.length > 0) {
+		childHtml += '<ul class="treeview-menu">';
+		for (var i = 0; i < treeviewAry.length; i++) {
+			// 判断子菜单是否为打开状态
+			if (treeviewAry[i]["active"] == "Y") {
+				childHtml += '<li class="active"><a menu-controller="'
+						+ treeviewAry[i]["url"]
+						+ '" href="javascript:void(0)">';
+			} else {
+				childHtml += '<li><a menu-controller="' + treeviewAry[i]["url"]
+						+ '" href="javascript:void(0)">';
+			}
+			childHtml += '<i class="fa fa-circle-o"></i>'
+					+ treeviewAry[i]["name"] + '</a></li>';
+		}
+		childHtml += '</ul>';
+	}
 
-            $(".icon-mobile-3").click(function () {
-                $("#by").css("overflow-y", "auto");
-                $('#iframe-wrap').removeClass().addClass('mobile-width-3');
-                $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
+	childHtml += '</li>';
+	$("#sideMenu").append(childHtml);
+}
 
-            $(".icon-mobile-2").click(function () {
-                $("#by").css("overflow-y", "auto");
-                $('#iframe-wrap').removeClass().addClass('mobile-width-2');
-                $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
+ var menu={};
+ menu.menuType=1;
+$(function(){
+ //初始化一级菜单
+    initIndexNav();
+    //initFirstIndex();
+    //initSecondIndex(1);
+});
 
-            $(".icon-mobile-1").click(function () {
-                $("#by").css("overflow-y", "auto");
-                $('#iframe-wrap').removeClass().addClass('mobile-width');
-                $('.icon-tablet,.icon-mobile,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
+    function initFirstIndex(){
+         $.ajax({
+             url: "/listMenu",
+             dataType:"json",
+             contentType : 'application/json;charset=UTF-8',
+             type: 'POST',
+             asnyc:false,
+             data:JSON.stringify(menu), //转JSON字符串
+             success: function(data){
+                //循环初始化一级菜单
+                $('#sideMenu').empty();
+                $.each(data, function(i, e){
+                    initNav(e.menuName, "fa-dashboard", e.menuUrl, "N", "");
+                 });
+              },
+              error: function(data){
+                    alert("error!!! " + data);
+              }
+         });
+    }
 
-            $(".icon-tablet").click(function () {
-                $("#by").css("overflow-y", "auto");
-                $('#iframe-wrap').removeClass().addClass('tablet-width');
-                $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
-
-            $(".icon-monitor").click(function () {
-                $("#by").css("overflow-y", "hidden");
-                $('#iframe-wrap').removeClass().addClass('full-width');
-                $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
-  function Responsive($a) {
-            if ($a == true) $("#Device").css("opacity", "100");
-            if ($a == false) $("#Device").css("opacity", "0");
-            $('#iframe-wrap').removeClass().addClass('full-width');
-            $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-            $(this).addClass('active');
-            return false;
-        };
+    function initSecondIndex(parentMenuId){
+             $.ajax({
+                 url: "/listSubMenu/"+parentMenuId,
+                 dataType:"json",
+                   type: 'GET',
+                   asnyc:false,
+                 success: function(data){
+                    //循环初始化一级菜单
+                    $('#sideMenu').empty();
+                    $.each(data, function(i, e){
+                        initNav(e.menuName, "fa-dashboard", e.menuUrl, "N", "");
+                     });
+                  },
+                  error: function(data){
+                        alert("error!!! " + data);
+                  }
+             });
+        }
+    //初始化二级菜单
+     function initIndexNav(){
+            var treeAry = [
+                    { "name":"问题列表", "url":"/myQuestionSubmit", "active": "N" },
+                    { "name":"问题处理", "url":"/myQuestionDeal/75", "active": "N" ,"method":"GET"},
+            ];
+            initNav("问题管理","fa-dashboard","#","N",treeAry);
+            initNav("项目管理","fa-dashboard","#","N",treeAry);
+        }
+    //获取所有的菜单
+    function listMenu(){
+         $.ajax({
+             url: "/listSubMenu",
+             dataType:"json",
+             contentType : 'application/json;charset=UTF-8',
+             type: 'POST',
+             asnyc:false,
+             data:JSON.stringify(menu), //转JSON字符串
+             success: function(data){
+                $('#menuId').empty();
+                $.each(data, function(i, e){
+                    $('#menuId').append();
+                    $('#menuId').append('<ul>' +e.menuName+ '</ul>');
+                 });
+              },
+              error: function(data){
+                    alert("error!!! " + data);
+              }
+         });
+        }

@@ -1,45 +1,118 @@
-<html xmlns="http://www.w3.org/1999/xhtml"><head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@(name: String)
+<!DOCTYPE html>
+<html>
+<head>
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>jQuery抽屉式导航收缩展开下拉菜单代码</title>
-
-    <link href="/static/css/demo.css" rel="stylesheet" media="all">
-
-    <script src="https://hm.baidu.com/hm.js?382f81c966395258f239157654081890"></script>
-
-
-    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "stylesheets/bootstrap.css")'/>
-    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "stylesheets/myQuestionMain.css")'/>
-    <script type="text/javascript" src='@routes.Assets.at("/public", "javascripts/jquery-1.8.0.min.js")'></script>
-    <script type="text/javascript" src='@routes.Assets.at("/public", "javascripts/myQuestionMain.js")'></script>
-    <script type="text/javascript" src="/static/js/jquery.qrcode.min.js" ></script>
+    <title>问题反馈系统主页面</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "theme/bootstrap3/css/bootstrap.min.css")'/>
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "theme/font-awesome/css/font-awesome.min.css")'/>
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "theme/AdminLTE/css/AdminLTE.min.css")'/>
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "theme/AdminLTE/skins/css/_all-skins.min.css")'/>
 </head>
-<body id="by">
+<body class="hold-transition skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="#" class="logo">
+            <span class="logo-lg"><b>Inspur 问题反馈系统</b></span>
+        </a>
 
-<div id="switcher">
-    <div class="center">
-        <ul>
-            <div id="Device">
-                <li class="device-monitor"><a href="javascript:"><div class="icon-monitor active"></div></a></li>
-                <li class="device-mobile"><a href="javascript:"><div class="icon-tablet"></div></a></li>
-                <li class="device-mobile"><a href="javascript:"><div class="icon-mobile-1"></div></a></li>
-                <li class="device-mobile-2"><a href="javascript:"><div class="icon-mobile-2"></div></a></li>
-                <li class="device-mobile-3"><a href="javascript:"><div class="icon-mobile-3"></div></a></li>
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">切换导航菜单</span>
+            </a>
+
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <!-- <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image"> -->
+                            <span class="hidden-xs">@name,您好！</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- Menu Body -->
+                            <li class="user-body">
+                                <div class="row">
+                                    <div class="col-xs-6 text-center">
+                                        <a href="#">修改密码</a>
+                                    </div>
+                                    <div class="col-xs-6 text-center">
+                                        <a  id="logOut">退出</a>
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </li>
+                            <!-- Menu Footer
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="#" class="btn btn-default btn-flat">简介</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="#" class="btn btn-default btn-flat">退出</a>
+                                </div>
+                            </li>-->
+                        </ul>
+                    </li>
+                </ul>
             </div>
-            <li class="logoTop">
-                <a href="http://www.17sucai.com/pins/24555.html">jQuery抽屉式导航收缩展开下拉菜单代码</a>
+        </nav>
+    </header>
 
-            <li class="remove_frame"><a title="移除框架" href="http://www.17sucai.com/preview/1/2017-05-13/menu/index.html"></a></li>
-        </ul>
+    <aside class="main-sidebar">
+        <section class="sidebar">
+            <ul id="sideMenu" class="sidebar-menu" data-widget="tree">
+                <li class="header">导航菜单</li>
+            </ul>
+        </section>
+    </aside>
+
+    <!-- 主页面 -->
+    <div id="contentWrapper" class="content-wrapper">
+
+        <section class="content-header">
+            <h1> 系统管理 <small>注释：主页面</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>导航</li>
+                <li class="active">图表</li>
+            </ol>
+            <div style=" border: 1px solid #333; margin-top: 10px;"></div>
+        </section>
+
+        <section class="content">
+            <div class="row">
+                <div class="col-lg-3 col-xs-6">
+                    <div class="small-box bg-aqua">
+                        <div class="inner">
+                            <h3>150</h3>
+
+                            <p>新消息</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-bag"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">查看更多内容<i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </div>
+
+    <footer class="main-footer">
+        <strong> &copy; 版权所有 浪潮电子信息产业股份有限公司 </strong>
+    </footer>
+
+
 </div>
+<script type="text/javascript" src='@routes.Assets.at("/public", "theme/jquery/js/jquery.min.js")'></script>
+<script type="text/javascript" src='@routes.Assets.at("/public", "theme/bootstrap3/js/bootstrap.min.js")'></script>
+<script type="text/javascript" src='@routes.Assets.at("/public", "theme/AdminLTE/js/adminlte.js")'></script>
+<script type="text/javascript" src='@routes.Assets.at("/public", "javascripts/myQuestionMain.js")'></script>
 
-<div id="iframe-wrap">
-    <iframe width="100%" height="654" id="iframe" src="http://www.17sucai.com/preview/1/2017-05-13/menu/index.html" frameborder="0"></iframe>
-</div>
-
-
-
-
-</body></html>
+</body>
+</html>

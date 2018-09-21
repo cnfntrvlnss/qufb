@@ -1,12 +1,8 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import dao.MenuRepository;
-import dao.QuestionFeedbackRepository;
-import dao.UserRepository;
-import models.QuestionFeedback;
-import models.viewModels.FlowStateEnum;
-import models.viewModels.QuestionStateEnum;
-import models.viewModels.SubmitTypeEnum;
+import models.Menu;
 import play.Logger;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -14,10 +10,7 @@ import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.myQuestion;
-
 import javax.inject.Inject;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
@@ -33,15 +26,28 @@ public class MenuController extends Controller {
 	@Inject
 	private HttpExecutionContext ec;
 	@Inject
-	private  FormFactory formFactory;
+	private FormFactory formFactory;
 
 	/**
 	 * 获取问题列表
+	 *
 	 * @return
 	 */
+
+	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> listMenu() {
-		return menuRepository.listMenu().thenApplyAsync(menuList -> ok(toJson(menuList)), ec.current());
+		Menu menu = Json.fromJson(request().body().asJson(), Menu.class);
+		CompletionStage<List<Menu>> menuList = menuRepository.listMenu(menu);
+		return menuList.thenApplyAsync(menus -> {
+			for(Menu menuTemp : menus){
+				menuTemp.setSubMenuJson(listSubMenu(menuTemp.getMenuId()));
+			}
+		return ok(toJson(menus));
+		}, ec.current());
 	}
-
-
+	public CompletionStage<Result> listSubMenu(Integer parentMenuId) {
+		return menuRepository.listSubMenu(parentMenuId).thenApplyAsync(subMenuList ->
+				ok(toJson(subMenuList))
+		);
+	}
 }

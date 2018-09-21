@@ -60,7 +60,7 @@ public class UserController extends Controller {
             }
             session().put("username", name);
             // session().put("email", user.getEmail());
-            return ok(views.html.myQuestionSubmit.render(name));
+            return ok(views.html.myQuestionMain.render(name));
         }, ec.current());
     }
 

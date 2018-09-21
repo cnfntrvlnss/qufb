@@ -36,14 +36,16 @@ body :-ms-input-placeholder {
   font-weight: 300;
 }
 .wrapper {
-  background: #1c4587;
-  background: -webkit-linear-gradient(top left, #1c4587 50%, black 100%);
-  background: linear-gradient(to bottom right, #3e72e7 50%, black 100%);
+  background: #50a3a2;
+  background: -webkit-linear-gradient(top left, #3e72e7 0%, #3e72e7 100%);
+  background: linear-gradient(to bottom right, #3e72e7 0%, #3e72e7 100%);
   opacity: 0.8;
   position: absolute;
+  top: 50%;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 600px;
+  margin-top: -300px;
   overflow: hidden;
 }
 
@@ -53,21 +55,29 @@ body :-ms-input-placeholder {
           transform: translateY(85px);
 }
 .container {
-  margin: 100 auto;
-  padding: 120px 0;
-  height: 100%;
+  max-width: 600px;
+	margin: 50px auto 0;
+  padding: 80px 0;
+  height: 400px;
   text-align: center;
 }
 .container h1 {
-  font-size: 40px;
+  font-size: 30px;
   -webkit-transition-duration: 1s;
           transition-duration: 1s;
   -webkit-transition-timing-function: ease-in-put;
           transition-timing-function: ease-in-put;
   font-weight: 200;
 }
+.infoBorder{
+	width: 55%;
+  height: 150%;
+  padding: 25px 0;
+  border: 1px solid white;
+  margin: 0 auto;
+}
 form {
-  padding: 20px 0;
+  padding: 35px 0;
   position: relative;
   z-index: 2;
 }
@@ -81,7 +91,7 @@ form input {
   width: 250px;
   border-radius: 3px;
   padding: 10px 15px;
-  margin: 0 auto 10px auto;
+  margin: 0 auto 20px auto;
   display: block;
   text-align: center;
   font-size: 18px;
@@ -96,7 +106,7 @@ form input:hover {
 form input:focus {
   background-color: white;
   width: 300px;
-  color: black;
+  color: #53e3a6;
 }
 form button {
   -webkit-appearance: none;
@@ -106,7 +116,7 @@ form button {
   background-color: white;
   border: 0;
   padding: 10px 15px;
-  color: black;
+  color: #3e72e7;
   border-radius: 3px;
   width: 250px;
   cursor: pointer;
@@ -115,13 +125,8 @@ form button {
           transition-duration: 0.25s;
 }
 form button:hover {
-  background-color: #76a8b9;
-  color: white;
+  background-color: #f5f7f9;
 }
-form button:active {
-  background-color: #4982B4;
-}
-
 .bg-bubbles {
   position: absolute;
   top: 0;
@@ -142,7 +147,6 @@ form button:active {
   animation: square 25s infinite;
   -webkit-transition-timing-function: linear;
   transition-timing-function: linear;
-  border-radius: 50%;
 }
 .bg-bubbles li:nth-child(1) {
   left: 10%;

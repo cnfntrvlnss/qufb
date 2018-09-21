@@ -1,155 +1,108 @@
-@(userName :String)
+@(name:String)
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>问题反馈列表</title>
-    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "stylesheets/questionList.css")' />
-    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "stylesheets/bootstrap.css")'/>
-    <script type="text/javascript" src='@routes.Assets.at("/public", "javascripts/jquery-1.8.0.min.js")'></script>
 
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>bootIndex</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "theme/bootstrap-table/css/bootstrap-table.css")'/>
 </head>
 <body>
-<div class="col-md-12">
-    <!-topbar->
-    <div class=" col-md-12 topbar">
-        <div class="wu-header-right">
-            <p><strong><a href="/ipas/user.do/user.view">@userName</a></strong>，欢迎您！</p>
-            <p><a  id="logOut">退出</a></p>
-        </div>
+
+<div class="content" style="padding: 0px;">
+
+    <section class="content-header">
+        <h1>问题列表 <small>问题反馈系统问题列表</small></h1>
+        <ol class="breadcrumb">
+            <li>问题反馈系统</li>
+            <li class="active">问题列表</li>
+        </ol>
+        <div style="border: 1px solid #333; margin-top: 10px;"></div>
+    </section>
 
 
-    </div>
-    <!-body->
-    <div class="row work col-md-12">
-        <!-左侧菜单->
-        <div class="menu col-md-3 col-xs-3">
-               <div id="menuId"></div>
-        </div>
-        <!-右侧工作区->
-        <div class="work col-md-9 col-xs-9" >
-            <!-查询条件->
-            <div class="  col-md-12 select" >
-                    <div class=" col-md-12">
-                        <div class="col-md-5">
-                            <div class="form-group clearfix">
-                                <div class="col-xs-6 col-md-6 text-right">
-                                    <label>标题：</label>
-                                </div>
-                                <div class="col-xs-6 col-md-6">
-                                    <input id="questionTitle" class="form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="form-group clearfix">
-                                <div class="col-xs-6 col-md-6 text-right">
-                                    <label>问题描述：</label>
-                                </div>
-                                <div class="col-xs-6 col-md-6">
-                                    <input id="questionDescription" class="form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="position: absolute; right: 30px; top: 0px;">
-                            <div class="form-group">
-                                <button type="button" id="btnSelect" class="btn btn-primary btn-sm">查询</button>
-                            </div>
-                        </div>
+    <section class="content">
+        <div class="box-body">
+            <div class="row" style="margin-bottom: 5px;">
+                <div class="col-sm-3" style="margin-bottom: 5px;">
+                    <div class="row">
+                        <span class="col-sm-5 col-xs-5 col-md-5">标题</span>
+                        <input id="questionTitle" type="text" class="col-sm-7" />
                     </div>
-                    <div class="col-md-12">
-                        <div class="col-md-5">
-                            <div class="form-group clearfix">
-                                <div class="col-xs-6 col-md-6 text-right">
-                                    <label>问题提出者：</label>
-                                </div>
-                                <div class="col-xs-6 col-md-6">
-                                    <input id="feedbacker" class="form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="form-group clearfix">
-                                <div class="col-xs-6 col-md-6 text-right">
-                                    <label>BUG负责人：</label>
-                                </div>
-                                <div class="col-xs-6 col-md-6">
-                                    <input id="bugHeader" class="form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="col-md-5">
-                            <div class="form-group clearfix">
-                                <div class="col-xs-6 col-md-6 text-right">
-                                    <label>问题接口人：</label>
-                                </div>
-                                <div class="col-xs-6 col-md-6">
-                                    <input id="transferName" class="form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="form-group clearfix">
-                                <div class="col-xs-6 col-md-6 text-right">
-                                    <label>方案责任人：</label>
-                                </div>
-                                <div class="col-xs-6 col-md-6">
-                                    <input id="developerName" class="form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="col-md-5">
-                            <div class="form-group clearfix">
-                                <div class="col-xs-6 col-md-6 text-right">
-                                    <label>方案审核人：</label>
-                                </div>
-                                <div class="col-xs-6 col-md-6">
-                                    <input id="schemeAuditName" class="form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="form-group clearfix">
-                                <div class="col-xs-6 col-md-6 text-right">
-                                    <label>问题验证人：</label>
-                                </div>
-                                <div class="col-xs-6 col-md-6">
-                                    <input id="verifyName" class="form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            <div class="   col-md-12" >
-                <div class="buttonDiv">
-                    <button  class="btn-primary" type="submit" id="btnNew">新建</button>
                 </div>
-                <table class="table" title="问题反馈系统列表" dataformatas="center-block" align="center">
-                    <thead>
-                    <tr>
-                        <td>问题id</td>
-                        <td>问题标题</td>
-                        <td>BUG负责人</td>
-                        <td>问题描述</td>
-                        <td>修改意见</td>
-                        <td>反馈时间</td>
-                        <td>流程状态</td>
-                    </tr>
-                    </thead>
-                    <tbody id="questionTable">
-
-                    </tbody>
-
-                </table>
+                <div class="col-sm-3" style="margin-bottom: 5px;">
+                    <div class="row">
+                        <span class="col-sm-5 col-xs-5 col-md-5">问题描述</span>
+                        <input id="questionDescription" type="text" class="col-sm-7" />
+                    </div>
+                </div>
+                <div class="col-sm-3" style="margin-bottom: 5px;">
+                    <div class="row">
+                        <span class="col-sm-5 col-xs-5 col-md-5">问题提出者</span>
+                        <input id="feedbacker" type="text" class="col-sm-7" />
+                    </div>
+                </div>
+                <div class="col-sm-3" style="margin-bottom: 5px;">
+                    <div class="row">
+                        <button type="button" class="btn btn-primary" style="padding: 3px 10px;"  id="btnSelect" >查询</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-<script type='text/javascript' src='@routes.Assets.at("/public", "javascripts/questionSubmit.js")'></script>
+            <div class="row" style="margin-bottom: 5px;">
 
+                <div class="col-sm-3" style="margin-bottom: 5px;">
+                    <div class="row">
+                        <span class="col-sm-5 col-xs-5 col-md-5">BUG负责人</span>
+                        <input id="bugHeader" type="text" class="col-sm-7" />
+                    </div>
+                </div>
+                <div class="col-sm-3" style="margin-bottom: 5px;">
+                    <div class="row">
+                        <span class="col-sm-5 col-xs-5 col-md-5">问题接口人</span>
+                        <input id="transferName" type="text" class="col-sm-7" />
+                    </div>
+                </div>
+                <div class="col-sm-3" style="margin-bottom: 5px;">
+                    <div class="row">
+                        <span class="col-sm-5 col-xs-5 col-md-5">方案责任人</span>
+                        <input id="developerName" type="text" class="col-sm-7" />
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 5px;">
+
+                <div class="col-sm-3" style="margin-bottom: 5px;">
+                    <div class="row">
+                        <span class="col-sm-5 col-xs-5 col-md-5">方案审核人</span>
+                        <input id="schemeAuditName" type="text" class="col-sm-7" />
+                    </div>
+                </div>
+                <div class="col-sm-3" style="margin-bottom: 5px;">
+                    <div class="row">
+                        <span class="col-sm-5 col-xs-5 col-md-5">问题验证人</span>
+                        <input id="verifyName" type="text" class="col-sm-7" />
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 5px;">
+                <div class="col-sm-4" style="margin-bottom: 5px;">
+                    <button type="button" class="btn btn-primary" style="padding: 3px 10px;" id="btnNew">新增</button>
+                </div>
+            </div>
+
+            <!-- bootStrap tables -->
+            <table id="questionTable" class="bodyTable">
+            </table>
+
+        </div>
+    </section>
+
+
+</div>
+<script type="text/javascript" src='@routes.Assets.at("/public", "theme/bootstrap-table/js/bootstrap-table.js")'></script>
+<script type="text/javascript" src='@routes.Assets.at("/public", "theme/bootstrap-table/js/bootstrap-table-zh-CN.js")'></script>
+<script type="text/javascript" src='@routes.Assets.at("/public", "javascripts/questionSubmit.js")'></script>
 </body>
 </html>

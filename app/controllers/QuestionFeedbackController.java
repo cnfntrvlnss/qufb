@@ -74,7 +74,8 @@ public class QuestionFeedbackController extends Controller {
 	 * @return
 	 */
 	public Result myQuestionMain() {
-		return ok(views.html.myQuestionMain.render());
+		String userName=session().get("username");
+		return ok(views.html.myQuestionMain.render(userName));
 	}
 
 	/**

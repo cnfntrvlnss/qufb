@@ -29,10 +29,9 @@ POST    /postForm       controllers.Application.postForm()
 GET /myQuestion     controllers.QuestionFeedbackController.myQuestion()
 
 # myQuestionSubmit
-GET /myQuestionSubmit       controllers.QuestionFeedbackController.myQuestionSubmit()
+POST /myQuestionSubmit       controllers.QuestionFeedbackController.myQuestionSubmit()
 
-# myQuestionMain
-GET /myQuestionMain       controllers.QuestionFeedbackController.myQuestionMain()
+
 
 # myQuestionDeal
 GET /myQuestionDeal/:questionId     controllers.QuestionFeedbackController.myQuestionDeal(questionId :Integer)
@@ -76,7 +75,10 @@ GET    /listUnit/:departmentId    controllers.QuestionFeedbackController.listUni
 GET /listUser/    controllers.QuestionFeedbackController.listUser(departmentId :Integer,unitId:Integer)
 
 #listMenu
-GET /listMenu       controllers.MenuController.listMenu()
+POST /listMenu       controllers.MenuController.listMenu()
+
+#listMenu
+GET /listSubMenu/:parentMenuId       controllers.MenuController.listSubMenu( parentMenuId :Integer)
 
 #login
 GET /questionLogin      controllers.LoginController.login()
