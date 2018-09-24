@@ -223,10 +223,15 @@ public class JPAUserRepository implements UserRepository {
         });
     }
 
-    public CompletionStage<Void> addUsers(List<User> users) {
+    @Override
+    public CompletionStage<Void> deleteUnitsById(List<Integer> unitIds){
         return wrap(em -> {
-            for(User u: users){
-                em.persist(u);
+            for(Integer id: unitIds){
+                Unit u = em.find(Unit.class, id);
+                for(User user: u.getStaffs()){
+                    em.remove(user);
+                }
+                em.remove(u);
             }
             return null;
         });
@@ -253,7 +258,7 @@ public class JPAUserRepository implements UserRepository {
      * @return
      */
     @Override
-    public CompletionStage<Void> updateSectionInner(Section section){
+    public CompletionStage<Void> updateSectionRecur(Section section){
         return wrap(em -> {
             List<Section> sections = em.createNamedQuery("Section.findByName", Section.class)
                     .setParameter("name", section.getName())
@@ -264,6 +269,7 @@ public class JPAUserRepository implements UserRepository {
             }else{
                 section.setId(sections.get(0).getId());
             }
+
             for(Unit u: units) {
                 List<Unit> us = em.createNamedQuery("Unit.findByName", Unit.class)
                         .setParameter("name", u.getName())
@@ -283,7 +289,7 @@ public class JPAUserRepository implements UserRepository {
                     u.setId(us.get(0).getId());
                 }
                 Unit u1 = em.merge(u);
-                //user中的Unit必须要被managed，才能保持user.
+                //user中的Unit必须要被managed，才能保存到数据库.
                 for(User user: users) {
                     User user1 = em.find(User.class, user.getUserId());
                     if(user1 != null){
@@ -292,6 +298,9 @@ public class JPAUserRepository implements UserRepository {
                     user.setUnit(u1);
                     em.persist(user);
                 }
+                //恢复unit数据原样，保证函数返回后数据的完整性。
+                u.setStaffs(users);
+                u.setManager(manager);
             }
 
             return null;

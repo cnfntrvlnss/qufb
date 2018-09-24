@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dao.UserRepository;
+import models.MyRole;
 import models.Section;
 import models.Unit;
 import models.User;
@@ -20,15 +21,10 @@ import play.mvc.Result;
 import util.HashFunctions;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
-
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class UserController extends Controller {
     private final Logger.ALogger logger = Logger.of(UserController.class);
@@ -178,15 +174,15 @@ public class UserController extends Controller {
             unit.setSection(section);
             units.add(unit);
             JsonNode staffsNode = unitsNode.get(i).get("staffs");
+            List<User> users = new ArrayList<>();
             if(staffsNode != null){
-                List<User> users = new ArrayList<>();
                 for(int j=0; j< staffsNode.size(); j++) {
                     User user = Json.fromJson(staffsNode.get(j), User.class);
                     user.setUnit(unit);
                     users.add(user);
                 }
-                unit.setStaffs(users);
             }
+            unit.setStaffs(users);
             JsonNode managerNode = unitsNode.get(i).get("manager");
             if(managerNode != null){
                 unit.setManager(new User(){
@@ -205,12 +201,19 @@ public class UserController extends Controller {
 
         JsonNode body = request().body().asJson();
         CompletionStage stags = CompletableFuture.completedFuture(null);
-        for(int i=0; i <body.get("departments").size(); i++){
-            JsonNode deptNode = body.get("departments").get(i);
-            modifyDepartmentNode(deptNode);
-            logger.debug("in addUsersN, after modification, body: {}", Json.prettyPrint(deptNode));
-            Section dept = parseDepartmentJson(deptNode);
-            stags = stags.thenComposeAsync(v -> userRepo.updateSectionInner(dept));
+        if(body.get("departments") == null){
+            modifyDepartmentNode(body);
+            logger.debug("in addUsersN, after modification, body: {}", Json.prettyPrint(body));
+            Section dept = parseDepartmentJson(body);
+            stags = stags.thenComposeAsync(v -> userRepo.updateSectionRecur(dept));
+        } else{
+            for(int i=0; i <body.get("departments").size(); i++){
+                JsonNode deptNode = body.get("departments").get(i);
+                modifyDepartmentNode(deptNode);
+                logger.debug("in addUsersN, after modification, body: {}", Json.prettyPrint(deptNode));
+                Section dept = parseDepartmentJson(deptNode);
+                stags = stags.thenComposeAsync(v -> userRepo.updateSectionRecur(dept));
+            }
         }
         return stags.thenApplyAsync(v -> ok(), ec.current());
     }
@@ -275,10 +278,34 @@ public class UserController extends Controller {
     @BodyParser.Of(BodyParser.MultipartFormData.class)
     public CompletionStage<Result> addUser(){
         Map<String, String[]> m = request().body().asMultipartFormData().asFormUrlEncoded();
-        
-        return supplyAsync(() -> {
-            return ok();
-        });
+        Section section = new Section();
+        section.setName(m.get("sectionName")[0]);
+        Unit unit = new Unit();
+        if(m.get("unitName")[0].equals("无")){
+            unit.setName("经理处");
+        }else{
+            unit.setName(m.get("unitName")[0]);
+        }
+        User user = new User();
+        user.setUserId(m.get("userId")[0]);
+        user.setName(m.get("name")[0]);
+        user.setNumber(m.get("number")[0]);
+        user.setEmail(m.get("email")[0]);
+        user.setRoles(new ArrayList<MyRole>());
+        String[] roles = m.get("roles");
+        for(int i=0; i< roles.length; i++){
+            MyRole role = new MyRole();
+            role.setId(roles[i]);
+            user.getRoles().add(role);
+        }
+
+        section.setUnits(new ArrayList<>());
+        section.getUnits().add(unit);
+        unit.setSection(section);
+        unit.setStaffs(new ArrayList<>());
+        unit.getStaffs().add(user);
+        user.setUnit(unit);
+        return userRepo.updateSectionRecur(section).thenApplyAsync(v ->  ok(convertSectionToJson(section)), ec.current());
     }
 
     public CompletionStage<Result> deleteAllUsers(){
@@ -291,11 +318,18 @@ public class UserController extends Controller {
     public CompletionStage<Result> deleteUsers() {
         JsonNode userIdsNode = request().body().asJson();
         List<String> userIds = Json.fromJson(userIdsNode, new ArrayList<String>().getClass());
-        logger.debug("!!!!!!!!!!!!!! in deleteUsers, {}", Json.prettyPrint(Json.toJson(userIds)));
+        //logger.debug("!!!!!!!!!!!!!! in deleteUsers, {}", Json.prettyPrint(Json.toJson(userIds)));
 
         return userRepo.deleteUsersById(userIds).thenApplyAsync(v -> {
             return ok();
         }, ec.current());
+    }
+
+    @BodyParser.Of(BodyParser.MultipartFormData.class)
+    public CompletionStage<Result> deleteUnits(){
+        List<String> unitIdsStr = Arrays.asList(request().body().asMultipartFormData().asFormUrlEncoded().get("unitId"));
+        List<Integer> unitIds = unitIdsStr.stream().map(Integer::valueOf).collect(Collectors.toList());
+        return userRepo.deleteUnitsById(unitIds).thenApplyAsync(v -> ok(Json.toJson(unitIds)));
     }
 
     @Restrict(@Group("ADMIN"))

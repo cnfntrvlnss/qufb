@@ -36,9 +36,11 @@ public interface UserRepository {
     //添加处及部门，若部门不存在就添加部门，在判定部门下的处存在与否，若不存在处就添加处。
     CompletionStage<Void> addUnitsIfNone(List<Unit> units);
 
+    CompletionStage<Void> deleteUnitsById(List<Integer> unitIds);
+
     CompletionStage<Void> readdUsers(List<User> users);
 
-    CompletionStage<Void> updateSectionInner(Section section);
+    CompletionStage<Void> updateSectionRecur(Section section);
 
     CompletionStage<Void> deleteAllUsers();
 

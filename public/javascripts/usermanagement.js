@@ -72,36 +72,6 @@ function appendUserData(deptName, unitName, staffs){
 }
 
 var departmentData;
-/*
-var deletedUserIds = [];
-var addedUsers = [];
-
-function commitAll(){
-    var html = '';
-    if(deletedUserIds.length > 0){
-        html += '<p>删除的用户：' + JSON.stringify(deletedUserIds) + '</p>';
-    }
-    if(addedUsers.length > 0){
-        html += '<p>添加的用户：' + JSON.stringify(addedUsers) + '</p>';
-    }
-
-    if(html.length == 0){
-        return;
-    }
-    openConfirmModal(html, {}, function(){
-        if(departmentData.length > 0){
-            $.ajax({
-                url: 'deleteUsers'
-            });
-        }
-    });
-}
-
-function revertAll(){
-    deletedUserIds = [];
-    addedUsers = [];
-}
-*/
 
 function fetchCheckedDept(){
     var deptName = $('#collapseDepartment tbody tr :checked').closest('td').next().next().text();
@@ -219,6 +189,112 @@ function deleteUsers(){
     });
 }
 
+function deleteAndConfirmUnits(){
+    var units = [];
+    $('#collapseUnit tbody tr').filter(function(){
+        return $(this).find('td:eq(0) :checked').length > 0;
+    }).each(function(){
+        var id = $(this).find('td:eq(1)').text();
+        var secName = $(this).find('td:eq(2)').text();
+        var unitName = $(this).find('td:eq(3)').text();
+        units.push({id: id, name: secName + '---' + unitName});
+    });
+    var html = "<p>是否要删除如下的处：</p><p>" +
+    units.map(function(cur){return cur.name}).join(",") + "</p>";
+    openConfirmModal(html, units.map(function(cur){return cur.id}), function(ids){
+        var formData = ids.reduce(function(total, item){
+            total.append("unitId", item);
+            return total;
+        }, new FormData());
+
+        $.ajax({
+            url: 'deleteUnits',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(data){
+                var delUnits = [];
+                var hasNotUnitId = function(unit, unitIds){
+                    for(var i=0; i<unitIds.length; i++){
+                        if(unitIds[i] == unit.id) {
+                            delUnits.push(unit);
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+                departmentData.units = departmentData.units.filter(function(cur){
+                    return hasNotUnitId(cur, data);
+                });
+                //更新界面内容, 删除掉unit及其下的user
+                var hasUnitByName = function(unitName, units){
+                    for(var i=0; i<units.length; i++){
+                        if(units[i].name == unitName) return true;
+                    }
+                    return false;
+                };
+                $('#collapseUnit tbody tr').filter(function(){
+                    console.log('delete unit doc:', $(this).find('td:eq(3)').text(), delUnits);
+                    return hasUnitByName($(this).find('td:eq(3)').text(), delUnits);
+                }).remove();
+                $('#collapseUser tbody tr').filter(function(){
+                    return hasUnitByName($(this).find('td:eq(2)').text(), delUnits);
+                }).remove();
+
+            },
+            error: function(err){
+                alert("删除失败，返回值：" + err.status);
+            }
+        });
+    });
+}
+
+function addUnitAndRefresh(unit){
+    alert('addUnit success:', unit);
+}
+
+function submitUnitForm() {
+    var deptName = $('#unitDepartment').text();
+    var unitName = $('#unitUnit').val();
+    var manager = $('#unitManager').val();
+    if(manager != undefined && manager.length > 0){
+        //TODO 校验manager必须已经存在，才允许提交
+    }
+    $.ajax({
+        url: 'addUsers',
+        type: 'POST',
+        data: JSON.stringify({name: deptName,
+            units: [{ name: unitName, manager: manager
+            }]
+        }),
+        contentType: 'application/json;charset=UTF-8',
+        DataType: 'json',
+        success: function(response,status,xhr){
+            addUnitAndRefresh(response);
+        },
+        error: function(response){
+            alert('submitUnitForm error! ' + response.status + ":" + response.statusText);
+        }
+    });
+
+    $('#addUnitMdl').modal('hide');
+    return false;
+}
+
+function openAddUnitDlg(){
+    if(departmentData == undefined || departmentData.name == undefined){
+        alert('没有找到部门名称，请先选到某个部门！');
+        return;
+    }
+
+    $('#unitDepartment').text(departmentData.name);
+    $('#unitUnit').val('');
+    $('#unitManager').val('');
+    $('#addUnitMdl').modal('show');
+}
+
 function toggleChecks(self){
     if(self.checked){
         $(self).closest('thead').next().find(':checkbox').prop('checked', true);
@@ -227,20 +303,42 @@ function toggleChecks(self){
     }
 }
 
+//把section中的用户与全局变量departmentData中的用户合并，并刷新界面.
+//待合并用户的处是存在的
+function addUserAndRefresh(section){
+    //console.log("success from submit user:", section);
+    if(section.staffs != undefined && section.staffs.length > 0){
+        departmentData.staffs = departmentData.staffs.concat(section.staffs);
+    }
+    if(section.units != undefined){
+        $.each(section.units, function(idx, unit){
+            units = departmentData.units.filter(function(u){
+                return u.name == unit.name;
+            });
+            if(units.length == 0) return;
+            units[0].staffs = units[0].staffs.concat(unit.staffs);
+        });
+    }
+
+    showUsersByRadio();
+}
+
+
 function submitUserForm(){
     var fd = new FormData(document.getElementById('addUserForm'));
     fd.append('userId', fd.get('email'));
     fd.set('email', fd.get('email') + '@inspur.com');
     fd.set('number', 'LCJB' + fd.get('number'));
-    console.log('userFormData: ', fd);
+    fd.set("sectionName", $('#userDepartment').text());
     $.ajax({
         url: 'addUser',
         type: 'POST',
         data: fd,
         processData: false,
         contentType: false,
+        DataType: 'json',
         success: function(response,status,xhr){
-            alert('submitUserForm success!!!');
+            addUserAndRefresh(response);
         },
         error: function(data){
             alert('submitUserForm error!' + data);
@@ -256,14 +354,12 @@ function openAddUserDlg(){
         alert('没有找到部门名称，请先选到某个部门！');
         return;
     }
-    if(departmentData.units == undefined || departmentData.units.length == 0){
-        alert('没有找到二级部门，请先新建二级部门！');
-        return;
-    }
+
     $('#userDepartment').text(departmentData.name);
     $('#userUnit').empty();
+    $('#userUnit').append('<option value="无">无</option>');
     $.each(departmentData.units, function(idx, e){
-        $('#userUnit').append('<option value=' + e.id + '>' + e.name + '</option>');
+        $('#userUnit').append('<option value="' + e.name + '">' + e.name + '</option>');
     });
     $('#userName').val('');
     $('#userNumber').val('');
