@@ -26,14 +26,14 @@ function initNav(menuName, iconClass, href, activeFlag, treeviewAry) {
 			// 判断子菜单是否为打开状态
 			if (treeviewAry[i]["active"] == "Y") {
 				childHtml += '<li class="active"><a menu-controller="'
-						+ treeviewAry[i]["url"]
+						+ treeviewAry[i]["menuUrl"]
 						+ '" href="javascript:void(0)">';
 			} else {
-				childHtml += '<li><a menu-controller="' + treeviewAry[i]["url"]
+				childHtml += '<li><a menu-controller="' + treeviewAry[i]["menuUrl"]
 						+ '" href="javascript:void(0)">';
 			}
 			childHtml += '<i class="fa fa-circle-o"></i>'
-					+ treeviewAry[i]["name"] + '</a></li>';
+					+ treeviewAry[i]["menuName"] + '</a></li>';
 		}
 		childHtml += '</ul>';
 	}
@@ -43,13 +43,13 @@ function initNav(menuName, iconClass, href, activeFlag, treeviewAry) {
 }
 
  var menu={};
- menu.menuType=1;
-$(function(){
- //初始化一级菜单
-    initIndexNav();
-    //initFirstIndex();
-    //initSecondIndex(1);
-});
+     menu.menuType=1;
+    $(function(){
+        //初始化一级菜单
+        //initIndexNav();
+        initFirstIndex();
+        //initSecondIndex(1);
+    });
 
     function initFirstIndex(){
          $.ajax({
@@ -63,7 +63,7 @@ $(function(){
                 //循环初始化一级菜单
                 $('#sideMenu').empty();
                 $.each(data, function(i, e){
-                    initNav(e.menuName, "fa-dashboard", e.menuUrl, "N", "");
+                    initNav(e.menuName, "fa-dashboard", e.menuUrl, "N", e.subMenuJson);
                  });
               },
               error: function(data){
@@ -94,7 +94,7 @@ $(function(){
      function initIndexNav(){
             var treeAry = [
                     { "name":"问题列表", "url":"/myQuestionSubmit", "active": "N" },
-                    { "name":"问题处理", "url":"/myQuestionDeal/75", "active": "N" ,"method":"GET"},
+                    { "name":"问题处理", "url":"/myDepartment", "active": "N" },
             ];
             initNav("问题管理","fa-dashboard","#","N",treeAry);
             initNav("项目管理","fa-dashboard","#","N",treeAry);
@@ -102,21 +102,39 @@ $(function(){
     //获取所有的菜单
     function listMenu(){
          $.ajax({
-             url: "/listSubMenu",
+             url: "/listMenu",
              dataType:"json",
              contentType : 'application/json;charset=UTF-8',
              type: 'POST',
              asnyc:false,
              data:JSON.stringify(menu), //转JSON字符串
              success: function(data){
-                $('#menuId').empty();
-                $.each(data, function(i, e){
-                    $('#menuId').append();
-                    $('#menuId').append('<ul>' +e.menuName+ '</ul>');
-                 });
+               //循环初始化一级菜单
+               $('#sideMenu').empty();
+               $.each(data, function(i, e){
+                   initNav(e.menuName, "fa-dashboard", e.menuUrl, "N", "");
+                });
               },
               error: function(data){
                     alert("error!!! " + data);
               }
          });
+        }
+
+        function contentPageRender(url,pageRenderparams){
+        	$.ajax({
+        		url: url,
+        		type:"post",
+        		data:"",
+        		dataType:"html",
+        		async:true,
+        		success:function(data){
+        			$("#contentWrapper").html(data);
+        			$("#pageRenderParams").val(pageRenderparams);
+        		},
+        		error:function(data){
+        			alert("ajax PageRender error!");
+        		}
+        	});
+
         }

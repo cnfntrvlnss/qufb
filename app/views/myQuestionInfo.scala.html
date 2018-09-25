@@ -5,7 +5,7 @@
 
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>问题单新增</title>
+	<title>问题单详情</title>
 	<link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "stylesheets/layer.css")'/>
 	<script type="text/javascript" src='@routes.Assets.at("/public", "javascripts/layer.js")'></script>
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -47,23 +47,34 @@
 	            <div class="box-body">
 	              <form role="form" class="form-horizontal">
 	                <div class="form-group">
-	                  <label class="col-sm-2 control-label"><span style="color: red;font-size: 1px;">*</span>问题标题</label>
-	                  <div class="col-sm-9">
-		                  <input name="questionTitle" id="questionTitle" type="text" class="form-control" placeholder="请输入问题标题">
+	                  <label class="col-sm-2 control-label">问题编号</label>
+	                  <div class="col-sm-2">
+		                  <input name="questionTitle" id="questionCode" type="text" class="form-control" placeholder="问题标题">
 	                  </div>
+
+					<label class="col-sm-2 control-label">问题标题</label>
+					<div class="col-sm-2">
+						<input name="questionTitle" id="questionTitle" type="text" class="form-control" placeholder="问题标题">
+					</div>
+						<label class="col-sm-2 control-label">流程状态</label>
+						<div class="col-sm-2">
+							<input name="questionTitle" id="flowStateName" type="text" class="form-control" placeholder="问题标题">
+						</div>
 	                </div>
 	                <div class="form-group">
-                    	<label class="col-sm-2 control-label">BUG负责人</label>
+                    	<label class="col-sm-2 control-label">问题描述</label>
                     	<div class="col-sm-9" >
-			                <select class="form-control selectWidth" id="department1" name="bugHeader">
-			                </select>
-			                <select class="form-control selectWidth" id="unit1" name="bugHeader">
-								<option >请先选择一级部门</option>
-			                </select>
-			                <select class="form-control selectWidth" id="bugHeader" name="bugHeader">
-			                </select>
+			                <textarea class="form-control selectWidth" id="questionDescription" name="bugHeader">
+			                </textarea>
                     	</div>
 	                </div>
+					  <div class="form-group">
+						  <label class="col-sm-2 control-label">问修建议</label>
+						  <div class="col-sm-9" >
+			                <textarea class="form-control selectWidth" id="feedbackSuggestion" name="bugHeader">
+			                </textarea>
+						  </div>
+					  </div>
 	                <div class="form-group">
 	                  <label class="col-sm-2 control-label">问题描述</label>
 	                  <div class="col-sm-9" >

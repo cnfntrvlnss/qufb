@@ -31,18 +31,17 @@ GET /myQuestion     controllers.QuestionFeedbackController.myQuestion()
 # myQuestionSubmit
 POST /myQuestionSubmit       controllers.QuestionFeedbackController.myQuestionSubmit()
 
-
+# myQuestionDeal
+POST /myQuestionDeal/:questionId     controllers.QuestionFeedbackController.myQuestionDeal(questionId :Integer)
 
 # myQuestionDeal
-GET /myQuestionDeal/:questionId     controllers.QuestionFeedbackController.myQuestionDeal(questionId :Integer)
+POST /myQuestionInfo/:questionId     controllers.QuestionFeedbackController.myQuestionInfo(questionId :Integer)
 
 # myQuestionInfo
 GET /getQuestionInfo/:questionId        controllers.QuestionFeedbackController.getQuestionInfo(questionId :Integer)
 
 # addQuestion
 POST    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
-
-#GET    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
 
 # listQuestion
 GET /listQuestion       controllers.QuestionFeedbackController.listQuestion()
@@ -54,7 +53,7 @@ POST /listMyQuestion     controllers.QuestionFeedbackController.listMyQuestion()
 POST /updateQuestionInfo       controllers.QuestionFeedbackController.updateQuestionInfo()
 
 #myDepartment
-GET /myDepartment        controllers.DepartmentController.myDepartment()
+POST /myDepartment        controllers.DepartmentController.myDepartment()
 
 #getFirstDepartment
 GET /getFirstDepartment      controllers.DepartmentController.getFirstDepartment()
@@ -83,7 +82,7 @@ GET /listSubMenu/:parentMenuId       controllers.MenuController.listSubMenu( par
 #login
 GET /questionLogin      controllers.LoginController.login()
 
-
+GET /getCodeConfig      controllers.MenuController.getCodeConfig()
 
 
 

@@ -44,11 +44,11 @@ public class UserController extends Controller {
 
     public CompletionStage<Result> login(){
         DynamicForm form = formFactory.form().bindFromRequest();
-        String name = form.get("name");
+        String userId = form.get("name");
         String password = form.get("password");
-        logger.debug("in login, name: {}; password: {}", name, password);
+        logger.debug("in login, name: {}; password: {}", userId, password);
 
-        return userRepo.findById(name).thenApplyAsync(user -> {
+        return userRepo.findById(userId).thenApplyAsync(user -> {
             if(user == null){
                 return forbidden("user is not found!");
             }
@@ -58,9 +58,9 @@ public class UserController extends Controller {
                     return forbidden("password is not matched!");
                 }
             }
-            session().put("username", name);
-            // session().put("email", user.getEmail());
-            return ok(views.html.myQuestionMain.render(name));
+            session().put("userId", userId);
+            session().put("userName", user.getName());
+            return ok(views.html.myQuestionMain.render(user.getName()));
         }, ec.current());
     }
 
@@ -224,7 +224,7 @@ public class UserController extends Controller {
 
     @Restrict(@Group("ADMIN"))
     public Result testSecure(){
-        String userId = session().get("username");
+        String userId = session().get("userName");
         return ok("pass " + userId);
     }
 

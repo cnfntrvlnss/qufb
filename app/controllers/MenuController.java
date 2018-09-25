@@ -1,6 +1,6 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import dao.CodeSerialRepository;
 import dao.MenuRepository;
 import models.Menu;
 import play.Logger;
@@ -22,6 +22,8 @@ public class MenuController extends Controller {
 
 	@Inject
 	MenuRepository menuRepository;
+	@Inject
+	CodeSerialRepository codeSerialRepository;
 
 	@Inject
 	private HttpExecutionContext ec;
@@ -40,14 +42,22 @@ public class MenuController extends Controller {
 		CompletionStage<List<Menu>> menuList = menuRepository.listMenu(menu);
 		return menuList.thenApplyAsync(menus -> {
 			for(Menu menuTemp : menus){
-				menuTemp.setSubMenuJson(listSubMenu(menuTemp.getMenuId()));
+				menuTemp.setSubMenuJson(getSubMenuList(menuTemp.getMenuId()));
 			}
 		return ok(toJson(menus));
 		}, ec.current());
+	}
+
+	public List<Menu> getSubMenuList(Integer parentMenuId) {
+		return menuRepository.getSubMenuList(parentMenuId);
 	}
 	public CompletionStage<Result> listSubMenu(Integer parentMenuId) {
 		return menuRepository.listSubMenu(parentMenuId).thenApplyAsync(subMenuList ->
 				ok(toJson(subMenuList))
 		);
+	}
+	public  Result getCodeConfig(){
+		String code=codeSerialRepository.getCodeInfo(1);
+		return ok(views.html.myCodeConfig.render(code));
 	}
 }

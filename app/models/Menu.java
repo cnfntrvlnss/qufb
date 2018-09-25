@@ -21,7 +21,7 @@ public class Menu {
 
     //扩展字段
     @Transient
-    public CompletionStage<Result> subMenuJson;//每个菜单包含的二级菜单json串，加载左侧菜单使用
+    public List<Menu> subMenuJson;//每个菜单包含的二级菜单json串，加载左侧菜单使用
 
 
     public Integer getMenuId() {
@@ -80,11 +80,11 @@ public class Menu {
         this.menuIcon = menuIcon;
     }
 
-    public CompletionStage<Result> getSubMenuJson() {
+    public List<Menu> getSubMenuJson() {
         return subMenuJson;
     }
 
-    public void setSubMenuJson(CompletionStage<Result> subMenuJson) {
+    public void setSubMenuJson(List<Menu> subMenuJson) {
         this.subMenuJson = subMenuJson;
     }
 }

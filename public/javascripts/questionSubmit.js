@@ -132,7 +132,7 @@
         }
 
         function loadTableData() {
-                $("#questionTable").bootstrapTable({
+            var table =   $("#questionTable").bootstrapTable({
                     striped:true,
                     pagination:true,
                     //sidePagination:'server',
@@ -152,31 +152,32 @@
                     formatLoadingMessage:function(){
                         return "请稍等，正在加载中……";
                     },
-                    //url : "../theme/data/questionData.json",
                     url : "/listMyQuestion",
                     async:true,
                     method:'post',
-                    //contentType:'application/x-www-form-urlencoded; charset=UTF-8',
-                   /* queryParams: function(selectParam){
-                        selectParam.questionTitle = $("#questionTitle").val();
-                        return selectParam;
-                    },*/
                     queryParams : queryParams,//传递参数（*）
                     columns:[
                             {
+                                field:'questionId',
                                 align:'center',
-                                checkbox:true
+                                formatter:function(value,row,index){
+                                    return"<label><input type='radio'  id='questionIdCheck' value = '" + row.questionId + "' /><span class='lbl' id='questionIdCheck' value = '" + row.questionId + "'></span></label>";
+                                }
                             },
                             {
-                                field:'questionId',
-                                title:'问题id'
+                                field:'questionCode',
+                                title:'问题编号',
+                                align:'center',
+                                formatter:function(value,row,index){
+                                    return '<a onclick="questionUpdate('+row.questionId+');" >' + row.questionCode + '</a>';
+                                }
                             },
                             {
                                 field:'questionTitle',
                                 title:'问题标题',
                                 align:'center',
                                 formatter:function(value,row,index){
-                                    return '<a href="myQuestionDeal/'+row.questionId+'">' + row.questionTitle + '</a>';
+                                    return '<a onclick="questionUpdate('+row.questionId+');" >' + row.questionTitle + '</a>';
                                 }
                             },
                             {
@@ -209,6 +210,8 @@
                             }
                     ]
                 });
+
+
             };
 
     function loadQuestionList(){
@@ -226,4 +229,18 @@
                     alert("error!!! " + data);
               }
          });
+}
+function questionAdd(){
+	contentPageRender("/myQuestionDeal/0","")
+}
+    function questionDetail(){
+       if($("#questionIdCheck:checked").length==0){
+         layer.msg("请选择一个问题查看详情");
+         return;
+       } else{
+            contentPageRender("/myQuestionInfo/"+$("#questionIdCheck:checked").val(),"")
+       }
+}
+function questionUpdate(questionId){
+	contentPageRender("/myQuestionDeal/"+questionId,questionId)
 }

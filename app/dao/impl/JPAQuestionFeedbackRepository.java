@@ -71,8 +71,8 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
     }
 
     @Override
-    public CompletionStage<List<QuestionFeedback>> findAll(QuestionFeedback questionFeedback,String userName) {
-        String sql="select q from QuestionFeedback q    where 1=1 and (q.feedbacker=?1 or q.bugHeader=?1 or q.transferName =?1 or q.developerName =?1 or q.schemeAuditName=?1 or q.resultAuditName=?1 or q.verifyName =?1)   " ;
+    public CompletionStage<List<QuestionFeedback>> findAll(QuestionFeedback questionFeedback,String userId) {
+        String sql="select q from QuestionFeedback q    where 1=1 and (q.feedbackerId=?1 or q.bugHeaderId=?1 or q.transferId =?1 or q.developerId =?1 or q.schemeAuditId=?1 or q.resultAuditId=?1 or q.verifyId =?1)   " ;
                 if(questionFeedback.getQuestionTitle()!=null){
                     sql+=" and q.questionTitle like '%"+questionFeedback.getQuestionTitle()+"%'";
                 }
@@ -99,7 +99,7 @@ public class JPAQuestionFeedbackRepository implements QuestionFeedbackRepository
                sql += " order by q.feedbackTime desc";
                 String sqlQuery=sql;
         logger.debug("{}", sqlQuery);
-        return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery(sqlQuery, QuestionFeedback.class) .setParameter(1, userName).getResultList()));
+        return supplyAsync(()-> jpaApi.withTransaction(questionList-> questionList.createQuery(sqlQuery, QuestionFeedback.class) .setParameter(1, userId).getResultList()));
     }
 
     /**
