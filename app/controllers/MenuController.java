@@ -44,7 +44,7 @@ public class MenuController extends Controller {
 			for(Menu menuTemp : menus){
 				menuTemp.setSubMenuJson(getSubMenuList(menuTemp.getMenuId()));
 			}
-		return ok(toJson(menus));
+			return ok(toJson(menus));
 		}, ec.current());
 	}
 

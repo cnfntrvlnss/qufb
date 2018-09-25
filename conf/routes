@@ -76,24 +76,32 @@ GET /listUser/    controllers.QuestionFeedbackController.listUser(departmentId :
 #listMenu
 POST /listMenu       controllers.MenuController.listMenu()
 
+
 #listMenu
 GET /listSubMenu/:parentMenuId       controllers.MenuController.listSubMenu( parentMenuId :Integer)
+
 
 #login
 GET /questionLogin      controllers.LoginController.login()
 
+
 GET /getCodeConfig      controllers.MenuController.getCodeConfig()
 
-
-
-
-
-
 GET /person     controllers.PersonController.index()
-
 POST    /person/person      controllers.PersonController.addPerson()
-
 GET /person/persons     controllers.PersonController.getPersons()
 
+#导入部门数据
 POST    /addUsers      controllers.UserController.addUsersN()
+#导出部门数据
+GET /getSection    controllers.UserController.fetchDepartmentData(sectionName)
+
 POST  /deleteAllUsers   controllers.UserController.deleteAllUsers()
+#添加用户，传入用户列表
+POST    /addUser       controllers.UserController.addUser()
+#删除用户，传入用户id列表
+POST    /deleteUsers    controllers.UserController.deleteUsers()
+#删除处, 传入处ID列表
+POST    /deleteUnits    controllers.UserController.deleteUnits()
+#删除部门，传入部门ID
+POST    /deleteDept     controllers.UserController.deleteDept()

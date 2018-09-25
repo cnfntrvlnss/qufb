@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -162,6 +163,22 @@ public class JPAUserRepository implements UserRepository {
         }));
     }
 
+    @Override
+    public CompletionStage<Optional<Section>> findSectionData(String sectionName){
+        return supplyAsync(() -> jpaApi.withTransaction((EntityManager em) -> {
+            List<Section> sections = em.createNamedQuery("Section.findByName", Section.class)
+                    .setParameter("name", sectionName).getResultList();
+            if(sections.size() == 0) return Optional.empty();
+            else{
+                Section sec = sections.get(0);
+                for(Unit u: sec.getUnits()){
+                    u.getStaffs().size();
+                }
+                return Optional.of(sec);
+            }
+        }));
+    }
+
     private void _addUnitsIfNone(EntityManager em, List<Unit> units){
         for(Unit u: units) {
             User mana = u.getManager();
@@ -206,11 +223,31 @@ public class JPAUserRepository implements UserRepository {
         });
     }
 
-    public CompletionStage<Void> addUsers(List<User> users) {
+    @Override
+    public CompletionStage<Void> deleteUnitsById(List<Integer> unitIds){
         return wrap(em -> {
-            for(User u: users){
-                em.persist(u);
+            for(Integer id: unitIds){
+                Unit u = em.find(Unit.class, id);
+                for(User user: u.getStaffs()){
+                    em.remove(user);
+                }
+                em.remove(u);
             }
+            return null;
+        });
+    }
+
+    @Override
+    public CompletionStage<Void> deleteDeptById(Integer deptId) {
+        return wrap( em -> {
+            Section section = em.find(Section.class, deptId);
+            for(Unit unit: section.getUnits()){
+                for(User user: unit.getStaffs()){
+                    em.remove(user);
+                }
+                em.remove(unit);
+            }
+            em.remove(section);
             return null;
         });
     }
@@ -236,7 +273,7 @@ public class JPAUserRepository implements UserRepository {
      * @return
      */
     @Override
-    public CompletionStage<Void> updateSectionInner(Section section){
+    public CompletionStage<Void> updateSectionRecur(Section section){
         return wrap(em -> {
             List<Section> sections = em.createNamedQuery("Section.findByName", Section.class)
                     .setParameter("name", section.getName())
@@ -247,6 +284,7 @@ public class JPAUserRepository implements UserRepository {
             }else{
                 section.setId(sections.get(0).getId());
             }
+
             for(Unit u: units) {
                 List<Unit> us = em.createNamedQuery("Unit.findByName", Unit.class)
                         .setParameter("name", u.getName())
@@ -258,15 +296,16 @@ public class JPAUserRepository implements UserRepository {
                 u.setManager(null);//后添加Manager，就需要在更新unit时设置为null.
                 if(us.isEmpty()){
                     em.persist(u);
-                    if(manager != null){
-                        em.createNamedQuery("Unit.updateManager").setParameter("id", u.getId())
-                                .setParameter("userId", manager.getUserId()).executeUpdate();
-                    }
                 }else{
                     u.setId(us.get(0).getId());
                 }
+                if(manager != null){
+                    em.createNamedQuery("Unit.updateManager").setParameter("id", u.getId())
+                            .setParameter("userId", manager.getUserId()).executeUpdate();
+                }
+                //ZSR: 经测试，u也会被managed
                 Unit u1 = em.merge(u);
-                //user中的Unit必须要被managed，才能保持user.
+                //user中的Unit必须要被managed，才能保存到数据库.
                 for(User user: users) {
                     User user1 = em.find(User.class, user.getUserId());
                     if(user1 != null){
@@ -274,6 +313,12 @@ public class JPAUserRepository implements UserRepository {
                     }
                     user.setUnit(u1);
                     em.persist(user);
+                }
+                //恢复unit数据原样，保证函数返回后数据的完整性。
+                //返回的实体的各字段要来自数据库，因为这是在事务里面。
+                u.setStaffs(users);
+                if(manager != null){
+                    u.setManager(em.find(User.class, manager.getUserId()));
                 }
             }
 
@@ -285,6 +330,19 @@ public class JPAUserRepository implements UserRepository {
     public CompletionStage<Void> deleteAllUsers(){
         return wrap(em ->{
             em.createQuery("delete from User").executeUpdate();
+            return null;
+        });
+    }
+
+    @Override
+    public CompletionStage<Void> deleteUsersById(List<String> userIds){
+        return wrap(em -> {
+            for(String id: userIds){
+                User user = em.find(User.class, id);
+                if(user != null){
+                    em.remove(user);
+                }
+            }
             return null;
         });
     }
