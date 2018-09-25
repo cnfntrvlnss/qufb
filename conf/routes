@@ -98,3 +98,5 @@ POST    /addUser       controllers.UserController.addUser()
 POST    /deleteUsers    controllers.UserController.deleteUsers()
 #删除处, 传入处ID列表
 POST    /deleteUnits    controllers.UserController.deleteUnits()
+#删除部门，传入部门ID
+POST    /deleteDept     controllers.UserController.deleteDept()

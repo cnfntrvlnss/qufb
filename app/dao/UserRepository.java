@@ -38,6 +38,8 @@ public interface UserRepository {
 
     CompletionStage<Void> deleteUnitsById(List<Integer> unitIds);
 
+    CompletionStage<Void> deleteDeptById(Integer deptId);
+
     CompletionStage<Void> readdUsers(List<User> users);
 
     CompletionStage<Void> updateSectionRecur(Section section);

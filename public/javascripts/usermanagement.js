@@ -8,14 +8,7 @@ $(document).ready(function(){
         success: function(data){
             console.log('data:', data);
             $('#collapseDepartment tbody').empty();
-            $.each(data, function(i, e){
-                var html = '<tr><td><div class="form-check">' +
-                   '<label><input type="checkbox" class="form-check-input" value="">' + (i + 1) + '</label></div></td>' +
-                   '<td>' + e.id + '</td>' +
-                   '<td>' + e.name + '</td>' +
-                   '<td>' + (e.manager == undefined ? '': e.manager) + '</td></tr>';
-                $('#collapseDepartment tbody').append(html);
-            });
+            appendDeptData(data);
         },
         error: function(data){
             alert('error occurs while get listDepartment! ' + data);
@@ -27,11 +20,27 @@ $(document).ready(function(){
     $(':radio[name="useroptradio"]').click(showUsersByRadio);
 });
 
+function appendDeptData(depts){
+    var lastDept = $('#collapseDepartment tbody tr:last');
+    var st = 1;
+    if(lastDept.length != 0){
+        st += parseInt(lastDept.find('td:first label').text());
+    }
+    $.each(depts, function(i, e){
+        var html = '<tr><td><div class="form-check">' +
+           '<label><input type="checkbox" class="form-check-input" value="">' + (i + st) + '</label></div></td>' +
+           '<td>' + e.id + '</td>' +
+           '<td>' + e.name + '</td>' +
+           '<td>' + (e.manager == undefined ? '': e.manager) + '</td></tr>';
+        $('#collapseDepartment tbody').append(html);
+    });
+}
+
 function appendUnitData(deptName, units){
     var lastUnit = $('#collapseUnit tbody tr:last');
     var st = 1;
     if(lastUnit.length != 0){
-        st += parseInit(lastUnit.find('td:first label').text());
+        st += parseInt(lastUnit.find('td:first label').text());
     }
     $.each(units, function(i, e){
         var html = '<tr><td><div class="form-check"><label>' +
@@ -57,7 +66,7 @@ function appendUserData(deptName, unitName, staffs){
         var roles = e.roles.reduce(function(total, value){
             return total  + value + ',';
         }, '');
-        roles = roles.replace(',$', '');
+        roles = roles.replace(/,$/, '');
         var html = '<tr><td><div class="form-check"><label>' +
                    '<input type="checkbox" class="form-check-input" value="">'+ (i+st) + '</label></div></td>' +
                    '<td>'+ deptName + '</td>' +
@@ -74,7 +83,7 @@ function appendUserData(deptName, unitName, staffs){
 var departmentData;
 
 function fetchCheckedDept(){
-    var deptName = $('#collapseDepartment tbody tr :checked').closest('td').next().next().text();
+    var deptName = $('#collapseDepartment tbody tr :checked').first().closest('td').next().next().text();
     console.log("deptName:", deptName);
     if(deptName == undefined || deptName.length == 0){
         return;
@@ -84,7 +93,17 @@ function fetchCheckedDept(){
         dataType: 'json',
         success: function(data){
             console.log("return from fetchCheckedDept:", data);
-            departmentData = data.departments[0];
+            departmentData = data;
+            //更新dept表的manager字段
+            var manager = '';
+            if(departmentData.manager != undefined){
+                manager = departmentData.manager;
+            }
+            var curDept = $('#collapseDepartment tbody tr').filter(function(){
+                return $(this).find('td:eq(1)').text() == departmentData.id;
+            });
+            curDept.find('td:eq(3)').text(manager);
+            //更新其他表
             $('#collapseUnit tbody').empty();
             appendUnitData(departmentData.name, departmentData.units);
             showUsersByRadio();
@@ -137,6 +156,237 @@ function showCheckedUsers(){
     });
 }
 
+function deleteAndConfirmDept(){
+    if(departmentData == undefined){
+        alert("请先获取需要删除的部门数据，再做删除操作！");
+    }
+
+    //获取要删除的部门，存成formData形式发送到后台
+    var formData = new FormData();
+    formData.append("deptId", departmentData.id);
+    var html = "<p>是否要删除部门：" + departmentData.name + "？</p>";
+    openConfirmModal(html, formData, function(fd){
+        $.ajax({
+            url: 'deleteDept',
+            type: 'POST',
+            data: fd,
+            processData: false,
+            contentType: false,
+            success: function(data){
+                //在部门表中删除对应行,清空处表，用户表
+                departmentData = undefined;
+                var deptId = fd.get("deptId");
+                $('#collapseDepartment tbody tr').filter(function(){
+                    return $(this).find('td:eq(1)').text() == deptId;
+                }).remove();
+                $('#collapseUnit tbody').empty();
+                $('#collapseUser tbody').empty();
+            },
+            error: function(err){
+                alert("删除失败! " + err.status + ":" + err.statusText);
+            }
+        });
+    });
+}
+
+function submitDeptEdit(){
+    var deptName = $('#deptDepartment').val();
+    var manager = $('#deptManager').val();
+    if(manager == '') return;
+
+    $.ajax({
+        url: 'addUsers',
+        type: 'POST',
+        data: JSON.stringify({name: deptName, manager: manager}),
+        contentType: 'application/json; charset=UTF-8',
+        success: function(response){
+            console.log('submitDeptEdit success:', response);
+            //更新全局变量deparmentData, 更新界面
+            if(response.manager == undefined){
+                departmentData.manager = '';
+            }else{
+                departmentData.manager = response.manager;
+            }
+            $('#collapseDepartment tbody tr').filter(function(){
+                return $(this).find('td:eq(2)').text() == departmentData.name;
+            }).find('td:eq(3)').text(departmentData.manager);
+        },
+        error: function(response){
+            alert('submitDeptEdit error! ' + response.status + ":" + response.statusText);
+        }
+    });
+
+    $('#addDeptMdl').modal('hide');
+    return false;
+}
+
+function openEditDeptDlg(){
+    if(departmentData == undefined){
+        alert("请先获取部门数据，再编辑此部门！");
+        return;
+    }
+    $('#deptDepartment').val(departmentData.name);
+    $('#deptDepartment').prop('disabled', true);
+    $('#deptManager').closest('div').show();
+    $('#deptManager').val('');
+    if(departmentData.manager != undefined){
+        $('#deptManager').val(departmentData.manager);
+    }
+    $('#deptAddOrEdit').text('编辑');
+    document.getElementById('deptSubmitBtn').onclick = submitDeptEdit;
+    $('#addDeptMdl').modal('show');
+}
+
+function submitDeptAdd(){
+    var deptName = $('#deptDepartment').val();
+    if(deptName == '') return;
+    $.ajax({
+        url: 'addUsers',
+        type: 'POST',
+        data: JSON.stringify({name: deptName}),
+        contentType: 'application/json;charset=UTF-8',
+        DataType: 'json',
+        success: function(data){
+            //console.log("submitDeptForm success:", data);
+            departmentData = data;
+            appendDeptData([data,]);
+            $('#collapseUnit tbody').empty();
+            $('#collapseUser tbody').empty();
+        },
+        error: function(response){
+            alert('submitDeptAdd error! ' + response.status + ":" + response.statusText);
+        }
+    });
+    $('#addDeptMdl').modal('hide');
+    return false;
+}
+
+function openAddDeptDlg(){
+    $('#deptDepartment').val('');
+    $('#deptDepartment').prop('disabled', false);
+    $('#deptManager').closest('div').hide();
+    $('#deptAndOrEdit').text('添加');
+    document.getElementById('deptSubmitBtn').onclick = submitDeptAdd;
+    $('#addDeptMdl').modal('show');
+}
+
+//先从后台删除处，然后在departmentData中删除，再在html dom中删除.
+function deleteAndConfirmUnits(){
+    var units = [];
+    //获取要删除的处，存成formData形式发送到后台
+    $('#collapseUnit tbody tr').filter(function(){
+        return $(this).find('td:eq(0) :checked').length > 0;
+    }).each(function(){
+        var id = $(this).find('td:eq(1)').text();
+        var secName = $(this).find('td:eq(2)').text();
+        var unitName = $(this).find('td:eq(3)').text();
+        units.push({id: id, name: secName + '---' + unitName});
+    });
+    var html = "<p>是否要删除如下的处及其下的用户数据：</p><p>" +
+    units.map(function(cur){return cur.name}).join(",") + "</p>";
+    openConfirmModal(html, units.map(function(cur){return cur.id}), function(ids){
+        var formData = ids.reduce(function(total, item){
+            total.append("unitId", item);
+            return total;
+        }, new FormData());
+
+        $.ajax({
+            url: 'deleteUnits',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(data){
+                var delUnits = [];
+                //更新departmentData中的处信息
+                var hasNotUnitId = function(unit, unitIds){
+                    for(var i=0; i<unitIds.length; i++){
+                        if(unitIds[i] == unit.id) {
+                            delUnits.push(unit);
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+                departmentData.units = departmentData.units.filter(function(cur){
+                    return hasNotUnitId(cur, data);
+                });
+                //更新界面内容, 删除掉unit及其下的user
+                var hasUnitByName = function(unitName, units){
+                    for(var i=0; i<units.length; i++){
+                        if(units[i].name == unitName) return true;
+                    }
+                    return false;
+                };
+                $('#collapseUnit tbody tr').filter(function(){
+                    //console.log('delete unit doc:', $(this).find('td:eq(3)').text(), delUnits);
+                    return hasUnitByName($(this).find('td:eq(3)').text(), delUnits);
+                }).remove();
+                $('#collapseUser tbody tr').filter(function(){
+                    return hasUnitByName($(this).find('td:eq(2)').text(), delUnits);
+                }).remove();
+
+            },
+            error: function(err){
+                alert("删除失败，返回值：" + err.status);
+            }
+        });
+    });
+}
+
+function submitUnitForm() {
+    var deptName = $('#unitDepartment').text();
+    var unitName = $('#unitUnit').val();
+    var manager = $('#unitManager').val();
+    //unitName 不能已经存在
+    var addUnits = departmentData.units.filter(function(cur){
+        return cur.name == unitName;
+    });
+    if(addUnits.length > 0){
+        alert("处名（" + unitName + "）已经存在不能再添加！");
+        return;
+    }
+    if(manager != undefined && manager.length > 0){
+        //TODO 校验manager必须已经存在，才允许提交
+    }
+    $.ajax({
+        url: 'addUsers',
+        type: 'POST',
+        data: JSON.stringify({name: deptName,
+            units: [{ name: unitName, manager: manager
+            }]
+        }),
+        contentType: 'application/json;charset=UTF-8',
+        DataType: 'json',
+        success: function(response){
+            var unit = response.units[0];
+            //console.log("addUnit success:", unit);
+            departmentData.units.push(unit);
+            appendUnitData(departmentData.name, [unit,]);
+        },
+        error: function(response){
+            alert('submitUnitForm error! ' + response.status + ":" + response.statusText);
+        }
+    });
+
+    $('#addUnitMdl').modal('hide');
+    return false;
+}
+
+function openAddUnitDlg(){
+    if(departmentData == undefined || departmentData.name == undefined){
+        alert('没有找到部门名称，请先选到某个部门！');
+        return;
+    }
+
+    $('#unitDepartment').text(departmentData.name);
+    $('#unitUnit').val('');
+    $('#unitManager').val('');
+    $('#addUnitMdl').modal('show');
+}
+
+
 //从departmentData中删除userId为userIds的用户, 并刷新用户表
 function removeUsersAndRefresh(userIds){
     var usermap = userIds.reduce(function(m, u){
@@ -187,120 +437,6 @@ function deleteUsers(){
               }
           });
     });
-}
-
-function deleteAndConfirmUnits(){
-    var units = [];
-    $('#collapseUnit tbody tr').filter(function(){
-        return $(this).find('td:eq(0) :checked').length > 0;
-    }).each(function(){
-        var id = $(this).find('td:eq(1)').text();
-        var secName = $(this).find('td:eq(2)').text();
-        var unitName = $(this).find('td:eq(3)').text();
-        units.push({id: id, name: secName + '---' + unitName});
-    });
-    var html = "<p>是否要删除如下的处：</p><p>" +
-    units.map(function(cur){return cur.name}).join(",") + "</p>";
-    openConfirmModal(html, units.map(function(cur){return cur.id}), function(ids){
-        var formData = ids.reduce(function(total, item){
-            total.append("unitId", item);
-            return total;
-        }, new FormData());
-
-        $.ajax({
-            url: 'deleteUnits',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            success: function(data){
-                var delUnits = [];
-                var hasNotUnitId = function(unit, unitIds){
-                    for(var i=0; i<unitIds.length; i++){
-                        if(unitIds[i] == unit.id) {
-                            delUnits.push(unit);
-                            return false;
-                        }
-                    }
-                    return true;
-                };
-                departmentData.units = departmentData.units.filter(function(cur){
-                    return hasNotUnitId(cur, data);
-                });
-                //更新界面内容, 删除掉unit及其下的user
-                var hasUnitByName = function(unitName, units){
-                    for(var i=0; i<units.length; i++){
-                        if(units[i].name == unitName) return true;
-                    }
-                    return false;
-                };
-                $('#collapseUnit tbody tr').filter(function(){
-                    console.log('delete unit doc:', $(this).find('td:eq(3)').text(), delUnits);
-                    return hasUnitByName($(this).find('td:eq(3)').text(), delUnits);
-                }).remove();
-                $('#collapseUser tbody tr').filter(function(){
-                    return hasUnitByName($(this).find('td:eq(2)').text(), delUnits);
-                }).remove();
-
-            },
-            error: function(err){
-                alert("删除失败，返回值：" + err.status);
-            }
-        });
-    });
-}
-
-function addUnitAndRefresh(unit){
-    alert('addUnit success:', unit);
-}
-
-function submitUnitForm() {
-    var deptName = $('#unitDepartment').text();
-    var unitName = $('#unitUnit').val();
-    var manager = $('#unitManager').val();
-    if(manager != undefined && manager.length > 0){
-        //TODO 校验manager必须已经存在，才允许提交
-    }
-    $.ajax({
-        url: 'addUsers',
-        type: 'POST',
-        data: JSON.stringify({name: deptName,
-            units: [{ name: unitName, manager: manager
-            }]
-        }),
-        contentType: 'application/json;charset=UTF-8',
-        DataType: 'json',
-        success: function(response,status,xhr){
-            addUnitAndRefresh(response);
-        },
-        error: function(response){
-            alert('submitUnitForm error! ' + response.status + ":" + response.statusText);
-        }
-    });
-
-    $('#addUnitMdl').modal('hide');
-    return false;
-}
-
-function openAddUnitDlg(){
-    if(departmentData == undefined || departmentData.name == undefined){
-        alert('没有找到部门名称，请先选到某个部门！');
-        return;
-    }
-
-    $('#unitDepartment').text(departmentData.name);
-    $('#unitUnit').val('');
-    $('#unitManager').val('');
-    $('#addUnitMdl').modal('show');
-}
-
-function toggleChecks(self){
-    if(self.checked){
-        $(self).closest('thead').next().find(':checkbox').prop('checked', true);
-    }else{
-        $(self).closest('thead').next().find(':checked').prop('checked', false);
-    }
 }
 
 //把section中的用户与全局变量departmentData中的用户合并，并刷新界面.
@@ -364,6 +500,7 @@ function openAddUserDlg(){
     $('#userName').val('');
     $('#userNumber').val('');
     $('#userEmail').val('');
+    $('#userRoles').find(':selected').prop('selected', false);
     $('#addUserMdl').modal('show');
 }
 
@@ -377,4 +514,12 @@ function openConfirmModal(body, args, fn) {
         mdl.modal('hide');
     });
     mdl.modal('show');
+}
+
+function toggleChecks(self){
+    if(self.checked){
+        $(self).closest('thead').next().find(':checkbox').prop('checked', true);
+    }else{
+        $(self).closest('thead').next().find(':checked').prop('checked', false);
+    }
 }

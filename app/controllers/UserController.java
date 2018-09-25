@@ -184,7 +184,7 @@ public class UserController extends Controller {
             }
             unit.setStaffs(users);
             JsonNode managerNode = unitsNode.get(i).get("manager");
-            if(managerNode != null){
+            if(managerNode != null && !managerNode.asText().equals("")){
                 unit.setManager(new User(){
                     {
                         setUserId(managerNode.asText());
@@ -206,6 +206,7 @@ public class UserController extends Controller {
             logger.debug("in addUsersN, after modification, body: {}", Json.prettyPrint(body));
             Section dept = parseDepartmentJson(body);
             stags = stags.thenComposeAsync(v -> userRepo.updateSectionRecur(dept));
+            return stags.thenApplyAsync(v -> ok(convertSectionToJson(dept)), ec.current());
         } else{
             for(int i=0; i <body.get("departments").size(); i++){
                 JsonNode deptNode = body.get("departments").get(i);
@@ -214,8 +215,8 @@ public class UserController extends Controller {
                 Section dept = parseDepartmentJson(deptNode);
                 stags = stags.thenComposeAsync(v -> userRepo.updateSectionRecur(dept));
             }
+            return stags.thenApplyAsync(v -> ok(), ec.current());
         }
-        return stags.thenApplyAsync(v -> ok(), ec.current());
     }
 
     //生成的Json格式与导入的是一致的
@@ -260,6 +261,10 @@ public class UserController extends Controller {
             secNode.set("units", unitsNode);
         }
 
+        if(secNode.get("staffs") == null){
+            secNode.set("staffs", Json.newArray());
+        }
+
         return secNode;
     }
 
@@ -267,11 +272,7 @@ public class UserController extends Controller {
         return userRepo.findSectionData(sectionName).thenApplyAsync(section -> {
             //生成Json文档返回
             if(!section.isPresent()) return noContent();
-            ArrayNode secsNode = Json.newArray();
-            secsNode.add(convertSectionToJson(section.get()));
-            ObjectNode bodyNode = Json.newObject();
-            bodyNode.set("departments", secsNode);
-            return ok(bodyNode);
+            return ok(convertSectionToJson(section.get()));
         });
     }
 
@@ -330,6 +331,13 @@ public class UserController extends Controller {
         List<String> unitIdsStr = Arrays.asList(request().body().asMultipartFormData().asFormUrlEncoded().get("unitId"));
         List<Integer> unitIds = unitIdsStr.stream().map(Integer::valueOf).collect(Collectors.toList());
         return userRepo.deleteUnitsById(unitIds).thenApplyAsync(v -> ok(Json.toJson(unitIds)));
+    }
+
+    @BodyParser.Of(BodyParser.MultipartFormData.class)
+    public CompletionStage<Result> deleteDept() {
+        List<String> deptIdsStr = Arrays.asList(request().body().asMultipartFormData().asFormUrlEncoded().get("deptId"));
+        Integer deptId =  Integer.valueOf(deptIdsStr.get(0));
+        return userRepo.deleteDeptById(deptId).thenApplyAsync(v -> ok());
     }
 
     @Restrict(@Group("ADMIN"))

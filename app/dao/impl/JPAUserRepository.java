@@ -238,6 +238,21 @@ public class JPAUserRepository implements UserRepository {
     }
 
     @Override
+    public CompletionStage<Void> deleteDeptById(Integer deptId) {
+        return wrap( em -> {
+            Section section = em.find(Section.class, deptId);
+            for(Unit unit: section.getUnits()){
+                for(User user: unit.getStaffs()){
+                    em.remove(user);
+                }
+                em.remove(unit);
+            }
+            em.remove(section);
+            return null;
+        });
+    }
+
+    @Override
     public CompletionStage<Void> readdUsers(List<User> users){
         return wrap(em -> {
             for(User u: users){
@@ -281,13 +296,14 @@ public class JPAUserRepository implements UserRepository {
                 u.setManager(null);//后添加Manager，就需要在更新unit时设置为null.
                 if(us.isEmpty()){
                     em.persist(u);
-                    if(manager != null){
-                        em.createNamedQuery("Unit.updateManager").setParameter("id", u.getId())
-                                .setParameter("userId", manager.getUserId()).executeUpdate();
-                    }
                 }else{
                     u.setId(us.get(0).getId());
                 }
+                if(manager != null){
+                    em.createNamedQuery("Unit.updateManager").setParameter("id", u.getId())
+                            .setParameter("userId", manager.getUserId()).executeUpdate();
+                }
+                //ZSR: 经测试，u也会被managed
                 Unit u1 = em.merge(u);
                 //user中的Unit必须要被managed，才能保存到数据库.
                 for(User user: users) {
@@ -299,8 +315,11 @@ public class JPAUserRepository implements UserRepository {
                     em.persist(user);
                 }
                 //恢复unit数据原样，保证函数返回后数据的完整性。
+                //返回的实体的各字段要来自数据库，因为这是在事务里面。
                 u.setStaffs(users);
-                u.setManager(manager);
+                if(manager != null){
+                    u.setManager(em.find(User.class, manager.getUserId()));
+                }
             }
 
             return null;
