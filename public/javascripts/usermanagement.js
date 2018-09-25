@@ -335,6 +335,59 @@ function deleteAndConfirmUnits(){
     });
 }
 
+function submitUnitEdit() {
+    var deptName = $('#unitDepartment').text();
+    var unitName = $('#unitUnit').val();
+    var manager = $('#unitManager').val();
+    if(manager == ''){
+        manager = '一个不存在的名字';
+    }
+    $.ajax({
+        url: 'addUsers',
+        type: 'POST',
+        data: JSON.stringify({name: deptName, units: [{name: unitName, manager: manager}]}),
+        contentType: 'application/json; charset=UTF-8',
+        dataType: 'json',
+        success: function(response){
+            console.log("submitUnitEdit success:", response);
+            unit = response.units[0];
+            var manager = unit.manager;
+            //更新全局变量departmentData中的对应的unit的manager
+            departmentData.units.filter(function(cur){
+                return cur.name == unit.name;
+            })[0].manager = manager;
+            //更新处表对应的manager单元格
+            if(manager == undefined) manager = '';
+            $('#collapseUnit tbody tr').filter(function(){
+                return $(this).find('td:eq(3)').text() == unit.name;
+            }).find('td:eq(4)').text(manager);
+        },
+        error: function(response){
+            alert('submitUnitEdit error! ' + response.status + ":" + response.statusText);
+        }
+    });
+
+    $('#addUnitMdl').modal('hide');
+    return false;
+}
+
+function openEditUnitDlg(){
+    var curUnits = $('#collapseUnit tbody tr').filter(function(){
+        return $(this).find('td:eq(0) :checked').length > 0;
+    }).first();
+    if(curUnits.length == 0){
+        return;
+    }
+
+    $('#unitDepartment').text(curUnits.find('td:eq(2)').text());
+    $('#unitUnit').val(curUnits.find('td:eq(3)').text());
+    $('#unitUnit').prop('disabled', true);
+    $('#unitManager').val(curUnits.find('td:eq(4)').text());
+    document.getElementById('unitSubmitBtn').onclick = submitUnitEdit;
+    $('#unitAddOrEdit').text('编辑');
+    $('#addUnitMdl').modal('show');
+}
+
 function submitUnitForm() {
     var deptName = $('#unitDepartment').text();
     var unitName = $('#unitUnit').val();
@@ -382,7 +435,10 @@ function openAddUnitDlg(){
 
     $('#unitDepartment').text(departmentData.name);
     $('#unitUnit').val('');
+    $('#unitUnit').prop('disabled', false);
     $('#unitManager').val('');
+    document.getElementById('unitSubmitBtn').onclick = submitUnitForm;
+    $('#unitAddOrEdit').text('添加');
     $('#addUnitMdl').modal('show');
 }
 
@@ -421,7 +477,10 @@ function deleteUsers(){
     $('#collapseUser tbody tr').filter(function(){
              return $(this).find('td:eq(0) :checked').length > 0;
          }).find('td:eq(3)').each(function(){userIds.push($(this).text());});
-    openConfirmModal('<p>是否要删除这些用户？</p><p>' + JSON.stringify(userIds) + '</p>',
+    if(userIds.length == 0){
+        return ;
+    }
+    openConfirmModal('<p>是否要删除这些用户？</p><p>' + userIds.join(',') + '</p>',
         userIds,
         function(ids){
           $.ajax({
@@ -437,6 +496,49 @@ function deleteUsers(){
               }
           });
     });
+}
+
+function submitUserEdit(){
+
+}
+
+function openEditUserDlg(){
+    var curUser = $('#collapseUser tbody tr').filter(function(){
+        return $(this).find('td:eq(0) :checked').length > 0;
+    }).first();
+    var userId = curUser.find('td:eq(3)').text();
+    var unitName = curUser.find('td:eq(2)').text();
+    var deptName = curUser.find('td:eq(1)').text();
+    var userName = curUser.find('td:eq(4)').text();
+    var userNumber = curUser.find('td:eq(5)').text();
+    var userEmail = curUser.find('td:eq(6)').text();
+    var userRoles = curUser.find('td:eq(7)').text();
+    userNumber = userNumber.replace(/^LCBJ/, '');
+    var roles = userRoles.split(',').reduce(function(total, item){
+        return total[item] = null;
+    }, {});
+
+    $('#userDepartment').text(deptName);
+    $('#userUnit').empty();
+    $('#userUnit').append('<option value="无">无</option>');
+    $.each(departmentData.units, function(idx, e){
+        $('#userUnit').append('<option value="' + e.name + '">' + e.name + '</option>');
+    });
+    $('#userUnit option[value="' + unitName + '"]').prop('selected', true);
+    $('#userUnit').prop('disabled', true);
+    $('#userName').val(userName);
+    $('#uesrName').prop('disabled', true);
+    $('#userNumber').val(userNumber);
+    $('#userNumber').prop('disabled', true);
+    $('#userEmail').val(userId);
+    $('userEmail').prop('disabled', true);
+    //$('#userRoles').find(':selected').prop('selected', false);
+    $('#userRoles option').filter(function(){
+        return $(this).text() in roles;
+    }).prop('selected', true);
+    $('#userAddOrEdit').text('编辑');
+    document.getElementById('userSubmitBtn').onclick = submitUserEdit;
+    $('#addUserMdl').modal('show');
 }
 
 //把section中的用户与全局变量departmentData中的用户合并，并刷新界面.
@@ -497,10 +599,16 @@ function openAddUserDlg(){
     $.each(departmentData.units, function(idx, e){
         $('#userUnit').append('<option value="' + e.name + '">' + e.name + '</option>');
     });
+    $('#userUnit').prop('disabled', false);
     $('#userName').val('');
+    $('#uesrName').prop('disabled', false);
     $('#userNumber').val('');
+    $('#userNumber').prop('disabled', false);
     $('#userEmail').val('');
+    $('userEmail').prop('disabled', false);
     $('#userRoles').find(':selected').prop('selected', false);
+    $('#userAddOrEdit').text('添加');
+    document.getElementById('userSubmitBtn').onclick = submitUserForm;
     $('#addUserMdl').modal('show');
 }
 
