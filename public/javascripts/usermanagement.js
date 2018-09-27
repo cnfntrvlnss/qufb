@@ -195,7 +195,7 @@ function submitDeptEdit(){
     if(manager == '') return;
 
     $.ajax({
-        url: 'addUsers',
+        url: 'updateUsers',
         type: 'POST',
         data: JSON.stringify({name: deptName, manager: manager}),
         contentType: 'application/json; charset=UTF-8',
@@ -343,7 +343,7 @@ function submitUnitEdit() {
         manager = '一个不存在的名字';
     }
     $.ajax({
-        url: 'addUsers',
+        url: 'updateUsers',
         type: 'POST',
         data: JSON.stringify({name: deptName, units: [{name: unitName, manager: manager}]}),
         contentType: 'application/json; charset=UTF-8',
@@ -509,7 +509,6 @@ function submitUserEdit(user, curUser){
         type: 'POST',
         data: JSON.stringify({
             userId: user.userId,
-            number: user.number,
             roles: Object.keys(roles).map(function(cur){
                 return {id: cur};
             })

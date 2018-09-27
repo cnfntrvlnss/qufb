@@ -219,6 +219,18 @@ public class UserController extends Controller {
         }
     }
 
+    @BodyParser.Of(BodyParser.Json.class)
+    public CompletionStage<Result> updateUsersN(){
+
+        JsonNode body = request().body().asJson();
+        CompletionStage stags = CompletableFuture.completedFuture(null);
+        modifyDepartmentNode(body);
+        logger.debug("in addUsersN, after modification, body: {}", Json.prettyPrint(body));
+        Section dept = parseDepartmentJson(body);
+        stags = stags.thenComposeAsync(v -> userRepo.updateSectionRecur(dept));
+        return stags.thenApplyAsync(v -> ok(convertSectionToJson(dept)), ec.current());
+    }
+
     //生成的Json格式与导入的是一致的
     private JsonNode convertSectionToJson(Section section){
         ObjectNode secNode = (ObjectNode) Json.toJson(section);

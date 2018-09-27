@@ -88,6 +88,8 @@ GET /person/persons     controllers.PersonController.getPersons()
 
 #导入部门数据
 POST    /addUsers      controllers.UserController.addUsersN()
+#更新部门数据
+POST    /updateUsers   controllers.UserController.updateUsersN()
 #导出部门数据
 GET /getSection    controllers.UserController.fetchDepartmentData(sectionName)
 

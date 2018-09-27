@@ -46,6 +46,8 @@ public interface UserRepository {
 
     CompletionStage<Void> addSectionRecur(Section section);
 
+    CompletionStage<Void> updateSectionRecur(Section section);
+
     CompletionStage<Void> deleteAllUsers();
 
     CompletionStage<Void> deleteUsersById(List<String> userIds);
