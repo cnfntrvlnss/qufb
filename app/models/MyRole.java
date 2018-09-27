@@ -1,6 +1,7 @@
 package models;
 
 import be.objectify.deadbolt.java.models.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -19,6 +20,7 @@ public class MyRole implements Role {
         this.id = id;
     }
 
+    @JsonIgnore
     @Transient
     @Override
     public String getName() {

@@ -42,7 +42,9 @@ public interface UserRepository {
 
     CompletionStage<Void> readdUsers(List<User> users);
 
-    CompletionStage<Void> updateSectionRecur(Section section);
+    CompletionStage<Void> updateUser(User user);
+
+    CompletionStage<Void> addSectionRecur(Section section);
 
     CompletionStage<Void> deleteAllUsers();
 

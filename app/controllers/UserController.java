@@ -205,7 +205,7 @@ public class UserController extends Controller {
             modifyDepartmentNode(body);
             logger.debug("in addUsersN, after modification, body: {}", Json.prettyPrint(body));
             Section dept = parseDepartmentJson(body);
-            stags = stags.thenComposeAsync(v -> userRepo.updateSectionRecur(dept));
+            stags = stags.thenComposeAsync(v -> userRepo.addSectionRecur(dept));
             return stags.thenApplyAsync(v -> ok(convertSectionToJson(dept)), ec.current());
         } else{
             for(int i=0; i <body.get("departments").size(); i++){
@@ -213,7 +213,7 @@ public class UserController extends Controller {
                 modifyDepartmentNode(deptNode);
                 logger.debug("in addUsersN, after modification, body: {}", Json.prettyPrint(deptNode));
                 Section dept = parseDepartmentJson(deptNode);
-                stags = stags.thenComposeAsync(v -> userRepo.updateSectionRecur(dept));
+                stags = stags.thenComposeAsync(v -> userRepo.addSectionRecur(dept));
             }
             return stags.thenApplyAsync(v -> ok(), ec.current());
         }
@@ -306,7 +306,15 @@ public class UserController extends Controller {
         unit.setStaffs(new ArrayList<>());
         unit.getStaffs().add(user);
         user.setUnit(unit);
-        return userRepo.updateSectionRecur(section).thenApplyAsync(v ->  ok(convertSectionToJson(section)), ec.current());
+        return userRepo.addSectionRecur(section).thenApplyAsync(v ->  ok(convertSectionToJson(section)), ec.current());
+    }
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public CompletionStage<Result> updateUser(){
+        JsonNode userNode = request().body().asJson();
+        User user = Json.fromJson(userNode, User.class);
+        logger.debug("updateUser, user:{}", Json.prettyPrint(Json.toJson(user)));
+        return userRepo.updateUser(user).thenApplyAsync(v -> ok());
     }
 
     public CompletionStage<Result> deleteAllUsers(){

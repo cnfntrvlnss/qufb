@@ -266,14 +266,24 @@ public class JPAUserRepository implements UserRepository {
         });
     }
 
+    @Override
+    public CompletionStage<Void> updateUser(User user){
+        return wrap(em -> {
+            User user1 = em.find(User.class, user.getUserId());
+            user1.setRoles(user.getRoles());
+            return null;
+        });
+    }
+
     /**
      * 先添加section, 再添加section下的units, 最后添加unit下的staffs
-     * section， unit已经存在了，就不在添加; user先删除旧的，再添加新的.
+     * section， unit已经存在了，就不在添加; user要已经存在，就删除旧的.
+     *
      * @param section
      * @return
      */
     @Override
-    public CompletionStage<Void> updateSectionRecur(Section section){
+    public CompletionStage<Void> addSectionRecur(Section section){
         return wrap(em -> {
             List<Section> sections = em.createNamedQuery("Section.findByName", Section.class)
                     .setParameter("name", section.getName())
@@ -285,6 +295,7 @@ public class JPAUserRepository implements UserRepository {
                 section.setId(sections.get(0).getId());
             }
 
+            List<Unit> units1 = section.getUnits();
             for(Unit u: units) {
                 List<Unit> us = em.createNamedQuery("Unit.findByName", Unit.class)
                         .setParameter("name", u.getName())
@@ -296,35 +307,48 @@ public class JPAUserRepository implements UserRepository {
                 u.setManager(null);//后添加Manager，就需要在更新unit时设置为null.
                 if(us.isEmpty()){
                     em.persist(u);
+                    u.setManager(em.find(User.class, manager.getUserId()));
                 }else{
                     u.setId(us.get(0).getId());
+                    u = us.get(0);
                 }
+                units1.add(u);
+                /*
                 if(manager != null){
                     em.createNamedQuery("Unit.updateManager").setParameter("id", u.getId())
                             .setParameter("userId", manager.getUserId()).executeUpdate();
-                }
+
+                } */
                 //ZSR: 经测试，u也会被managed
-                Unit u1 = em.merge(u);
+                //Unit u1 = em.merge(u);
                 //user中的Unit必须要被managed，才能保存到数据库.
                 for(User user: users) {
                     User user1 = em.find(User.class, user.getUserId());
                     if(user1 != null){
                         em.remove(user1);
                     }
-                    user.setUnit(u1);
+                    user.setUnit(u);
                     em.persist(user);
                 }
                 //恢复unit数据原样，保证函数返回后数据的完整性。
                 //返回的实体的各字段要来自数据库，因为这是在事务里面。
                 u.setStaffs(users);
+                /*
                 if(manager != null){
                     u.setManager(em.find(User.class, manager.getUserId()));
-                }
+                }*/
             }
+            section.setUnits(units1);
 
             return null;
         });
     }
+
+    // 参数section中所有的实体要存在，不然会报错，更新失败。
+    //支持的功能： 只是更新部分，字段，更新部门经理，处经理，更新用户权限。
+    /*public CompletionStage<Void> updateSectionRecur(Section section){
+
+    } */
 
     @Override
     public CompletionStage<Void> deleteAllUsers(){

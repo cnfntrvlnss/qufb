@@ -96,6 +96,8 @@ POST  /deleteAllUsers   controllers.UserController.deleteAllUsers()
 POST    /addUser       controllers.UserController.addUser()
 #删除用户，传入用户id列表
 POST    /deleteUsers    controllers.UserController.deleteUsers()
+#修改用户，把传入的字段替换掉
+POST    /updateUser     controllers.UserController.updateUser()
 #删除处, 传入处ID列表
 POST    /deleteUnits    controllers.UserController.deleteUnits()
 #删除部门，传入部门ID

@@ -498,14 +498,42 @@ function deleteUsers(){
     });
 }
 
-function submitUserEdit(){
+function submitUserEdit(user, curUser){
+    var roles = {};
+    $('#userRoles :selected').each(function(){
+        roles[$(this).text().trim()] = null;
+    });
 
+    $.ajax({
+        url: 'updateUser',
+        type: 'POST',
+        data: JSON.stringify({
+            userId: user.userId,
+            number: user.number,
+            roles: Object.keys(roles).map(function(cur){
+                return {id: cur};
+            })
+        }),
+        contentType: 'application/json; charset=UTF-8',
+        success: function(response){
+            user.roles = roles;
+            //更新界面
+            curUser.find('td:eq(7)').text(Object.keys(roles).join(","));
+        },
+        error: function(response){
+            alert("更新用户失败！" + response.status + ":" + response.statusText);
+        }
+    });
+
+    $('#addUserMdl').modal('hide');
 }
 
 function openEditUserDlg(){
     var curUser = $('#collapseUser tbody tr').filter(function(){
         return $(this).find('td:eq(0) :checked').length > 0;
     }).first();
+    if(curUser.length == 0) return;
+
     var userId = curUser.find('td:eq(3)').text();
     var unitName = curUser.find('td:eq(2)').text();
     var deptName = curUser.find('td:eq(1)').text();
@@ -515,8 +543,34 @@ function openEditUserDlg(){
     var userRoles = curUser.find('td:eq(7)').text();
     userNumber = userNumber.replace(/^LCBJ/, '');
     var roles = userRoles.split(',').reduce(function(total, item){
-        return total[item] = null;
+        total[item] = null;
+        return total;
     }, {});
+
+    var user;
+    if(unitName == '无'){
+        departmentData.staffs.some(function(cur){
+            if(cur.userId == userId) {
+                user = cur;
+                return true;
+            }
+            return false;
+        });
+    }else{
+        departmentData.units.some(function(curUnit){
+            if(curUnit.name == unitName) {
+                curUnit.staffs.some(function(cur){
+                    if(cur.userId == userId){
+                        user = cur;
+                        return true;
+                    }
+                    return false;
+                });
+                return true;
+            }
+            return false;
+        });
+    }
 
     $('#userDepartment').text(deptName);
     $('#userUnit').empty();
@@ -527,17 +581,21 @@ function openEditUserDlg(){
     $('#userUnit option[value="' + unitName + '"]').prop('selected', true);
     $('#userUnit').prop('disabled', true);
     $('#userName').val(userName);
-    $('#uesrName').prop('disabled', true);
+    $('#userName').prop('disabled', true);
     $('#userNumber').val(userNumber);
     $('#userNumber').prop('disabled', true);
     $('#userEmail').val(userId);
-    $('userEmail').prop('disabled', true);
-    //$('#userRoles').find(':selected').prop('selected', false);
+    $('#userEmail').prop('disabled', true);
+    $('#userRoles').find(':selected').prop('selected', false);
     $('#userRoles option').filter(function(){
-        return $(this).text() in roles;
+        var role = $(this).text().trim();
+        return role in roles;
     }).prop('selected', true);
     $('#userAddOrEdit').text('编辑');
-    document.getElementById('userSubmitBtn').onclick = submitUserEdit;
+    $('#userSubmitBtn').off('click');
+    $('#userSubmitBtn').on('click', {user: user, curUser: curUser}, function(e){
+        submitUserEdit(e.data.user, e.data.curUser);
+    });
     $('#addUserMdl').modal('show');
 }
 
@@ -584,7 +642,6 @@ function submitUserForm(){
     });
 
     $('#addUserMdl').modal('hide');
-    return false;
 }
 
 function openAddUserDlg(){
@@ -608,9 +665,13 @@ function openAddUserDlg(){
     $('userEmail').prop('disabled', false);
     $('#userRoles').find(':selected').prop('selected', false);
     $('#userAddOrEdit').text('添加');
-    document.getElementById('userSubmitBtn').onclick = submitUserForm;
+    //document.getElementById('userSubmitBtn').onclick = submitUserForm;
+    $('#userSubmitBtn').off('click');
+    $('#userSubmitBtn').on('click', submitUserForm);
+
     $('#addUserMdl').modal('show');
 }
+
 
 function openConfirmModal(body, args, fn) {
     var mdl = $('#confirmMdl');
