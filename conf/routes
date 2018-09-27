@@ -29,21 +29,19 @@ POST    /postForm       controllers.Application.postForm()
 GET /myQuestion     controllers.QuestionFeedbackController.myQuestion()
 
 # myQuestionSubmit
-GET /myQuestionSubmit       controllers.QuestionFeedbackController.myQuestionSubmit()
-
-# myQuestionMain
-GET /myQuestionMain       controllers.QuestionFeedbackController.myQuestionMain()
+POST /myQuestionSubmit       controllers.QuestionFeedbackController.myQuestionSubmit()
 
 # myQuestionDeal
-GET /myQuestionDeal/:questionId     controllers.QuestionFeedbackController.myQuestionDeal(questionId :Integer)
+POST /myQuestionDeal/:questionId     controllers.QuestionFeedbackController.myQuestionDeal(questionId :Integer)
+
+# myQuestionDeal
+POST /myQuestionInfo/:questionId     controllers.QuestionFeedbackController.myQuestionInfo(questionId :Integer)
 
 # myQuestionInfo
 GET /getQuestionInfo/:questionId        controllers.QuestionFeedbackController.getQuestionInfo(questionId :Integer)
 
 # addQuestion
 POST    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
-
-#GET    /addQuestion        controllers.QuestionFeedbackController.addQuestion()
 
 # listQuestion
 GET /listQuestion       controllers.QuestionFeedbackController.listQuestion()
@@ -55,7 +53,7 @@ POST /listMyQuestion     controllers.QuestionFeedbackController.listMyQuestion()
 POST /updateQuestionInfo       controllers.QuestionFeedbackController.updateQuestionInfo()
 
 #myDepartment
-GET /myDepartment        controllers.DepartmentController.myDepartment()
+POST /myDepartment        controllers.DepartmentController.myDepartment()
 
 #getFirstDepartment
 GET /getFirstDepartment      controllers.DepartmentController.getFirstDepartment()
@@ -78,10 +76,17 @@ GET /listUser/    controllers.QuestionFeedbackController.listUser(departmentId :
 #listMenu
 POST /listMenu       controllers.MenuController.listMenu()
 
+
+#listMenu
+GET /listSubMenu/:parentMenuId       controllers.MenuController.listSubMenu( parentMenuId :Integer)
+
+
 #login
 GET /questionLogin      controllers.LoginController.login()
 
-#来自示例
+
+GET /getCodeConfig      controllers.MenuController.getCodeConfig()
+
 GET /person     controllers.PersonController.index()
 POST    /person/person      controllers.PersonController.addPerson()
 GET /person/persons     controllers.PersonController.getPersons()

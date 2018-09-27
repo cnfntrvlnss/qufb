@@ -30,6 +30,8 @@ public class JPAMenuRepository implements MenuRepository {
             sql+=" and m.menuId = "+menu.getMenuId();
         }else if(menu.getMenuName()!=null){
             sql+=" and m.menuName = "+menu.getMenuName();
+        }else if(menu.getMenuType()!=null){
+            sql+=" and m.menuType = "+menu.getMenuType();
         }
         String sqlQuery=sql;
         return supplyAsync(()-> jpaApi.withTransaction(menuList-> menuList.createQuery(sqlQuery, Menu.class).getResultList()));
@@ -43,5 +45,15 @@ public class JPAMenuRepository implements MenuRepository {
         }
         String sqlQuery=sql;
         return supplyAsync(()-> jpaApi.withTransaction(menuList-> menuList.createQuery(sqlQuery, Menu.class).getResultList()));
+    }
+
+    @Override
+    public List<Menu> getSubMenuList(Integer parentMenuId) {
+        String sql="select m from Menu m where 1=1";
+        if(parentMenuId!=null){
+            sql+=" and m.parentMenuId = "+parentMenuId;
+        }
+        String sqlQuery=sql;
+        return jpaApi.withTransaction(menuList-> menuList.createQuery(sqlQuery, Menu.class).getResultList());
     }
 }

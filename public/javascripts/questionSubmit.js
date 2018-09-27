@@ -1,14 +1,23 @@
         var selectParam={};
         var classCss;
-        selectQuestion();
+         //得到查询的参数
+        var queryParams = function() {
+            var temp = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                pageSize : this.pageSize, //页面大小
+                pageNum : 1,//页码
+                questionTitle:$("#questionTitle").val()
+            };
+            return temp;
+        };
+        loadTableData();
         var menu={};
-        menu.menuId=1;
-        listMenu();
+        menu.menuType=1;
+       // listMenu();
 
         //点击新建按钮
         $("#btnNew").click(function(){
             location.href = "myQuestionDeal/0";
-        })
+        });
         //点击查询按钮
         $("#btnSelect").click(function(){
             if($("#questionTitle").val()!=null && $("#questionTitle").val()!=""){
@@ -51,9 +60,8 @@
             }else{
                 delete selectParam.verifyName;
             }
-            selectQuestion();
-
-        })
+            loadQuestionList();
+        });
 
         //点击退出按钮
         $("#logOut").click(function(){
@@ -107,28 +115,7 @@
             return num;
          }
 
-        //获取所有的菜单
 
-        function listMenu(){
-             $.ajax({
-                 url: "/listMenu",
-                 dataType:"json",
-                 contentType : 'application/json;charset=UTF-8',
-                 type: 'POST',
-                 asnyc:false,
-                 data:JSON.stringify(menu), //转JSON字符串
-                 success: function(data){
-                    $('#menuId').empty();
-                    $.each(data, function(i, e){
-                        $('#menuId').append();
-                        $('#menuId').append('<ul>' +e.menuName+ '</ul>');
-                     });
-                  },
-                  error: function(data){
-                        alert("error!!! " + data);
-                  }
-             });
-        }
         //退出方法
         function logOut(){
             $.ajax({
@@ -143,3 +130,117 @@
                   }
              });
         }
+
+        function loadTableData() {
+            var table =   $("#questionTable").bootstrapTable({
+                    striped:true,
+                    pagination:true,
+                    //sidePagination:'server',
+                    pageSize:10,
+                    pageNumber:1,
+                    pageList:[10,20,30,40],
+                    paginationPreText:'<',
+                    paginationNextText:'>',
+                    clickToSelect: true,
+                    singleSelect: true,
+                    maintainSelected:true,
+                    search:false,
+                    showRefresh:false,
+                    searchOnEnterKey:true,
+                    searchAlign:'left',
+                    showSearchButton:true,
+                    formatLoadingMessage:function(){
+                        return "请稍等，正在加载中……";
+                    },
+                    url : "/listMyQuestion",
+                    async:true,
+                    method:'post',
+                    queryParams : queryParams,//传递参数（*）
+                    columns:[
+                            {
+                                field:'questionId',
+                                align:'center',
+                                formatter:function(value,row,index){
+                                    return"<label><input type='radio'  id='questionIdCheck' value = '" + row.questionId + "' /><span class='lbl' id='questionIdCheck' value = '" + row.questionId + "'></span></label>";
+                                }
+                            },
+                            {
+                                field:'questionCode',
+                                title:'问题编号',
+                                align:'center',
+                                formatter:function(value,row,index){
+                                    return '<a onclick="questionUpdate('+row.questionId+');" >' + row.questionCode + '</a>';
+                                }
+                            },
+                            {
+                                field:'questionTitle',
+                                title:'问题标题',
+                                align:'center',
+                                formatter:function(value,row,index){
+                                    return '<a onclick="questionUpdate('+row.questionId+');" >' + row.questionTitle + '</a>';
+                                }
+                            },
+                            {
+                                field:'bugHeader',
+                                title:'BUG负责人',
+                                align:'center'
+                            },
+                            {
+                                field:'questionDescription',
+                                title:'问题描述',
+                                align:'center'
+                            },
+                            {
+                                field:'feedbackSuggestion',
+                                title:'修改意见',
+                                align:'center'
+                            },
+                            {
+                                field:'feedbackTime',
+                                title:'反馈时间',
+                                align:'center',
+                                formatter:function(value,row,index){
+                                   return getMyDate(row.feedbackTime);
+                                }
+                            },
+                            {
+                                field:'flowStateName',
+                                title:'流程状态',
+                                align:'center'
+                            }
+                    ]
+                });
+
+
+            };
+
+    function loadQuestionList(){
+        $.ajax({
+             url: "/listMyQuestion",
+             dataType:"json",
+             contentType : 'application/json;charset=UTF-8',
+             type: 'POST',
+             asnyc:false,
+             data:JSON.stringify(selectParam), //转JSON字符串
+             success: function(data){
+                $("#questionTable").bootstrapTable('load', data);
+              },
+              error: function(data){
+                    alert("error!!! " + data);
+              }
+         });
+}
+function questionAdd(){
+	contentPageRender("/myQuestionDeal/0","")
+}
+    function questionDetail(){
+       if($("#questionIdCheck:checked").length==0){
+         layer.msg("请选择一个问题查看详情");
+         return;
+       } else{
+            contentPageRender("/myQuestionInfo/"+$("#questionIdCheck:checked").val(),"")
+       }
+}
+function questionUpdate(questionId){
+	contentPageRender("/myQuestionDeal/"+questionId,questionId)
+}

@@ -1,9 +1,11 @@
 package models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.databind.JsonNode;
+import play.mvc.Result;
+
+import javax.persistence.*;
+import java.util.List;
+import java.util.concurrent.CompletionStage;
 
 @Entity
 public class Menu {
@@ -14,6 +16,13 @@ public class Menu {
     public  Integer menuOrder;//菜单排序
     public Integer menuType;//菜单类型
     public  Integer parentMenuId;//父级菜单id
+    public  String menuUrl;//菜单地址
+    public String menuIcon;//菜单图标
+
+    //扩展字段
+    @Transient
+    public List<Menu> subMenuJson;//每个菜单包含的二级菜单json串，加载左侧菜单使用
+
 
     public Integer getMenuId() {
         return menuId;
@@ -53,5 +62,29 @@ public class Menu {
 
     public void setParentMenuId(Integer parentMenuId) {
         this.parentMenuId = parentMenuId;
+    }
+
+    public String getMenuUrl() {
+        return menuUrl;
+    }
+
+    public void setMenuUrl(String menuUrl) {
+        this.menuUrl = menuUrl;
+    }
+
+    public String getMenuIcon() {
+        return menuIcon;
+    }
+
+    public void setMenuIcon(String menuIcon) {
+        this.menuIcon = menuIcon;
+    }
+
+    public List<Menu> getSubMenuJson() {
+        return subMenuJson;
+    }
+
+    public void setSubMenuJson(List<Menu> subMenuJson) {
+        this.subMenuJson = subMenuJson;
     }
 }

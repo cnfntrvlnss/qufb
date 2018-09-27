@@ -37,7 +37,7 @@ public class MyDeadboltHandler implements DeadboltHandler {
 
     @Override
     public CompletionStage<Optional<? extends Subject>> getSubject(Http.Context context) {
-        String userId = context.session().get("username");
+        String userId = context.session().get("userId");
         if(userId == null) return CompletableFuture.completedFuture(Optional.empty());
         return  userRepo.findById(userId).thenApply(user-> {
             if(user == null) return Optional.empty();

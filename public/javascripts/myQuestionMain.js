@@ -1,90 +1,140 @@
 
-            function fixHeight() {
-                var headerHeight = $("#switcher").height();
-                $("#iframe").attr("height", $(window).height()-54+ "px");
-            }
-            $(window).resize(function () {
-                fixHeight();
-            }).resize();
+function initNav(menuName, iconClass, href, activeFlag, treeviewAry) {
+	var childHtml = "";
+	childHtml = '<li class="';
+	if (activeFlag == "Y") {
+		childHtml += 'active menu-open ';
+	}
+	if (treeviewAry.length > 0) {
+		childHtml += 'treeview">';
+	} else {
+		childHtml += '">';
+	}
+	childHtml += '<a href="' + href + '">';
+	childHtml += '<i class="fa ' + iconClass + '"></i> <span>' + menuName
+			+ '</span>';
+	childHtml += '<span class="pull-right-container">';
+	if (treeviewAry.length > 0) {
+		childHtml += '<i class="fa fa-angle-left pull-right"></i>';
+	}
+	childHtml += '</span></a>';
 
-            $('.icon-monitor').addClass('active');
+	// å­èœå•æ‹¼æ¥
+	if (treeviewAry.length > 0) {
+		childHtml += '<ul class="treeview-menu">';
+		for (var i = 0; i < treeviewAry.length; i++) {
+			// åˆ¤æ–­å­èœå•æ˜¯å¦ä¸ºæ‰“å¼€çŠ¶æ€
+			if (treeviewAry[i]["active"] == "Y") {
+				childHtml += '<li class="active"><a menu-controller="'
+						+ treeviewAry[i]["menuUrl"]
+						+ '" href="javascript:void(0)">';
+			} else {
+				childHtml += '<li><a menu-controller="' + treeviewAry[i]["menuUrl"]
+						+ '" href="javascript:void(0)">';
+			}
+			childHtml += '<i class="fa fa-circle-o"></i>'
+					+ treeviewAry[i]["menuName"] + '</a></li>';
+		}
+		childHtml += '</ul>';
+	}
 
-            $(".icon-mobile-3").click(function () {
-                $("#by").css("overflow-y", "auto");
-                $('#iframe-wrap').removeClass().addClass('mobile-width-3');
-                $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
+	childHtml += '</li>';
+	$("#sideMenu").append(childHtml);
+}
 
-            $(".icon-mobile-2").click(function () {
-                $("#by").css("overflow-y", "auto");
-                $('#iframe-wrap').removeClass().addClass('mobile-width-2');
-                $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
+ var menu={};
+     menu.menuType=1;
+    $(function(){
+        //åˆå§‹åŒ–ä¸€çº§èœå•
+        //initIndexNav();
+        initFirstIndex();
+        //initSecondIndex(1);
+    });
 
-            $(".icon-mobile-1").click(function () {
-                $("#by").css("overflow-y", "auto");
-                $('#iframe-wrap').removeClass().addClass('mobile-width');
-                $('.icon-tablet,.icon-mobile,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
+    function initFirstIndex(){
+         $.ajax({
+             url: "/listMenu",
+             dataType:"json",
+             contentType : 'application/json;charset=UTF-8',
+             type: 'POST',
+             asnyc:false,
+             data:JSON.stringify(menu), //è½¬JSONå­—ç¬¦ä¸²
+             success: function(data){
+                //å¾ªç¯åˆå§‹åŒ–ä¸€çº§èœå•
+                $('#sideMenu').empty();
+                $.each(data, function(i, e){
+                    initNav(e.menuName, "fa-dashboard", e.menuUrl, "N", e.subMenuJson);
+                 });
+              },
+              error: function(data){
+                    alert("error!!! " + data);
+              }
+         });
+    }
 
-            $(".icon-tablet").click(function () {
-                $("#by").css("overflow-y", "auto");
-                $('#iframe-wrap').removeClass().addClass('tablet-width');
-                $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
-
-            $(".icon-monitor").click(function () {
-                $("#by").css("overflow-y", "hidden");
-                $('#iframe-wrap').removeClass().addClass('full-width');
-                $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-                $(this).addClass('active');
-                return false;
-            });
-  function Responsive($a) {
-            if ($a == true) $("#Device").css("opacity", "100");
-            if ($a == false) $("#Device").css("opacity", "0");
-            $('#iframe-wrap').removeClass().addClass('full-width');
-            $('.icon-tablet,.icon-mobile-1,.icon-monitor,.icon-mobile-2,.icon-mobile-3').removeClass('active');
-            $(this).addClass('active');
-            return false;
-        };
-
-          $(function(){
-                    $(".li1").hover(function(){
-                        $(".shoucang").show();/*ÏÔÊ¾ÊÕ²ØµÄ²Ëµ¥ÄÚÈİ*/
-                        $(".customer,.sell").hide();/*Òş²ØÆäËûµÄ²Ëµ¥ÄÚÈİ*/
-                    },function(){
-                        $(".shoucang").hide();/*Êó±êÀë¿ª£¬ÊÕ²ØµÄ²Ëµ¥ÄÚÈİÒş²Ø*/
-                    });
-                    $(".li2").hover(function(){
-                        $(".sell").show();
-                        $(".customer,.shoucang").hide();
-                    },function(){
-                        $(".sell").hide();
-                    });
-                    $(".li3").hover(function(){
-                        $(".customer").show();
-                        $(".shoucang,.sell").hide();
-                    },function(){
-                        $(".customer").hide();
-                    });
-                    $("#top div").hover(function(){/*Êó±ê·ÅÖÃÔÚdivÎ»ÖÃÉÏ£¬ÏÔÊ¾ÏÂÀ­²Ëµ¥*/
-                        $(this).show();
-                    },function(){/*Êó±êÀë¿ªÔÚdivÎ»ÖÃÉÏ£¬Òş²ØÏÂÀ­²Ëµ¥*/
-                        $(this).hide();
-                    });
-                    $(".sell p,.shoucang p,.customer p").bind("mouseover",function(){
-                        $(this).addClass("bg");
-                    });
-                    $(".sell p,.shoucang p,.customer p").bind("mouseout",function(){
-                        $(this).removeClass("bg");
-                    });
+    function initSecondIndex(parentMenuId){
+             $.ajax({
+                 url: "/listSubMenu/"+parentMenuId,
+                 dataType:"json",
+                   type: 'GET',
+                   asnyc:false,
+                 success: function(data){
+                    //å¾ªç¯åˆå§‹åŒ–ä¸€çº§èœå•
+                    $('#sideMenu').empty();
+                    $.each(data, function(i, e){
+                        initNav(e.menuName, "fa-dashboard", e.menuUrl, "N", "");
+                     });
+                  },
+                  error: function(data){
+                        alert("error!!! " + data);
+                  }
+             });
+        }
+    //åˆå§‹åŒ–äºŒçº§èœå•
+     function initIndexNav(){
+            var treeAry = [
+                    { "name":"é—®é¢˜åˆ—è¡¨", "url":"/myQuestionSubmit", "active": "N" },
+                    { "name":"é—®é¢˜å¤„ç†", "url":"/myDepartment", "active": "N" },
+            ];
+            initNav("é—®é¢˜ç®¡ç†","fa-dashboard","#","N",treeAry);
+            initNav("é¡¹ç›®ç®¡ç†","fa-dashboard","#","N",treeAry);
+        }
+    //è·å–æ‰€æœ‰çš„èœå•
+    function listMenu(){
+         $.ajax({
+             url: "/listMenu",
+             dataType:"json",
+             contentType : 'application/json;charset=UTF-8',
+             type: 'POST',
+             asnyc:false,
+             data:JSON.stringify(menu), //è½¬JSONå­—ç¬¦ä¸²
+             success: function(data){
+               //å¾ªç¯åˆå§‹åŒ–ä¸€çº§èœå•
+               $('#sideMenu').empty();
+               $.each(data, function(i, e){
+                   initNav(e.menuName, "fa-dashboard", e.menuUrl, "N", "");
                 });
+              },
+              error: function(data){
+                    alert("error!!! " + data);
+              }
+         });
+        }
+
+        function contentPageRender(url,pageRenderparams){
+        	$.ajax({
+        		url: url,
+        		type:"post",
+        		data:"",
+        		dataType:"html",
+        		async:true,
+        		success:function(data){
+        			$("#contentWrapper").html(data);
+        			$("#pageRenderParams").val(pageRenderparams);
+        		},
+        		error:function(data){
+        			alert("ajax PageRender error!");
+        		}
+        	});
+
+        }

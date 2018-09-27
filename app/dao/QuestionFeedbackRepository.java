@@ -54,5 +54,5 @@ public interface QuestionFeedbackRepository {
 
     Page<QuestionFeedback> getQuestionPagingList(QuestionFeedback questionFeedback,Integer page,Integer size);
 
-    CompletionStage<List<QuestionFeedback>> findAll(QuestionFeedback questionFeedback,String userName);
+    CompletionStage<List<QuestionFeedback>> findAll(QuestionFeedback questionFeedback,String userId);
 }

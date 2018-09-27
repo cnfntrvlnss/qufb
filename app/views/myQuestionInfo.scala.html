@@ -1,0 +1,326 @@
+@(questionId: Integer)
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>问题单详情</title>
+	<link rel="stylesheet" type="text/css"  href='@routes.Assets.at("/public", "stylesheets/layer.css")'/>
+	<script type="text/javascript" src='@routes.Assets.at("/public", "javascripts/layer.js")'></script>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	
+	<style>
+		.btnGroup{
+		    display:none;
+		}
+		.selectWidth{
+			width: 30%; 
+			display: inline-block;
+		}
+	</style>
+
+</head>
+<body>
+	
+	<!-- 必须存在，接收页面局部刷新时需要传递的参数 questionId为保留关键字不允许重复使用 -->
+	<input type="hidden" id="questionId"  value=@questionId />
+	
+	<div class="content" style="padding: 0px;">
+
+		<section class="content-header">
+			<h1>问题单 <small>问题反馈系统单据信息</small></h1>
+			<ol class="breadcrumb">
+				<li><a href="javascript:void(0)" onclick="backToList()">>>返回问题列表>></a></li>
+			</ol>
+			<div style="border: 1px solid #333; margin-top: 10px;"></div>
+		</section>
+
+		<section class="content">
+			<div id="submitQuestionDiv" class="box box-info">
+	            <div class="box-header with-border">
+	              <h3 class="box-title">提交问题</h3>
+	              <div class="box-tools pull-right">
+		          	<button type="button" class="btn btn-box-tool" value="submitQuestionDiv" onclick="tabSlide($(this));" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		          </div>
+	            </div>
+	            <div class="box-body">
+	              <form role="form" class="form-horizontal">
+	                <div class="form-group">
+	                  <label class="col-sm-2 control-label">问题编号</label>
+	                  <div class="col-sm-2">
+		                  <input name="questionTitle" id="questionCode" type="text" class="form-control" placeholder="问题标题">
+	                  </div>
+
+					<label class="col-sm-2 control-label">问题标题</label>
+					<div class="col-sm-2">
+						<input name="questionTitle" id="questionTitle" type="text" class="form-control" placeholder="问题标题">
+					</div>
+						<label class="col-sm-2 control-label">流程状态</label>
+						<div class="col-sm-2">
+							<input name="questionTitle" id="flowStateName" type="text" class="form-control" placeholder="问题标题">
+						</div>
+	                </div>
+	                <div class="form-group">
+                    	<label class="col-sm-2 control-label">问题描述</label>
+                    	<div class="col-sm-9" >
+			                <textarea class="form-control selectWidth" id="questionDescription" name="bugHeader">
+			                </textarea>
+                    	</div>
+	                </div>
+					  <div class="form-group">
+						  <label class="col-sm-2 control-label">问修建议</label>
+						  <div class="col-sm-9" >
+			                <textarea class="form-control selectWidth" id="feedbackSuggestion" name="bugHeader">
+			                </textarea>
+						  </div>
+					  </div>
+	                <div class="form-group">
+	                  <label class="col-sm-2 control-label">问题描述</label>
+	                  <div class="col-sm-9" >
+	                  	<textarea class="form-control" id="questionDescription" name="questionDescription" rows="3" placeholder="问题描述..." prompt="请限制在1024个字数以内"></textarea>
+	                  </div>
+	                </div>
+	                <div class="form-group">
+	                  <label class="col-sm-2 control-label">修改建议</label>
+	                  <div class="col-sm-9" >
+	                  	<textarea class="form-control" id="feedbackSuggestion" name="feedbackSuggestion" rows="3" placeholder="修改建议..." prompt="请限制在1024个字数以内"></textarea>
+	                  </div>
+	                </div>
+	              </form>
+	            </div>
+	            <div class="box-footer" id="btnGroup1">
+	                <button type="submit" id="btnSubmit1" class="btn btn-primary pull-right" data-dismiss="modal">提交</button>
+	                <button type="submit" id="btnSave1" class="btn btn-primary pull-right" style="margin-right:15px;">保存</button>
+	            </div>
+          </div>
+          
+          <!-- bug负责人处理问题 -->
+          <div id="bugAuditSuggestDiv" class="box box-info">
+	            <div class="box-header with-border">
+	              <h3 class="box-title">BUG负责人审核问题规范性</h3>
+	              <div class="box-tools pull-right">
+		          	<button type="button" class="btn btn-box-tool" value="bugAuditSuggestDiv" onclick="tabSlide($(this));" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		          </div>
+	            </div>
+	            <div class="box-body">
+	              <form role="form" class="form-horizontal">
+	              	
+	              	<div class="form-group">
+                    	<label class="col-sm-2 control-label">选择问题接口人</label>
+		                <div class="col-sm-9" >
+			                <select class="form-control selectWidth" name="department2" id="department2" >
+			                </select>
+			                <select class="form-control selectWidth" name="unit2" id="unit2">
+								<option >请先选择一级部门</option>
+			                </select>
+			                <select class="form-control selectWidth" name="transferName" id="transferName">
+			                </select>
+		                </div>
+	                </div>
+	                
+	                <div class="form-group">
+	                  <label class="col-sm-2 control-label">审核意见</label>
+	                  <div class="col-sm-9" >
+		                  <textarea class="form-control " name="auditSuggestion" id="auditSuggestion" rows="3" placeholder="审核意见..." prompt="请限制在1024个字数以内"></textarea>
+	                  </div>
+	                </div>
+	                
+	              </form>
+	            </div>
+	            <div class="box-footer" id="btnGroup2">
+	                <button type="submit" id="btnSubmit2" class="btn btn-primary pull-right" data-dismiss="modal">提交</button>
+	                <button type="submit" id="btnReject2" class="btn btn-primary pull-right" style="margin-right:15px;">驳回</button>
+	            </div>
+          </div>
+          
+          <!-- 问题接口人处理问题 -->
+          <div id="questionManagerDealDiv" class="box box-info">
+	            <div class="box-header with-border">
+	              <h3 class="box-title">问题接口人处理处理问题</h3>
+	              <div class="box-tools pull-right">
+		          	<button type="button" class="btn btn-box-tool" value="questionManagerDealDiv" onclick="tabSlide($(this));" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		          </div>
+	            </div>
+	            <div class="box-body">
+	              <form role="form" class="form-horizontal">
+	              
+	              	<div class="form-group">
+                    	<label class="col-sm-2 control-label">选择方案责任人</label>
+                    	<div class="col-sm-9" >
+			                <select class="form-control selectWidth" name="department3" id="department3">
+			                </select>
+			                <select class="form-control selectWidth" name="unit3" id="unit3">
+								<option >请先选择一级部门</option>
+			                </select>
+			                <select class="form-control selectWidth" name="developerName" id="developerName">
+			                </select>
+			            </div>
+	                </div>
+	
+	                <div class="form-group">
+	                  <label class="col-sm-2 control-label">审核意见</label>
+	                  <div class="col-sm-9" >
+		                  <textarea class="form-control" name="transferSuggestion" id="transferSuggestion" rows="3" placeholder="审核意见..." prompt="请限制在1024个字数以内"></textarea>
+	                  </div>
+	                </div>
+	                
+	              </form>
+	            </div>
+	            <div class="box-footer" id="btnGroup3">
+	                <button type="submit" id="btnSubmit3" class="btn btn-primary pull-right" data-dismiss="modal">提交</button>
+	                <button type="submit" id="btnReject3" class="btn btn-primary pull-right" style="margin-right:15px;">驳回</button>
+	            </div>
+          </div>
+          
+          <!-- 方案责任人处理问题 -->
+          <div id="projectLiableSubmitDiv" class="box box-info">
+	            <div class="box-header with-border">
+	              <h3 class="box-title">方案责任人提交解决方案</h3>
+	              <div class="box-tools pull-right">
+		          	<button type="button" class="btn btn-box-tool" value="projectLiableSubmitDiv" onclick="tabSlide($(this));" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		          </div>
+	            </div>
+	            <div class="box-body">
+	              <form role="form" class="form-horizontal">
+	              
+	              	<div class="form-group">
+                    	<label class="col-sm-2 control-label">选择方案审核人</label>
+                    	<div class="col-sm-9">
+			                <select class="form-control selectWidth" name="bugHeader" id="department4">
+			                </select>
+			                <select class="form-control selectWidth" name="bugHeader" id="unit4">
+								<option >请先选择一级部门</option>
+			                </select>
+			                <select class="form-control selectWidth" name="schemeAuditName" id="schemeAuditName">
+			                </select>
+                    	</div>
+	                </div>
+	
+	                <div class="form-group">
+	                  <label class="col-sm-2 control-label">解决方案</label>
+	                  <div class="col-sm-9" >
+	                  	<textarea class="form-control" name="solution"  id="solution" rows="3" placeholder="解决方案..." prompt="请限制在1024个字数以内"></textarea>
+	                  </div>
+	                </div>
+	                
+	              </form>
+	            </div>
+	            <div class="box-footer" id="btnGroup4">
+	                <button type="submit" id="btnSubmit4" class="btn btn-primary pull-right" data-dismiss="modal">提交</button>
+	                <button type="submit" id="btnReject4" class="btn btn-primary pull-right" style="margin-right:15px;">驳回</button>
+	            </div>
+          </div>
+          
+          <!-- 方案审核人处理 -->
+          <div id="projectAuditDiv" class="box box-info">
+	            <div class="box-header with-border">
+	              <h3 class="box-title">方案审核人审核方案</h3>
+	              <div class="box-tools pull-right">
+		          	<button type="button" class="btn btn-box-tool" value="projectAuditDiv" onclick="tabSlide($(this));" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		          </div>
+	            </div>
+	            <div class="box-body">
+	              <form role="form" class="form-horizontal">
+	              
+	              	<div class="form-group">
+                    	<label class="col-sm-2 control-label">选择BUG负责人</label>
+                    	<div class="col-sm-9" >
+			                <select class="form-control selectWidth" name="bugHeader" id="department5">
+			                </select>
+			                <select class="form-control selectWidth" name="bugHeader" id="unit5">
+								<option >请先选择一级部门</option>
+			                </select>
+			                <select class="form-control selectWidth" name="resultAuditName" id="resultAuditName">
+			                </select>
+                    	</div>
+	                </div>
+	
+	                <div class="form-group">
+	                  <label class="col-sm-2 control-label">方案审核意见</label>
+	                  <div class="col-sm-9" >
+		                  <textarea class="form-control" name="schemeAuditSuggestion"  id="schemeAuditSuggestion" rows="3" placeholder="方案审核意见..." prompt="请限制在1024个字数以内"></textarea>
+	                  </div>
+	                </div>
+	                
+	              </form>
+	            </div>
+	            <div class="box-footer" id="btnGroup5">
+	                <button type="submit" id="btnSubmit5" class="btn btn-primary pull-right" data-dismiss="modal">提交</button>
+	                <button type="submit" id="btnReject5" class="btn btn-primary pull-right" style="margin-right:15px;">驳回</button>
+	            </div>
+          </div>
+          
+          <!-- bug负责人审核方案 -->
+          <div id="bugManageAuditDiv" class="box box-info">
+	            <div class="box-header with-border">
+	              <h3 class="box-title">BUG负责人审核方案</h3>
+	              <div class="box-tools pull-right">
+		          	<button type="button" class="btn btn-box-tool" value="bugManageAuditDiv" onclick="tabSlide($(this));" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		          </div>
+	            </div>
+	            <div class="box-body">
+	              <form role="form" class="form-horizontal">
+	              
+	              	<div class="form-group">
+                    	<label class="col-sm-2 control-label">选择验证人员</label>
+                    	<div class="col-sm-9" >
+			                <select class="form-control selectWidth" name="bugHeader"  id="department6">
+			                </select>
+			                <select class="form-control selectWidth" name="bugHeader"  id="unit6">
+								<option >请先选择一级部门</option>
+			                </select>
+			                <select class="form-control selectWidth" name="verifyName"  id="verifyName">
+			                </select>
+                    	</div>
+	                </div>
+	
+	                <div class="form-group">
+	                  <label class="col-sm-2 control-label">方案审核意见</label>
+	                  <div class="col-sm-9" >
+		                  <textarea class="form-control" name="resultAuditSuggestion"  id="resultAuditSuggestion" rows="3" placeholder="方案审核意见..." prompt="请限制在1024个字数以内"></textarea>
+	                  </div>
+	                </div>
+	                
+	              </form>
+	            </div>
+	            <div class="box-footer" id="btnGroup6">
+	                <button type="submit" id="btnSubmit6" class="btn btn-primary pull-right" data-dismiss="modal">提交</button>
+	                <button type="submit" id="btnReject6" class="btn btn-primary pull-right" style="margin-right:15px;">驳回</button>
+	            </div>
+          </div>
+          
+          <!--验证人员验证问题 -->
+          <div id="checkManageDiv" class="box box-info">
+	            <div class="box-header with-border">
+	              <h3 class="box-title">验证人员验证问题</h3>
+	              <div class="box-tools pull-right">
+		          	<button type="button" class="btn btn-box-tool" value="checkManageDiv" onclick="tabSlide($(this));" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		          </div>
+	            </div>
+	            <div class="box-body">
+	              <form role="form" class="form-horizontal">
+	
+	                <div class="form-group">
+	                  <label class="col-sm-2 control-label">验证意见</label>
+	                  <div class="col-sm-9" >
+		                  <textarea class="form-control" name="resultAuditSuggestion"  id="verifySuggestion" rows="3" placeholder="验证意见..." prompt="请限制在1024个字数以内"></textarea>
+	                  </div>
+	                </div>
+	                
+	              </form>
+	            </div>
+	            <div class="box-footer" id="btnGroup7">
+	                <button type="submit" id="btnSubmit7" class="btn btn-primary pull-right" data-dismiss="modal">关闭问题</button>
+	                <button type="submit" id="btnReject7" class="btn btn-primary pull-right" style="margin-right:15px;">驳回</button>
+	            </div>
+          </div>
+          
+		</section>
+		
+	</div>
+
+	<script type='text/javascript' src='@routes.Assets.at("/public", "javascripts/questionDeal.js")'></script>
+
+</body>
+</html>

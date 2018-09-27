@@ -1,6 +1,7 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import dao.CodeSerialRepository;
 import dao.UserRepository;
 import play.Logger;
 
@@ -32,7 +33,8 @@ public class QuestionFeedbackController extends Controller {
 	QuestionFeedbackRepository questRepo;
 	@Inject
 	UserRepository userRepository;
-
+	@Inject
+	CodeSerialRepository codeSerialRepository;
 	@Inject
 	private HttpExecutionContext ec;
 	@Inject
@@ -63,7 +65,7 @@ public class QuestionFeedbackController extends Controller {
 	 * @return
 	 */
 	public Result myQuestionSubmit() {
-		String userName=session().get("username");
+		String userName=session().get("userName");
 		return ok(views.html.myQuestionSubmit.render(userName));
 	}
 
@@ -74,7 +76,8 @@ public class QuestionFeedbackController extends Controller {
 	 * @return
 	 */
 	public Result myQuestionMain() {
-		return ok(views.html.myQuestionMain.render());
+		String userName=session().get("userName");
+		return ok(views.html.myQuestionMain.render(userName));
 	}
 
 	/**
@@ -83,10 +86,15 @@ public class QuestionFeedbackController extends Controller {
 	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> addQuestion() {
-		String userName=session().get("username");
+		String userName=session().get("userName");
+		String userId=session().get("userId");
         QuestionFeedback questionFeedback = Json.fromJson(request().body().asJson(), QuestionFeedback.class);
+		//自动生成问题编号
+		String questionCode=codeSerialRepository.getCodeInfo(1);
+		questionFeedback.setQuestionCode(questionCode);
 		questionFeedback.setFeedbackTime(new Date());//反馈时间
 		questionFeedback.setFeedbacker(userName);
+		questionFeedback.setFeedbackerId(userId);
 		logger.debug("测试新建问题时的问题提交者"+userName);
 		//用户的提交类型，用来判断问题状态和流程状态的变换
 		int submitType=questionFeedback.getSubmitType();
@@ -99,7 +107,7 @@ public class QuestionFeedbackController extends Controller {
 			questionFeedback.setFlowState(FlowStateEnum.SUBMIT.getValue());//设置流程状态为2
 			questionFeedback.setFlowStateName("SUBMIT");//设置流程状态为2
 		}
-		return questRepo.save(questionFeedback).thenApplyAsync(p -> { return  ok();	}, ec.current());
+		return questRepo.save(questionFeedback).thenApplyAsync(p -> ok("success"), ec.current());
 	}
 
 
@@ -121,6 +129,9 @@ public class QuestionFeedbackController extends Controller {
 	public Result myQuestionDeal(Integer questionId) {
 		return ok(views.html.myQuestionDeal.render(questionId));
 	}
+	public Result myQuestionInfo(Integer questionId) {
+		return ok(views.html.myQuestionInfo.render(questionId));
+	}
 	/**
 	 * 通过问题id获取一个问题信息
 	 * lixin
@@ -130,7 +141,8 @@ public class QuestionFeedbackController extends Controller {
 	 */
 
 	public CompletionStage<Result> getQuestionInfo(Integer questionId) {
-		String userName=session().get("username");//当前登录用户名
+		String userName=session().get("userName");//当前登录用户名
+		String userId=session().get("userId");//当前登录用户名
 		//操作标志码1：第一个环节2、第二个环节 3、第三个环节 4、第四个环节 5、第五个环节 6、第六个环节 7、第七个环节 8、第八个环节
 
 		//判断当前问题状态，获取需要处理问题的人，与当前登录用户进行对比，若是同一个人，允许操作。否则只展示信息，隐藏按钮的操作。
@@ -138,20 +150,20 @@ public class QuestionFeedbackController extends Controller {
 
 		return questionFeedback.thenApplyAsync(questionInfo -> {
 			logger.debug("{},{},{},{}", questionInfo.getQuestionState(),QuestionStateEnum.DEVELOPER.getValue(), questionInfo.getDeveloperName(),userName);
-			if(questionInfo.getQuestionState() == QuestionStateEnum.FEEDBACKER.getValue() && questionInfo.getFeedbacker().equals(userName)){//第一个节点的人，需要对比问题提交人
+			if(questionInfo.getQuestionState() == QuestionStateEnum.FEEDBACKER.getValue() && questionInfo.getFeedbackerId().equals(userId)){//第一个节点的人，需要对比问题提交人
 				questionInfo.setOperateFlag(1);
-			}else if(questionInfo.getQuestionState() == QuestionStateEnum.BUG_HEADER.getValue() && questionInfo.getBugHeader().equals(userName)){//第二个节点的人，需要对比bug负责人
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.BUG_HEADER.getValue() && questionInfo.getBugHeaderId().equals(userId)){//第二个节点的人，需要对比bug负责人
 				questionInfo.setOperateFlag(2);
-			}else if(questionInfo.getQuestionState() == QuestionStateEnum.TRANSFER.getValue() && questionInfo.getTransferName().equals(userName)){//第二个节点的人，需要对比bug负责人
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.TRANSFER.getValue() && questionInfo.getTransferId().equals(userId)){//第三个节点的人，需要对比问题接口人
 				questionInfo.setOperateFlag(3);
-			}else if(questionInfo.getQuestionState() == QuestionStateEnum.DEVELOPER.getValue() && questionInfo.getDeveloperName().equals(userName)){//第二个节点的人，需要对比bug负责人
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.DEVELOPER.getValue() && questionInfo.getDeveloperId().equals(userId)){//第四个节点的人，需要对比方案责任人
 				questionInfo.setOperateFlag(4);
 			}
-			else if(questionInfo.getQuestionState() == QuestionStateEnum.SCHEME_AUDITOR.getValue() && questionInfo.getSchemeAuditName().equals(userName)){//第二个节点的人，需要对比bug负责人
+			else if(questionInfo.getQuestionState() == QuestionStateEnum.SCHEME_AUDITOR.getValue() && questionInfo.getSchemeAuditId().equals(userId)){//第五个节点的人，需要对比方案审核人
 				questionInfo.setOperateFlag(5);
-			}else if(questionInfo.getQuestionState() == QuestionStateEnum.AUDITOR.getValue() && questionInfo.getResultAuditName().equals(userName)){//第二个节点的人，需要对比bug负责人
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.AUDITOR.getValue() && questionInfo.getResultAuditId().equals(userId)){//第六个节点的人，需要对比问题审核人
 				questionInfo.setOperateFlag(6);
-			}else if(questionInfo.getQuestionState() == QuestionStateEnum.VERIFY.getValue() && questionInfo.getVerifyName().equals(userName)){//第二个节点的人，需要对比bug负责人
+			}else if(questionInfo.getQuestionState() == QuestionStateEnum.VERIFY.getValue() && questionInfo.getVerifyId().equals(userId)){//第七个节点的人，需要对比验证人员
 				questionInfo.setOperateFlag(7);
 			}else{
 				questionInfo.setOperateFlag(8);
@@ -234,9 +246,10 @@ public class QuestionFeedbackController extends Controller {
 	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public CompletionStage<Result> listMyQuestion() {
-		String userName = session().get("username");
+		String userName = session().get("userName");
+		String userId = session().get("userId");
 		QuestionFeedback questionFeedback = Json.fromJson(request().body().asJson(), QuestionFeedback.class);
-		return questRepo.findAll(questionFeedback,userName).thenApplyAsync(questionList -> ok(toJson(questionList)), ec.current());
+		return questRepo.findAll(questionFeedback,userId).thenApplyAsync(questionList -> ok(toJson(questionList)), ec.current());
 	}
 
 	/**
@@ -271,7 +284,6 @@ public class QuestionFeedbackController extends Controller {
 				return null;
 			}
 		}
-
 		if(unitId==null || unitId ==0){//若二级部门id为空，则取一级部门用户
 			return userRepository.findUsersBySection(departmentId).thenApplyAsync(unitList -> ok(toJson(unitList)), ec.current());
 		}else{
