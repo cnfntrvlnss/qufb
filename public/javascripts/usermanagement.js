@@ -14,6 +14,20 @@ $(document).ready(function(){
             alert('error occurs while get listDepartment! ' + data);
         }
     });
+    $.ajax({
+        url: 'getRoles',
+        dataType: 'json',
+        success: function(data){
+            roles = data;
+            $('#userRoles').empty();
+            $.each(roles, function(i, val){
+                $('#userRoles').append("<option>"+val+"</option>");
+            });
+        },
+        error: function(data){
+            console.log("error occurs while getRoles.");
+        }
+    });
 
     $('#confirmMdl').modal({backdrop: 'static', show: false});
     $('#addUserMdl').modal({backdrop: 'static', show: false});
@@ -81,6 +95,7 @@ function appendUserData(deptName, unitName, staffs){
 }
 
 var departmentData;
+var roles;
 
 function fetchCheckedDept(){
     var deptName = $('#collapseDepartment tbody tr :checked').first().closest('td').next().next().text();

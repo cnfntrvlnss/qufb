@@ -52,7 +52,5 @@ public interface UserRepository {
 
     CompletionStage<Void> deleteUsersById(List<String> userIds);
 
-    public CompletionStage<List<MyRole>> findAllRoles();
-
-
+    CompletionStage<List<MyRole>> findAllRoles();
 }

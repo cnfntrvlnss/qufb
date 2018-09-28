@@ -249,12 +249,14 @@ public class UserController extends Controller {
                 for(User user: staffs){
                     ObjectNode staffNode = (ObjectNode) Json.toJson(user);
                     staffNode.remove("unit");
-                    ArrayNode rolesNode = (ArrayNode) staffNode.get("roles");
-                    ArrayNode simpleNode = Json.newArray();
-                    for(int i=0; i< rolesNode.size(); i++){
-                        simpleNode.add(rolesNode.get(i).get("id"));
+                    if(staffNode.get("roles") != null){
+                        ArrayNode rolesNode = (ArrayNode) staffNode.get("roles");
+                        ArrayNode simpleNode = Json.newArray();
+                        for(int i=0; i< rolesNode.size(); i++){
+                            simpleNode.add(rolesNode.get(i).get("id"));
+                        }
+                        staffNode.set("roles", simpleNode);
                     }
-                    staffNode.set("roles", simpleNode);
                     staffsNode.add(staffNode);
                 }
 
@@ -358,6 +360,12 @@ public class UserController extends Controller {
         List<String> deptIdsStr = Arrays.asList(request().body().asMultipartFormData().asFormUrlEncoded().get("deptId"));
         Integer deptId =  Integer.valueOf(deptIdsStr.get(0));
         return userRepo.deleteDeptById(deptId).thenApplyAsync(v -> ok());
+    }
+
+    public CompletionStage<Result> findRoles(){
+        return userRepo.findAllRoles().thenApplyAsync(l -> {
+            return ok(Json.toJson(l.stream().map(v -> v.getId()).collect(Collectors.toList())));
+        }, ec.current());
     }
 
     @Restrict(@Group("ADMIN"))

@@ -84,7 +84,6 @@ public class JPAUserRepository implements UserRepository {
         }), executionContext);
     }
 
-
     @Override
     public CompletionStage<List<Section>> findSections(){
         return supplyAsync(() -> jpaApi.withTransaction((EntityManager em) -> {
@@ -307,25 +306,32 @@ public class JPAUserRepository implements UserRepository {
                 u.setManager(null);//后添加Manager，就需要在更新unit时设置为null.
                 if(us.isEmpty()){
                     em.persist(u);
-                    if(manager != null){
-                        u.setManager(em.find(User.class, manager.getUserId()));
-                    }
                 }else{
                     u = us.get(0);
                 }
 
                 //user中的Unit必须要被managed，才能保存到数据库.
+                for(User user: users){
+                    user.setUnit(u);
+                }
+                //若已经存在用户，就忽略掉.
+                List<User> users1 = new ArrayList<>();
                 for(User user: users) {
                     User user1 = em.find(User.class, user.getUserId());
                     if(user1 != null){
-                        em.remove(user1);
+                        users1.add(user1);
+                    }else{
+                        em.persist(user);
+                        users1.add(user);
                     }
-                    user.setUnit(u);
-                    em.persist(user);
+                }
+                //manager有可能来自所属处的staffs列表，因此放在后面更新.
+                if(manager != null){
+                    u.setManager(em.find(User.class, manager.getUserId()));
                 }
                 //恢复unit数据原样，保证函数返回后数据的完整性。
                 //返回的实体的各字段要来自数据库，因为这是在事务里面。
-                u.setStaffs(users);
+                u.setStaffs(users1);
                 units1.add(u);
             }
             section.setUnits(units1);
