@@ -10,7 +10,7 @@ scalaVersion := "2.12.6"
 
 crossScalaVersions := Seq("2.11.12", "2.12.6")
 PlayKeys.externalizeResources := false
-PlayKeys.devSettings += "play.server.http.port" -> "9000"
+PlayKeys.devSettings += "play.server.http.port" -> "9090"
 
 
 libraryDependencies += guice
