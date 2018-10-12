@@ -111,3 +111,10 @@ POST    /updateUser     controllers.UserController.updateUser()
 POST    /deleteUnits    controllers.UserController.deleteUnits()
 #删除部门，传入部门ID
 POST    /deleteDept     controllers.UserController.deleteDept()
+
+######################
+#配置管理
+######################
+GET     /questionAttribute/fetchAll     controllers.QuestionAttributeController.fetchAll()
+POST    /questionAttribute/addOrUpdate    controllers.QuestionAttributeController.addOrUpdate()
+POST    /questionAttribute/deleteSome    controllers.QuestionAttributeController.deleteSome()

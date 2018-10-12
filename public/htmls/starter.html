@@ -137,7 +137,7 @@ desired effect
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel" hidden>
         <div class="pull-left image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+          <img src="assets/images/avatar.png" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <p>Alexander Pierce</p>
@@ -203,11 +203,11 @@ desired effect
                 <!-- /.box-header -->
                 <div class="box-body no-padding">
                     <div class="btn-group " id="qustAttrTableTb">
-                        <button type="button" class="btn" ><i class="fa fa-minus"></i>添加
+                        <button type="button" class="btn"  onclick="addQustAttr('添加')"><i class="fa fa-minus"></i>添加
                         </button>
-                        <button type="button" class="btn" ><i class="fa fa-times"></i>删除
+                        <button type="button" class="btn" onclick="deleteQustAttrs()"><i class="fa fa-times" ></i>删除
                         </button>
-                        <button type="button" class="btn"><i class="fa fa-times"></i>编辑
+                        <button type="button" class="btn" onclick="updateQustAttr()"><i class="fa fa-times"></i>编辑
                         </button>
                     </div>
 
@@ -219,9 +219,72 @@ desired effect
         </div>
         <div class="col-md-4">
 
+            <div class="box" id="qustAttrDlgHidden" >
+                <div class="box-header with-border">
+                    <h3 class="box-title"><span></span>配置信息</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">配置ID</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="itemId" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">配置名</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="itemName" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">子配置ID</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="subItemId" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">子配置名</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="subItemName" placeholder="">
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="box-footer">
+                    <button  class="btn btn-default" data-widget="remove">取消</button>
+                    <button type="submit" class="btn btn-info pull-right">提交</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
+    <div class="modal fade" id="confirmMdl">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Default Modal</h4>
+                </div>
+                <div class="modal-body">
+                    <p>One fine body&hellip;</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary confirmed">确定</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
 
     </section>
     <!-- /.content -->
@@ -334,7 +397,7 @@ desired effect
 
 <script src="assets/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
 <script src="assets/bootstrap-table/1.12.1/bootstrap-table-zh-CN.min.js"></script>
-
+<script src="assets/jquery-validation-1.17.0/dist/jquery.validate.min.js"></script>
 <script src="assets/javascripts/starter.js"></script>
 </body>
 </html>

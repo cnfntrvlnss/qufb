@@ -2,9 +2,14 @@ package models;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.*;
 
 
 @Entity
+@NamedQueries(
+        @NamedQuery(name = "ConfigInfo.findConfig",
+        query = "select c from ConfigInfo c where c.configId.configId = :configId")
+)
 public class ConfigInfo {
 
     public ConfigInfoPK configId;//复合主键

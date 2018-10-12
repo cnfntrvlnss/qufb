@@ -3,6 +3,8 @@ package dao;
 import com.google.inject.ImplementedBy;
 import dao.impl.JPAConfigInfoRepository;
 import models.ConfigInfo;
+import models.ConfigInfoPK;
+
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
@@ -15,5 +17,9 @@ public interface ConfigInfoRepository {
      * @return
      */
     CompletionStage<List<ConfigInfo>> findAll(ConfigInfo configInfo);
+    public CompletionStage<List<ConfigInfo>> fetchAll();
 
+    public CompletionStage<Void> addOrUpdate(ConfigInfo configInfo);
+
+    CompletionStage<Void> deleteConfigs(List<ConfigInfoPK> pks);
 }
